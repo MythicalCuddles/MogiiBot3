@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MelissasCode;
+using Discord;
 
 namespace DiscordBot.Common
 {
@@ -16,6 +17,8 @@ namespace DiscordBot.Common
 
         public ulong Owner { get; set; } = DiscordWorker.getMelissasID;
         public string Prefix { get; set; } = "$";
+        public string Playing { get; set; }
+        public UserStatus Status { get; set; } = UserStatus.Online;
 
         public static void EnsureExists()
         {
@@ -48,5 +51,22 @@ namespace DiscordBot.Common
         
         public string ToJson()
             => JsonConvert.SerializeObject(this, Formatting.Indented);
+
+        public static void UpdateJson(string parameterName, string newValue)
+        {
+            string json = File.ReadAllText(FileName);
+            dynamic jsonObj = JsonConvert.DeserializeObject(json);
+            jsonObj[parameterName] = newValue;
+            string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
+            File.WriteAllText(FileName, output);
+        }
+        public static void UpdateJson(string parameterName, int newValue)
+        {
+            string json = File.ReadAllText(FileName);
+            dynamic jsonObj = JsonConvert.DeserializeObject(json);
+            jsonObj[parameterName] = newValue;
+            string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
+            File.WriteAllText(FileName, output);
+        }
     }
 }

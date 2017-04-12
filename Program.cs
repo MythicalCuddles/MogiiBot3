@@ -58,8 +58,8 @@ namespace DiscordBot
 
         private async Task Ready()
         {
-            await _bot.SetGameAsync("MogiiCraft");
-            await _bot.SetStatusAsync(UserStatus.Online);
+            await _bot.SetGameAsync(Configuration.Load().Playing);
+            await _bot.SetStatusAsync(Configuration.Load().Status);
 
             Modules.Public.InfoModule._dt = DateTime.Now;
         }
