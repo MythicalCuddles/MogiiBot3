@@ -9,6 +9,8 @@ using Discord.WebSocket;
 using Discord.Net.Providers.WS4Net;
 using Discord.Net.Providers.UDPClient;
 
+using DiscordBot.Common;
+
 using MelissasCode;
 using Discord.Commands;
 using System.Reflection;
@@ -26,6 +28,8 @@ namespace DiscordBot
 
         public async Task RunBotAsync()
         {
+            Common.Configuration.EnsureExists();
+
             _bot = new DiscordSocketClient(new DiscordSocketConfig
             {
                 LogLevel = LogSeverity.Debug,
@@ -44,7 +48,7 @@ namespace DiscordBot
 
             await InstallCommands();
 
-            await _bot.LoginAsync(TokenType.Bot, DiscordToken.MogiiBot);
+            await _bot.LoginAsync(TokenType.Bot, "MjkwMjEwMTgzOTcwNDIyNzk0.C8-ytA.amMnNaV4RM-dH6LI1t5Dzkrt7b8");//DiscordToken.MogiiBot);
             await _bot.StartAsync();
 
             await Task.Delay(-1);
@@ -99,7 +103,7 @@ namespace DiscordBot
 
             int argPos = 0;
 
-            if (!(message.HasCharPrefix('$', ref argPos) || message.HasMentionPrefix(_bot.CurrentUser, ref argPos))) return;
+            if (!(message.HasStringPrefix(Configuration.Load().Prefix, ref argPos) || message.HasMentionPrefix(_bot.CurrentUser, ref argPos))) return;
 
             var context = new CommandContext(_bot, message);
             var result = await commands.ExecuteAsync(context, argPos, map);

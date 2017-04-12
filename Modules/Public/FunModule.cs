@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using Discord.Commands;
 using Discord;
 
+using DiscordBot.Common.Preconditions;
+using DiscordBot.Common;
+
 using MelissasCode;
 
 namespace DiscordBot.Modules.Public
@@ -16,6 +19,7 @@ namespace DiscordBot.Modules.Public
         Random _r = new Random();
 
         [Command("dice"), Summary("Rolls a 6 sided dice.")]
+        [MinPermissions(PermissionLevel.User)]
         public async Task Roll6Dice()
         {
             int value = _r.Next(1, 7);
@@ -24,6 +28,7 @@ namespace DiscordBot.Modules.Public
 
         [Command("flipcoin"), Summary("Flips a two sided coin.")]
         [Alias("flip", "tosscoin", "coinflip")]
+        [MinPermissions(PermissionLevel.User)]
         public async Task FlipCoin()
         {
             int value = _r.Next(1, 3);

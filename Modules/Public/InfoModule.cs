@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using Discord.Commands;
 using Discord;
 
+using DiscordBot.Common.Preconditions;
+using DiscordBot.Common;
+
 using MelissasCode;
 using Discord.WebSocket;
 
@@ -17,6 +20,7 @@ namespace DiscordBot.Modules.Public
         private Version _v = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
         [Command("about"), Summary("Sends information about the bot.")]
+        [MinPermissions(PermissionLevel.User)]
         public async Task About()
         {
             StringBuilder sb = new StringBuilder()
@@ -61,11 +65,11 @@ namespace DiscordBot.Modules.Public
         }
 
         [Command("hotlines"), Summary("Sends hotline links for the user.")]
+        [MinPermissions(PermissionLevel.User)]
         public async Task LinkHotlines()
         {
             await ReplyAsync("**International Helplines** \nhttp://togetherweare-strong.tumblr.com/helpline \nhttps://reddit.com/r/SuicideWatch/wiki/hotlines");
         }
-        
 
         private static TimeSpan _uptime;
         public static DateTime _dt = new DateTime();
