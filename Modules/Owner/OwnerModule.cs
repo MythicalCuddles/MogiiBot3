@@ -15,7 +15,10 @@ using MelissasCode;
 
 namespace DiscordBot.Modules.Owner
 {
-    class OwnerModule : ModuleBase
+    [Group("bot")]
+    [MinPermissions(PermissionLevel.BotOwner)]
+    public class OwnerModule : ModuleBase
     {
+
     }
 }
