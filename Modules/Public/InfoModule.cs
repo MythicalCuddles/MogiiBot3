@@ -29,11 +29,11 @@ namespace DiscordBot.Modules.Public
                 .Append("Bot ID: " + Program._bot.CurrentUser.Id + "\n")
                 .Append("[MogiiBot Repository](https://github.com/MythicalCuddles/MogiiBot3)" + "\n")
                 .Append("---------------------------------------------\n")
-                .Append("Developer Name: " + GetHandler.getUser(DiscordWorker.getMelissasID).Mention + "\n")
-                .Append("Developer ID: " + DiscordWorker.getMelissasID + "\n")
+                .Append("Developer Name: " + GetHandler.getUser(DiscordWorker.getMaelíosaID).Mention + "\n")
+                .Append("Developer ID: " + DiscordWorker.getMaelíosaID + "\n")
                 .Append("[GitHub/MythicalCuddles](https://github.com/MythicalCuddles)" + "\n")
                 .Append("---------------------------------------------\n")
-                .Append("With help from " + GetHandler.getUser(DiscordWorker.getAmbersID).Mention + " | [GitHub/Amperpil](https://github.com/AmperPil)" + "\n")
+                .Append("With help from " + GetHandler.getUser(DiscordWorker.getAmberID).Mention + " | [GitHub/Amperpil](https://github.com/AmperPil)" + "\n")
                 .Append("---------------------------------------------\n")
                 .Append("Uptime: " + calculateUptime());
 

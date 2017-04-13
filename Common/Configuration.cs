@@ -17,8 +17,8 @@ namespace DiscordBot.Common
 
         public ulong[] DevTeam { get; set; } = {
             DiscordWorker.getMaelíosaID,
-            DiscordWorker.getAmbersID,
-            DiscordWorker.getConcobharsID,
+            DiscordWorker.getAmberID,
+            DiscordWorker.getConcobharID,
             DiscordWorker.getCuirtéisID
         };
         public string Prefix { get; set; } = "$";
