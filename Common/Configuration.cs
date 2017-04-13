@@ -16,8 +16,10 @@ namespace DiscordBot.Common
         public static string FileName { get; private set; } = "config/configuration.json";
 
         public ulong[] DevTeam { get; set; } = {
-            DiscordWorker.getMelissasID,
-            DiscordWorker.getAmbersID
+            DiscordWorker.getMaelíosaID,
+            DiscordWorker.getAmbersID,
+            DiscordWorker.getConcobharsID,
+            DiscordWorker.getCuirtéisID
         };
         public string Prefix { get; set; } = "$";
         public string Playing { get; set; }
