@@ -68,6 +68,7 @@ namespace DiscordBot.Modules.Public
 
         [Command("devteam"), Summary("Sends a list of all the developers and testers.")]
         [Alias("devs", "developers", "team", "testers")]
+        [MinPermissions(PermissionLevel.User)]
         public async Task DeveloperTeam()
         {
             StringBuilder sb = new StringBuilder()
