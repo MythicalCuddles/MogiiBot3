@@ -22,9 +22,9 @@ namespace DiscordBot.Modules.Admin
     {
         [Command("channelmessage"), Summary("Sends a message to the channel specified.")]
         [Alias("cmessage", "channelmsg")]
-        public async Task SendChannelMessage([Summary("The channel id to send the message to.")] SocketTextChannel channel)
+        public async Task SendChannelMessage([Summary("The channel id to send the message to.")] ulong channel, [Remainder]string message)
         {
-            await ReplyAsync(channel.Name);
+            await GetHandler.getTextChannel(channel).SendMessageAsync(message);
         }
 
         [Command("privatemessage"), Summary("Sends a private message to the user specified.")]
