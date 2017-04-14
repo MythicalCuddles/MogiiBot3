@@ -29,12 +29,12 @@ namespace DiscordBot.Modules.Public
                 .Append("Bot ID: " + Program._bot.CurrentUser.Id + "\n")
                 .Append("[MogiiBot Repository](https://github.com/MythicalCuddles/MogiiBot3)" + "\n")
                 .Append("---------------------------------------------\n")
-                .Append("Developer Name: " + GetHandler.getUser(DiscordWorker.getMaelíosaID).Mention + "\n")
+                .Append("Developer Name: " + GetHandler.getUser(DiscordWorker.getMaelíosaID).Username + "\n")
                 .Append("Developer ID: " + DiscordWorker.getMaelíosaID + "\n")
                 .Append("[GitHub/MythicalCuddles](https://github.com/MythicalCuddles)" + "\n")
                 .Append("---------------------------------------------\n")
                 .Append("With help from:" + "\n")
-                .Append(GetHandler.getUser(DiscordWorker.getAmberID).Mention + " | [GitHub/Amperpil](https://github.com/AmperPil)" + "\n")
+                .Append(GetHandler.getUser(DiscordWorker.getAmberID).Username + " | [GitHub/Amperpil](https://github.com/AmperPil)" + "\n")
                 .Append("---------------------------------------------\n")
                 .Append("Development: " + developmentSince() + "\n")
                 .Append("Uptime: " + calculateUptime());
@@ -74,12 +74,12 @@ namespace DiscordBot.Modules.Public
             StringBuilder sb = new StringBuilder()
                 .Append("---------------------------------------------\n")
                 .Append("Developer(s)" + "\n")
-                .Append(GetHandler.getUser(DiscordWorker.getMaelíosaID).Mention + " | [GitHub/MythicalCuddles](https://github.com/MythicalCuddles)" + "\n")
+                .Append(GetHandler.getUser(DiscordWorker.getMaelíosaID).Username + " | [GitHub/MythicalCuddles](https://github.com/MythicalCuddles)" + "\n")
                 .Append("---------------------------------------------\n")
                 .Append("With help from:" + "\n")
-                .Append(GetHandler.getUser(DiscordWorker.getAmberID).Mention + " | [GitHub/Amperpil](https://github.com/AmperPil)" + "\n")
-                .Append(GetHandler.getUser(DiscordWorker.getConcobharID).Mention + " | No GitHub Provided." + "\n")
-                .Append(GetHandler.getUser(DiscordWorker.getCuirtéisID).Mention + " | No GitHub Provided." + "\n")
+                .Append(GetHandler.getUser(DiscordWorker.getAmberID).Username + " | [GitHub/Amperpil](https://github.com/AmperPil)" + "\n")
+                .Append(GetHandler.getUser(DiscordWorker.getConcobharID).Username + " | No GitHub Provided." + "\n")
+                .Append(GetHandler.getUser(DiscordWorker.getCuirtéisID).Username + " | No GitHub Provided." + "\n")
                 .Append("---------------------------------------------\n");
 
             Color color = new Color(255, 116, 140);
