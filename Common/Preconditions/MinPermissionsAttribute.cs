@@ -39,7 +39,7 @@ namespace DiscordBot.Common.Preconditions
             if (context.User.IsBot)
                 return PermissionLevel.Bot;
 
-            if (Configuration.Load().DevTeam.Contains(context.User.Id))
+            if (Configuration.Load().Developer == context.User.Id)
                 return PermissionLevel.BotOwner;
 
             var user = context.User as SocketGuildUser;

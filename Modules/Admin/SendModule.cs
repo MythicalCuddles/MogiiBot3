@@ -25,6 +25,7 @@ namespace DiscordBot.Modules.Admin
         public async Task SendChannelMessage([Summary("The channel id to send the message to.")] ulong channel, [Remainder]string message)
         {
             await GetHandler.getTextChannel(channel).SendMessageAsync(message);
+            await ReplyAsync("Message sent, " + Context.User.Mention);
         }
 
         [Command("privatemessage"), Summary("Sends a private message to the user specified.")]
@@ -32,6 +33,7 @@ namespace DiscordBot.Modules.Admin
         public async Task SendPrivateMessage([Summary("The user to send the message to.")] IUser user, [Remainder]string message)
         {
             await user.CreateDMChannelAsync().Result.SendMessageAsync(message);
+            await ReplyAsync("Message sent, " + Context.User.Mention);
         }
     }
 }
