@@ -33,8 +33,10 @@ namespace DiscordBot.Modules.Public
                 .Append("Developer ID: " + DiscordWorker.getMaelíosaID + "\n")
                 .Append("[GitHub/MythicalCuddles](https://github.com/MythicalCuddles)" + "\n")
                 .Append("---------------------------------------------\n")
-                .Append("With help from " + GetHandler.getUser(DiscordWorker.getAmberID).Mention + " | [GitHub/Amperpil](https://github.com/AmperPil)" + "\n")
+                .Append("With help from:" + "\n")
+                .Append(GetHandler.getUser(DiscordWorker.getAmberID).Mention + " | [GitHub/Amperpil](https://github.com/AmperPil)" + "\n")
                 .Append("---------------------------------------------\n")
+                .Append("Development: " + developmentSince() + "\n")
                 .Append("Uptime: " + calculateUptime());
 
             int userCount = 0, channelCount = 0, tChannelCount = 0;
@@ -64,6 +66,32 @@ namespace DiscordBot.Modules.Public
             await ReplyAsync("", false, eb);
         }
 
+        [Command("devteam"), Summary("Sends a list of all the developers and testers.")]
+        [Alias("devs", "developers", "team", "testers")]
+        public async Task DeveloperTeam()
+        {
+            StringBuilder sb = new StringBuilder()
+                .Append("---------------------------------------------\n")
+                .Append("Developer(s)" + "\n")
+                .Append(GetHandler.getUser(DiscordWorker.getMaelíosaID).Mention + " | [GitHub/MythicalCuddles](https://github.com/MythicalCuddles)" + "\n")
+                .Append("---------------------------------------------\n")
+                .Append("With help from:" + "\n")
+                .Append(GetHandler.getUser(DiscordWorker.getAmberID).Mention + " | [GitHub/Amperpil](https://github.com/AmperPil)" + "\n")
+                .Append(GetHandler.getUser(DiscordWorker.getConcobharID).Mention + " | No GitHub Provided." + "\n")
+                .Append(GetHandler.getUser(DiscordWorker.getCuirtéisID).Mention + " | No GitHub Provided." + "\n")
+                .Append("---------------------------------------------\n");
+
+            Color color = new Color(255, 116, 140);
+            EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
+                .WithName("Develoers & Testers");
+            EmbedBuilder eb = new EmbedBuilder()
+                .WithAuthor(eab)
+                .WithDescription(sb.ToString())
+                .WithColor(color);
+
+            await ReplyAsync("", false, eb);
+        }
+
         [Command("hotlines"), Summary("Sends hotline links for the user.")]
         [MinPermissions(PermissionLevel.User)]
         public async Task LinkHotlines()
@@ -77,6 +105,13 @@ namespace DiscordBot.Modules.Public
         {
             _uptime = DateTime.Now - _dt;
             return (_uptime.Days.ToString() + " day(s), " + _uptime.Hours.ToString() + " hour(s), " + _uptime.Minutes.ToString() + " minute(s), " + _uptime.Seconds.ToString() + " second(s)");
+        }
+
+        private DateTime startDevelopment = new DateTime(2017, 4, 11, 00, 00, 00);
+        private string developmentSince()
+        {
+            TimeSpan DevelopmentCounter = DateTime.Now - startDevelopment;
+            return (DevelopmentCounter.Days.ToString() + " day(s), " + DevelopmentCounter.Hours.ToString() + " hour(s), " + DevelopmentCounter.Minutes.ToString() + " minute(s), " + DevelopmentCounter.Seconds.ToString() + " second(s)");
         }
     }
 }

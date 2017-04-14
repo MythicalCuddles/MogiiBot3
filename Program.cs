@@ -48,7 +48,7 @@ namespace DiscordBot
 
             await InstallCommands();
 
-            await _bot.LoginAsync(TokenType.Bot, DiscordToken.MogiiBot);
+            await _bot.LoginAsync(TokenType.Bot, DiscordToken.DoggoBot);
             await _bot.StartAsync();
 
             await Task.Delay(-1);
@@ -68,8 +68,7 @@ namespace DiscordBot
         {
             if (e.Guild.Id == 221250721046069249)
             {
-                await GetHandler.getTextChannel(225721556435730433).SendMessageAsync("Hey " + e.Mention + ", and welcome to the " + e.Guild.Name + " Discord Server! If you are a player on our Minecraft Server, tell us your username and a Staff Member will grant you the MC Players Role \n\nIf you don't mind, could you fill out this form linked below. We are collecting data on how you found out about us, and it'd be great if we had your input. The form can be found here: <https://goo.gl/forms/iA9t5xjoZvnLJ5np1>");
-                await GetHandler.getTextChannel(235179833053675522).SendMessageAsync(e.Mention + " has joined the server.");
+                await GetHandler.getTextChannel(235179833053675522).SendMessageAsync(e.Mention + " has left the server.\n" + e.Username + " | " + e.Nickname + " | " + e.Id);
             }
         }
 
@@ -77,7 +76,8 @@ namespace DiscordBot
         {
             if (e.Guild.Id == 221250721046069249)
             {
-                await GetHandler.getTextChannel(235179833053675522).SendMessageAsync(e.Mention + " has left the server.");
+                await GetHandler.getTextChannel(225721556435730433).SendMessageAsync("Hey " + e.Mention + ", and welcome to the " + e.Guild.Name + " Discord Server! If you are a player on our Minecraft Server, tell us your username and a Staff Member will grant you the MC Players Role \n\nIf you don't mind, could you fill out this form linked below. We are collecting data on how you found out about us, and it'd be great if we had your input. The form can be found here: <https://goo.gl/forms/iA9t5xjoZvnLJ5np1>");
+                await GetHandler.getTextChannel(235179833053675522).SendMessageAsync(e.Mention + " has joined the server.");
             }
         }
 
