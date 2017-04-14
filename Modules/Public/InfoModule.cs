@@ -84,7 +84,7 @@ namespace DiscordBot.Modules.Public
 
             Color color = new Color(255, 116, 140);
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
-                .WithName("Develoers & Testers");
+                .WithName("Developers & Testers");
             EmbedBuilder eb = new EmbedBuilder()
                 .WithAuthor(eab)
                 .WithDescription(sb.ToString())
