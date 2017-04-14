@@ -66,33 +66,6 @@ namespace DiscordBot.Modules.Public
             await ReplyAsync("", false, eb);
         }
 
-        [Command("devteam"), Summary("Sends a list of all the developers and testers.")]
-        [Alias("devs", "developers", "team", "testers")]
-        [MinPermissions(PermissionLevel.User)]
-        public async Task DeveloperTeam()
-        {
-            StringBuilder sb = new StringBuilder()
-                .Append("---------------------------------------------\n")
-                .Append("Developer(s)" + "\n")
-                .Append(GetHandler.getUser(DiscordWorker.getMaelíosaID).Username + " | [GitHub/MythicalCuddles](https://github.com/MythicalCuddles)" + "\n")
-                .Append("---------------------------------------------\n")
-                .Append("With help from:" + "\n")
-                .Append(GetHandler.getUser(DiscordWorker.getAmberID).Username + " | [GitHub/Amperpil](https://github.com/AmperPil)" + "\n")
-                .Append(GetHandler.getUser(DiscordWorker.getConcobharID).Username + " | No GitHub Provided." + "\n")
-                .Append(GetHandler.getUser(DiscordWorker.getCuirtéisID).Username + " | No GitHub Provided." + "\n")
-                .Append("---------------------------------------------\n");
-
-            Color color = new Color(255, 116, 140);
-            EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
-                .WithName("Developers & Testers");
-            EmbedBuilder eb = new EmbedBuilder()
-                .WithAuthor(eab)
-                .WithDescription(sb.ToString())
-                .WithColor(color);
-
-            await ReplyAsync("", false, eb);
-        }
-
         [Command("hotlines"), Summary("Sends hotline links for the user.")]
         [MinPermissions(PermissionLevel.User)]
         public async Task LinkHotlines()
