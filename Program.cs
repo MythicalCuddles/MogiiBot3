@@ -96,7 +96,21 @@ namespace DiscordBot
             if (message.Author.IsBot) return;
             
             if (!(messageParam.Channel is ITextChannel)) // If message is a private message
-                await GetHandler.getTextChannel(235179833053675522).SendMessageAsync(message.Author.Mention + " sent:\n" + message.Content);
+            {
+                Color color = new Color(227, 185, 15);
+                EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
+                    .WithName("Private Message");
+                EmbedFooterBuilder efb = new EmbedFooterBuilder()
+                    .WithText("PRIVATE MESSAGE | UID: " + message.Author.Id + " | MID: " + message.Id + " | STATUS: [ok]");
+                EmbedBuilder eb = new EmbedBuilder()
+                    .WithAuthor(eab)
+                    .WithTitle("from: " + message.Author.Username)
+                    .WithDescription(message.Content + "\n\n---------------------------------------------")
+                    .WithColor(color)
+                    .WithFooter(efb);
+
+                await GetHandler.getTextChannel(235179833053675522).SendMessageAsync("", false, eb);
+            }
 
             if(message.Content.ToUpper() == "F")
             {
