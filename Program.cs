@@ -94,6 +94,9 @@ namespace DiscordBot
 
             if (message == null) return;
             if (message.Author.IsBot) return;
+            
+            if (!(messageParam.Channel is ITextChannel)) // If message is a private message
+                await GetHandler.getTextChannel(235179833053675522).SendMessageAsync(message.Author.Mention + " sent:\n" + message.Content);
 
             if(message.Content.ToUpper() == "F")
             {
