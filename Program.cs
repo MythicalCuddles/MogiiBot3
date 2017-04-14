@@ -48,7 +48,7 @@ namespace DiscordBot
 
             await InstallCommands();
 
-            await _bot.LoginAsync(TokenType.Bot, DiscordToken.DoggoBot);
+            await _bot.LoginAsync(TokenType.Bot, DiscordToken.MogiiBot);
             await _bot.StartAsync();
 
             await Task.Delay(-1);
