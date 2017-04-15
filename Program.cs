@@ -52,8 +52,6 @@ namespace DiscordBot
             await _bot.StartAsync();
 
             await Task.Delay(-1);
-
-            await _bot.LogoutAsync();
         }
 
         private async Task Ready()
