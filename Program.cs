@@ -28,7 +28,7 @@ namespace DiscordBot
 
         public async Task RunBotAsync()
         {
-            Common.Configuration.EnsureExists();
+            Configuration.EnsureExists();
 
             _bot = new DiscordSocketClient(new DiscordSocketConfig
             {
