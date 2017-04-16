@@ -20,8 +20,8 @@ namespace DiscordBot
     class Program
     {
         public static DiscordSocketClient _bot;
-        private CommandService commands;
-        private DependencyMap map;
+        public static CommandService commandService;
+        public static DependencyMap dependencyMap;
 
         static void Main(string[] args)
             => new Program().RunBotAsync().GetAwaiter().GetResult();
@@ -33,11 +33,12 @@ namespace DiscordBot
             _bot = new DiscordSocketClient(new DiscordSocketConfig
             {
                 LogLevel = LogSeverity.Debug,
+                MessageCacheSize = 50,
                 WebSocketProvider = WS4NetProvider.Instance,
                 UdpSocketProvider = UDPClientProvider.Instance,
             });
-            commands = new CommandService();
-            map = new DependencyMap();
+            commandService = new CommandService();
+            dependencyMap = new DependencyMap();
 
             _bot.Log += Log;
             
@@ -83,7 +84,7 @@ namespace DiscordBot
         {
             _bot.MessageReceived += MessageReceived;
 
-            await commands.AddModulesAsync(Assembly.GetEntryAssembly());
+            await commandService.AddModulesAsync(Assembly.GetEntryAssembly());
         }
 
         private async Task MessageReceived(SocketMessage messageParam)
@@ -121,7 +122,7 @@ namespace DiscordBot
             if (!(message.HasStringPrefix(Configuration.Load().Prefix, ref argPos) || message.HasMentionPrefix(_bot.CurrentUser, ref argPos))) return;
 
             var context = new CommandContext(_bot, message);
-            var result = await commands.ExecuteAsync(context, argPos, map);
+            var result = await commandService.ExecuteAsync(context, argPos, dependencyMap);
             if (!result.IsSuccess)
             {
                 await context.Channel.SendMessageAsync(messageParam.Author.Mention + ", " + result.ErrorReason);
