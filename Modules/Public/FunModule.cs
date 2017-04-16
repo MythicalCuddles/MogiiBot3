@@ -46,7 +46,7 @@ namespace DiscordBot.Modules.Public
             }
         }
 
-        [Command("approve"), Summary("Sends a picture of stating \"Harold Likes This\".")]
+        [Command("approve"), Summary("Sends a picture stating \"Harold Likes This\".")]
         public async Task HaroldApproves()
         {
             await ReplyAsync("http://i.imgur.com/AgXT80B.jpg");

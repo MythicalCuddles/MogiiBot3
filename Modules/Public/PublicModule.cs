@@ -16,7 +16,13 @@ using MelissasCode;
 namespace DiscordBot.Modules.Public
 {
     [MinPermissions(PermissionLevel.User)]
+    [RequireContext(ContextType.Guild)]
     public class PublicModule : ModuleBase
     {
+        [Command("hug"), Summary("Give your friend a hug!")]
+        public async Task HugUser(IUser user)
+        {
+            await ReplyAsync(Context.User.Mention + " has given a massive hug to " + user.Mention);
+        }
     }
 }
