@@ -15,10 +15,14 @@ using MelissasCode;
 
 namespace DiscordBot.Modules.Owner
 {
-    [Group("bot")]
     [MinPermissions(PermissionLevel.BotOwner)]
     public class OwnerModule : ModuleBase
     {
-
+        [Command("prefix"), Summary("Set the prefix for the bot.")]
+        public async Task SetPrefix(string prefix)
+        {
+            Configuration.UpdateJson("Prefix", prefix);
+            await ReplyAsync(Context.User.Mention + " has updated the Prefix to: " + prefix);
+        }
     }
 }

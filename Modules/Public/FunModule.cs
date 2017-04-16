@@ -14,12 +14,12 @@ using MelissasCode;
 
 namespace DiscordBot.Modules.Public
 {
+    [MinPermissions(PermissionLevel.User)]
     public class FunModule : ModuleBase
     {
         Random _r = new Random();
 
         [Command("dice"), Summary("Rolls a 6 sided dice.")]
-        [MinPermissions(PermissionLevel.User)]
         public async Task Roll6Dice()
         {
             int value = _r.Next(1, 7);
@@ -28,7 +28,6 @@ namespace DiscordBot.Modules.Public
 
         [Command("flipcoin"), Summary("Flips a two sided coin.")]
         [Alias("flip", "tosscoin", "coinflip")]
-        [MinPermissions(PermissionLevel.User)]
         public async Task FlipCoin()
         {
             int value = _r.Next(1, 3);
@@ -44,6 +43,39 @@ namespace DiscordBot.Modules.Public
             else
             {
                 await ReplyAsync("A coin had been flipped, but got lost while landing.");
+            }
+        }
+
+        [Command("approve"), Summary("Sends a picture of stating \"Harold Likes This\".")]
+        public async Task HaroldApproves()
+        {
+            await ReplyAsync("http://i.imgur.com/AgXT80B.jpg");
+        }
+
+        [Command("nice"), Summary("NOICE!")]
+        public async Task Noice()
+        {
+            await ReplyAsync("https://media.giphy.com/media/yJFeycRK2DB4c/giphy.gif");
+        }
+
+        [Command("noticeme"), Summary("Will Senpai notice you?")]
+        public async Task Senpai()
+        {
+            if (Configuration.Load().SenpaiEnabled)
+            {
+                Random _r = new Random();
+                if (_r.Next(0, 20) == _r.Next(0, 20))
+                {
+                    await ReplyAsync(Context.User.Mention + ", Senpai has noticed you!");
+                }
+                else
+                {
+                    await ReplyAsync(Context.User.Mention + ", Senpai has not noticed you this time around...");
+                }
+            }
+            else
+            {
+                await ReplyAsync(Context.User.Mention + ", Senpai can not notice you if Senpai is in bed sleeping.");
             }
         }
     }

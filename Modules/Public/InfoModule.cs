@@ -15,12 +15,13 @@ using Discord.WebSocket;
 
 namespace DiscordBot.Modules.Public
 {
+    [MinPermissions(PermissionLevel.User)]
     public class InfoModule : ModuleBase
     {
         private Version _v = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
         [Command("about"), Summary("Sends information about the bot.")]
-        [MinPermissions(PermissionLevel.User)]
+        [Alias("stats")]
         public async Task About()
         {
             StringBuilder sb = new StringBuilder()
@@ -65,12 +66,36 @@ namespace DiscordBot.Modules.Public
 
             await ReplyAsync("", false, eb);
         }
-
+        
         [Command("hotlines"), Summary("Sends hotline links for the user.")]
-        [MinPermissions(PermissionLevel.User)]
         public async Task LinkHotlines()
         {
             await ReplyAsync("**International Helplines** \nhttp://togetherweare-strong.tumblr.com/helpline \nhttps://reddit.com/r/SuicideWatch/wiki/hotlines");
+        }
+
+        [Command("poll"), Summary("Sends a link to the poll for the minecraft server.")]
+        public async Task SendPollLink()
+        {
+            await ReplyAsync("https://docs.google.com/forms/d/e/1FAIpQLSe9CFsWWBlInGqgVqt4SieG6JW1E81zAjtWZeEoDUTH3xPE1w/viewform?c=0&w=1");
+        }
+
+        [Command("website"), Summary("Sends a link to the forums.")]
+        public async Task SendWebsiteLink()
+        {
+            await ReplyAsync("We currently have a forums, but it isn't active. Anyways, you can visit it here: http://mogiicraft.proboards.com/");
+        }
+
+        [Command("minecraftip"), Summary("Posts the Minecraft IP into the chat.")]
+        [Alias("ip")]
+        public async Task SendMinecraftIP()
+        {
+            await ReplyAsync("The Minecraft Server IP is: mogiicraft.ddns.net:25635");
+        }
+
+        [Command("vote"), Summary("Sends links to the voting websites for Minecraft.")]
+        public async Task SendVotingLinks()
+        {
+            await ReplyAsync(Context.User.Mention + " use the following links to vote and support the server. You'll be given some diamonds in-game to say thanks :D \n<http://minecraft-mp.com/server-s133918> \n<https://minecraftlist.org/server/5352> \n<https://mc-servers.com/details/1251/> \n<http://minecraftserverfinder.com/server/mogiicraft.ddns.net:25635> \n<http://topg.org/Minecraft/in-451175> \n<https://minecraft-tracker.com/server/4026/> \n<https://www.minecraft-servers-list.net/servers/5326/> \n<http://minecraftservers.org/server/385314>");
         }
 
         private static TimeSpan _uptime;
@@ -81,7 +106,7 @@ namespace DiscordBot.Modules.Public
             return (_uptime.Days.ToString() + " day(s), " + _uptime.Hours.ToString() + " hour(s), " + _uptime.Minutes.ToString() + " minute(s), " + _uptime.Seconds.ToString() + " second(s)");
         }
 
-        private DateTime startDevelopment = new DateTime(2017, 4, 11, 00, 00, 00);
+        private static DateTime startDevelopment = DiscordWorker.developmentTime(Program._bot.CurrentUser.Id);
         private string developmentSince()
         {
             TimeSpan DevelopmentCounter = DateTime.Now - startDevelopment;
