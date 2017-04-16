@@ -19,6 +19,7 @@ namespace DiscordBot.Common
         public string Prefix { get; set; } = "$";
         public string Playing { get; set; }
         public UserStatus Status { get; set; } = UserStatus.Online;
+        public bool SenpaiEnabled { get; set; } = true;
 
         public static void EnsureExists()
         {
@@ -61,6 +62,14 @@ namespace DiscordBot.Common
             File.WriteAllText(FileName, output);
         }
         public static void UpdateJson(string parameterName, int newValue)
+        {
+            string json = File.ReadAllText(FileName);
+            dynamic jsonObj = JsonConvert.DeserializeObject(json);
+            jsonObj[parameterName] = newValue;
+            string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
+            File.WriteAllText(FileName, output);
+        }
+        public static void UpdateJson(string parameterName, bool newValue)
         {
             string json = File.ReadAllText(FileName);
             dynamic jsonObj = JsonConvert.DeserializeObject(json);
