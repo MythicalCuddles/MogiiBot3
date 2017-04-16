@@ -25,7 +25,20 @@ namespace DiscordBot.Modules.Admin
         public async Task SendChannelMessage([Summary("The channel id to send the message to.")] ulong channel, [Remainder]string message)
         {
             await GetHandler.getTextChannel(channel).SendMessageAsync(message);
-            await ReplyAsync("Message sent, " + Context.User.Mention);
+
+            EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
+                .WithName("author: @" + Context.User.Username);
+            EmbedFooterBuilder efb = new EmbedFooterBuilder()
+                .WithText("Message Sent to #" + GetHandler.getTextChannel(channel).Name + " | Sent by @" + Context.User.Username);
+
+            EmbedBuilder eb = new EmbedBuilder()
+                .WithAuthor(eab)
+                .WithColor(new Color(74, 185, 11))
+                .WithDescription(message)
+                .WithFooter(efb)
+                .WithCurrentTimestamp();
+
+            await ReplyAsync("", false, eb);
         }
 
         [Command("privatemessage"), Summary("Sends a private message to the user specified.")]
@@ -33,7 +46,21 @@ namespace DiscordBot.Modules.Admin
         public async Task SendPrivateMessage([Summary("The user to send the message to.")] IUser user, [Remainder]string message)
         {
             await user.CreateDMChannelAsync().Result.SendMessageAsync(message);
-            await ReplyAsync("Message sent, " + Context.User.Mention);
+
+            EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
+                .WithName("to: @" + user.Username);
+            EmbedFooterBuilder efb = new EmbedFooterBuilder()
+                .WithText("Message Sent to @" + user.Username + " | Sent by @" + Context.User.Username);
+
+            EmbedBuilder eb = new EmbedBuilder()
+                .WithAuthor(eab)
+                .WithTitle("from: @" + Context.User.Username)
+                .WithColor(new Color(74, 185, 11))
+                .WithDescription(message)
+                .WithFooter(efb)
+                .WithCurrentTimestamp();
+
+            await ReplyAsync("", false, eb);
         }
     }
 }

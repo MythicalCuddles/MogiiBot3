@@ -94,7 +94,7 @@ namespace DiscordBot
             if (message == null) return;
             if (message.Author.IsBot) return;
             
-            if (!(messageParam.Channel is ITextChannel)) // If message is a private message
+            if (!(messageParam.Channel is ITextChannel))
             {
                 Color color = new Color(227, 185, 15);
                 EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
@@ -103,10 +103,11 @@ namespace DiscordBot
                     .WithText("PRIVATE MESSAGE | UID: " + message.Author.Id + " | MID: " + message.Id + " | STATUS: [ok]");
                 EmbedBuilder eb = new EmbedBuilder()
                     .WithAuthor(eab)
-                    .WithTitle("from: " + message.Author.Username)
+                    .WithTitle("from: @" + message.Author.Username)
                     .WithDescription(message.Content + "\n\n---------------------------------------------")
                     .WithColor(color)
-                    .WithFooter(efb);
+                    .WithFooter(efb)
+                    .WithCurrentTimestamp();
 
                 await GetHandler.getTextChannel(235179833053675522).SendMessageAsync("", false, eb);
             }
