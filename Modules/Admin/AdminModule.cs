@@ -43,7 +43,7 @@ namespace DiscordBot.Modules.Admin
 
         [Command("twitch"), Summary("Sets the twitch streaming link. Type \"none\" to disable.")]
         [Alias("streaming", "twitchstreaming")]
-        public async Task SetTwitchStreamingBot(string linkOrValue)
+        public async Task SetTwitchStreamingStatus(string linkOrValue)
         {
             if (linkOrValue.Contains("twitch.tv"))
             {
