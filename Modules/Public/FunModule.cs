@@ -58,6 +58,19 @@ namespace DiscordBot.Modules.Public
             await ReplyAsync("https://media.giphy.com/media/yJFeycRK2DB4c/giphy.gif");
         }
 
+        [Command("hehe"), Summary("Hehe!")]
+        public async Task Hehe()
+        {
+            await ReplyAsync("https://media.giphy.com/media/9MFsKQ8A6HCN2/giphy.gif");
+        }
+
+        [Command("answer"), Summary("THE ANSWER TO LIFE, THE UNIVERSE AND EVERYTHING")]
+        [Alias("question")]
+        public async Task UltimateQuestionOfLifeTheUniverseAndEverything()
+        {
+            await ReplyAsync("42");
+        }
+
         [Command("noticeme"), Summary("Will Senpai notice you?")]
         public async Task Senpai()
         {

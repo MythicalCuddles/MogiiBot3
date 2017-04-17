@@ -30,6 +30,9 @@ namespace DiscordBot.Modules.Public
                 .Append("Bot ID: " + Program._bot.CurrentUser.Id + "\n")
                 .Append("[MogiiBot Repository](https://github.com/MythicalCuddles/MogiiBot3)" + "\n")
                 .Append("---------------------------------------------\n")
+                .Append("[Suggest Something / Report an Issue](http://mogii.bot.nu)" + "\n")
+                .Append("*An account may be required to make a suggestion/report an issue.*" + "\n")
+                .Append("---------------------------------------------\n")
                 .Append("Developer Name: " + GetHandler.getUser(DiscordWorker.getMelissaID).Username + "\n")
                 .Append("Developer ID: " + DiscordWorker.getMelissaID + "\n")
                 .Append("[GitHub/MythicalCuddles](https://github.com/MythicalCuddles)" + "\n")
@@ -64,8 +67,8 @@ namespace DiscordBot.Modules.Public
                 .WithFooter(efb);
 
             await ReplyAsync("", false, eb);
-        }
-        
+        } 
+
         [Command("hotlines"), Summary("Sends hotline links for the user.")]
         public async Task LinkHotlines()
         {
