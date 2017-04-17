@@ -49,8 +49,9 @@ namespace DiscordBot.Modules.Public
                     });
                 }
             }
-
-            await ReplyAsync("", false, eb.Build());
+            
+            await Context.Message.DeleteAsync();
+            await Context.User.CreateDMChannelAsync().Result.SendMessageAsync("", false, eb);
         }
     }
 }
