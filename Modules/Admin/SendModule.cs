@@ -33,7 +33,7 @@ namespace DiscordBot.Modules.Admin
 
             EmbedBuilder eb = new EmbedBuilder()
                 .WithAuthor(eab)
-                .WithColor(new Color(74, 185, 11))
+                .WithColor(new Color(181, 81, 215))
                 .WithDescription(message)
                 .WithFooter(efb)
                 .WithCurrentTimestamp();
@@ -55,7 +55,7 @@ namespace DiscordBot.Modules.Admin
             EmbedBuilder eb = new EmbedBuilder()
                 .WithAuthor(eab)
                 .WithTitle("from: @" + Context.User.Username)
-                .WithColor(new Color(74, 185, 11))
+                .WithColor(new Color(181, 81, 215))
                 .WithDescription(message)
                 .WithFooter(efb)
                 .WithCurrentTimestamp();

@@ -96,7 +96,7 @@ namespace DiscordBot
             
             if (!(messageParam.Channel is ITextChannel))
             {
-                Color color = new Color(227, 185, 15);
+                Color color = new Color(255, 116, 140);
                 EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
                     .WithName("Private Message");
                 EmbedFooterBuilder efb = new EmbedFooterBuilder()

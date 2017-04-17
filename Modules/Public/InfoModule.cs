@@ -34,7 +34,7 @@ namespace DiscordBot.Modules.Public
                 .Append("Developer ID: " + DiscordWorker.getMelissaID + "\n")
                 .Append("[GitHub/MythicalCuddles](https://github.com/MythicalCuddles)" + "\n")
                 .Append("---------------------------------------------\n")
-                .Append("With help from:" + "\n")
+                .Append("With testing help from:" + "\n")
                 .Append(GetHandler.getUser(DiscordWorker.getAmberID).Username + " | [GitHub/Amperpil](https://github.com/AmperPil)" + "\n")
                 .Append("---------------------------------------------\n")
                 .Append("Development: " + developmentSince() + "\n")
@@ -47,11 +47,10 @@ namespace DiscordBot.Modules.Public
                     channelCount++;
                 foreach (SocketTextChannel t in g.TextChannels)
                     tChannelCount++;
-                foreach (SocketUser u in g.Users)
+                foreach (SocketUser u in g.Users) 
                     userCount++;
             }
 
-            Color color = new Color(255, 116, 140);
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
                 .WithName(Program._bot.CurrentUser.Username + " Version " + _v.Major + "." + _v.Minor + "." + _v.Build + "." + _v.Revision);
             EmbedFooterBuilder efb = new EmbedFooterBuilder()
@@ -59,7 +58,7 @@ namespace DiscordBot.Modules.Public
             EmbedBuilder eb = new EmbedBuilder()
                 .WithAuthor(eab)
                 .WithDescription(sb.ToString())
-                .WithColor(color)
+                .WithColor(new Color(255, 116, 140))
                 .WithTitle("MelissasCode Version " + MelissaCode.Version)
                 .WithThumbnailUrl(Program._bot.CurrentUser.GetAvatarUrl())
                 .WithFooter(efb);
