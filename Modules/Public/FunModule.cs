@@ -64,6 +64,18 @@ namespace DiscordBot.Modules.Public
             await ReplyAsync("https://media.giphy.com/media/9MFsKQ8A6HCN2/giphy.gif");
         }
 
+        [Command("why"), Summary("y tho")]
+        public async Task WhyTho()
+        {
+            await ReplyAsync("http://i.imgur.com/yNlQWRM.jpg");
+        }
+
+        [Command("groot"), Summary("Sends a picture of baby groot dancing.")]
+        public async Task BabyGroot()
+        {
+            await ReplyAsync("https://media.giphy.com/media/14b13BDH3V81wc/giphy.gif");
+        }
+
         [Command("answer"), Summary("THE ANSWER TO LIFE, THE UNIVERSE AND EVERYTHING")]
         [Alias("question")]
         public async Task UltimateQuestionOfLifeTheUniverseAndEverything()
