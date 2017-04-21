@@ -20,6 +20,12 @@ namespace DiscordBot.Common
         public string Playing { get; set; }
         public UserStatus Status { get; set; } = UserStatus.Online;
         public bool SenpaiEnabled { get; set; } = true;
+        /// MogiiCraft Variables
+        // Server Variables
+        public ulong ServerID { get; set; } = 221250721046069249;
+        // Channel Variables
+        public ulong WelcomeChannelID { get; set; } = 225721556435730433;
+        public ulong LogChannelID { get; set; } = 235179833053675522;
 
         public static void EnsureExists()
         {

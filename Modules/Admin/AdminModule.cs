@@ -30,7 +30,7 @@ namespace DiscordBot.Modules.Admin
         public async Task ToggleSenpai()
         {
             Configuration.UpdateJson("SenpaiEnabled", !Configuration.Load().SenpaiEnabled);
-            await GetHandler.getTextChannel(235179833053675522).SendMessageAsync("Senpai has been toggled by " + Context.User.Mention + " (" + Configuration.Load().SenpaiEnabled + ")");
+            await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("Senpai has been toggled by " + Context.User.Mention + " (" + Configuration.Load().SenpaiEnabled + ")");
         }
 
         [Command("playing"), Summary("Changes the playing message of the bot.")]
@@ -60,8 +60,8 @@ namespace DiscordBot.Modules.Admin
         [Command("welcome"), Summary("Send the welcome messages to the user specified.")]
         public async Task SendWelcomeMessage(IUser user)
         {
-            await GetHandler.getTextChannel(225721556435730433).SendMessageAsync("Hey " + user.Mention + ", and welcome to the " + Context.Guild.Name + " Discord Server! If you are a player on our Minecraft Server, tell us your username and a Staff Member will grant you the MC Players Role \n\nIf you don't mind, could you fill out this form linked below. We are collecting data on how you found out about us, and it'd be great if we had your input. The form can be found here: <https://goo.gl/forms/iA9t5xjoZvnLJ5np1>");
-            await GetHandler.getTextChannel(235179833053675522).SendMessageAsync(user.Mention + " has joined the server.");
+            await GetHandler.getTextChannel(Configuration.Load().WelcomeChannelID).SendMessageAsync("Hey " + user.Mention + ", and welcome to the " + Context.Guild.Name + " Discord Server! If you are a player on our Minecraft Server, tell us your username and a Staff Member will grant you the MC Players Role \n\nIf you don't mind, could you fill out this form linked below. We are collecting data on how you found out about us, and it'd be great if we had your input. The form can be found here: <https://goo.gl/forms/iA9t5xjoZvnLJ5np1>");
+            await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync(user.Mention + " has joined the server.");
         }
     }
 }
