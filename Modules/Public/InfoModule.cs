@@ -36,6 +36,7 @@ namespace DiscordBot.Modules.Public
                 .Append("Developer Name: " + GetHandler.getUser(DiscordWorker.getMelissaID).Username + "\n")
                 .Append("Developer ID: " + DiscordWorker.getMelissaID + "\n")
                 .Append("[GitHub/MythicalCuddles](https://github.com/MythicalCuddles)" + "\n")
+                .Append("[melissa@mythicalcuddles.xyz](mailto:melissa@mythicalcuddles.xyz)" + "\n")
                 .Append("---------------------------------------------\n")
                 .Append("With testing help from:" + "\n")
                 .Append(GetHandler.getUser(DiscordWorker.getAmberID).Username + " | [GitHub/Amperpil](https://github.com/AmperPil)" + "\n")
