@@ -20,8 +20,7 @@ namespace DiscordBot.Modules.Public
     {
         private Version _v = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
-        [Command("about"), Summary("Sends information about the bot.")]
-        [Alias("stats")]
+        [Command("stats"), Summary("Sends information about the bot.")]
         public async Task About()
         {
             StringBuilder sb = new StringBuilder()
@@ -30,17 +29,15 @@ namespace DiscordBot.Modules.Public
                 .Append("Bot ID: " + Program._bot.CurrentUser.Id + "\n")
                 .Append("[MogiiBot Repository](https://github.com/MythicalCuddles/MogiiBot3)" + "\n")
                 .Append("---------------------------------------------\n")
-                .Append("[Suggest Something / Report an Issue](http://mogii.bot.nu)" + "\n")
-                .Append("*An account may be required to make a suggestion/report an issue.*" + "\n")
-                .Append("---------------------------------------------\n")
                 .Append("Developer Name: " + GetHandler.getUser(DiscordWorker.getMelissaID).Username + "\n")
                 .Append("Developer ID: " + DiscordWorker.getMelissaID + "\n")
                 .Append("[GitHub/MythicalCuddles](https://github.com/MythicalCuddles)" + "\n")
-                .Append("[melissa@mythicalcuddles.xyz](mailto:melissa@mythicalcuddles.xyz)" + "\n")
                 .Append("---------------------------------------------\n")
-                .Append("With testing help from:" + "\n")
-                .Append(GetHandler.getUser(DiscordWorker.getAmberID).Username + " | [GitHub/Amperpil](https://github.com/AmperPil)" + "\n")
-                .Append("---------------------------------------------\n")
+                //.Append("With testing help from:" + "\n")
+                //.Append("[" + GetHandler.getUser(DiscordWorker.getAmberID).Username + "](https://github.com/AmperPil)" + ", ")
+                //.Append(GetHandler.getUser(DiscordWorker.getOscarID).Username)
+                //.Append("\n")
+                //.Append("---------------------------------------------\n")
                 .Append("Development: " + developmentSince() + "\n")
                 .Append("Uptime: " + calculateUptime());
 

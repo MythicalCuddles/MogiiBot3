@@ -103,5 +103,42 @@ namespace DiscordBot.Modules.Public
                 await ReplyAsync(Context.User.Mention + ", Senpai can not notice you if Senpai is in bed sleeping.");
             }
         }
+
+        [Command("coins"), Summary("Returns the amount of coins you have earned")]
+        [Alias("mogiicoins")]
+        public async Task Coins()
+        {
+            await ReplyAsync(Context.User.Mention + ", you currently have " + User.Load(Context.User.Id).Coins + " coins!");
+        }
+
+        [Command("setabout"), Summary("Set your about message! :)")]
+        public async Task SetUserAbout([Remainder]string aboutMessage)
+        {
+            User.UpdateJson(Context.User.Id, "About", aboutMessage);
+            await ReplyAsync("Updated successfully, " + Context.User.Mention);
+        }
+
+        [Command("about"), Summary("Returns the about description about the user specified.")]
+        public async Task UserAbout([Summary("The (optional) user to get info for")] IUser user = null)
+        {
+            var userAbout = user ?? Context.User;
+
+            await ReplyAsync("**About " + userAbout.Username + "**\n" + User.Load(userAbout.Id).About);
+        }
+
+        [Command("setpronouns"), Summary("Set your pronouns! :)")]
+        public async Task SetUserPronouns([Remainder]string pronouns)
+        {
+            User.UpdateJson(Context.User.Id, "Pronouns", pronouns);
+            await ReplyAsync("Updated successfully, " + Context.User.Mention);
+        }
+
+        [Command("pronouns"), Summary("Returns the users pronouns.")]
+        public async Task UserPronouns([Summary("The (optional) user to get info for")] IUser user = null)
+        {
+            var userSpecified = user ?? Context.User;
+            
+            await ReplyAsync("**" + userSpecified.Username + "'s Pronouns**\n" + User.Load(userSpecified.Id).Pronouns);
+        }
     }
 }

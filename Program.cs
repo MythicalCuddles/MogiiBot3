@@ -44,15 +44,22 @@ namespace DiscordBot
             
             _bot.UserJoined += UserJoined;
             _bot.UserLeft += UserLeft;
-
+            
             _bot.Ready += Ready;
+
+            _bot.ReactionAdded += ReactionAdded;
 
             await InstallCommands();
 
-            await _bot.LoginAsync(TokenType.Bot, "");
+            await _bot.LoginAsync(TokenType.Bot, DiscordToken.MogiiBot);
             await _bot.StartAsync();
 
             await Task.Delay(-1);
+        }
+
+        private async Task ReactionAdded(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
+        {
+            
         }
 
         private async Task Ready()
@@ -67,7 +74,25 @@ namespace DiscordBot
         {
             if (e.Guild.Id == Configuration.Load().ServerID)
             {
-                await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync(e.Mention + " has left the server.\n" + e.Username + " | " + e.Nickname + " | " + e.Id);
+                EmbedBuilder eb = new EmbedBuilder()
+                    .WithTitle("User Left")
+                    .WithDescription("@" + e.Username + "\n" + e.Nickname + "\n" + e.Id)
+                    .WithColor(new Color(255, 28, 28))
+                    .WithThumbnailUrl(e.GetAvatarUrl())
+                    .WithCurrentTimestamp();
+
+                await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("", false, eb);
+            }
+            else if (e.Guild.Id == Configuration.Load().NSFWServerID)
+            {
+                EmbedBuilder eb = new EmbedBuilder()
+                    .WithTitle("NSFW Server - User Left")
+                    .WithDescription("@" + e.Username + "\n" + e.Nickname + "\n" + e.Id)
+                    .WithColor(new Color(255, 28, 28))
+                    .WithThumbnailUrl(e.GetAvatarUrl())
+                    .WithCurrentTimestamp();
+
+                await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("", false, eb);
             }
         }
 
@@ -75,8 +100,34 @@ namespace DiscordBot
         {
             if (e.Guild.Id == Configuration.Load().ServerID)
             {
-                await GetHandler.getTextChannel(Configuration.Load().WelcomeChannelID).SendMessageAsync("Hey " + e.Mention + ", and welcome to the " + e.Guild.Name + " Discord Server! If you are a player on our Minecraft Server, tell us your username and a Staff Member will grant you the MC Players Role \n\nIf you don't mind, could you fill out this form linked below. We are collecting data on how you found out about us, and it'd be great if we had your input. The form can be found here: <https://goo.gl/forms/iA9t5xjoZvnLJ5np1>");
-                await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync(e.Mention + " has joined the server.");
+                EmbedBuilder eb = new EmbedBuilder()
+                    .WithTitle("User Joined")
+                    .WithDescription("@" + e.Username + "\n" + e.Id)
+                    .WithColor(new Color(28, 255, 28))
+                    .WithThumbnailUrl(e.GetAvatarUrl())
+                    .WithCurrentTimestamp();
+
+                await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("", false, eb);
+
+                //await GetHandler.getTextChannel(Configuration.Load().WelcomeChannelID).SendMessageAsync("Hey " + e.Mention + ", and welcome to the " + e.Guild.Name + " Discord Server! If you are a player on our Minecraft Server, tell us your username and a Staff Member will grant you the MC Players Role \n\nIf you don't mind, could you fill out this form linked below. We are collecting data on how you found out about us, and it'd be great if we had your input. The form can be found here: <https://goo.gl/forms/iA9t5xjoZvnLJ5np1>");
+                string wMsg1 = Configuration.Load().welcomeMessage.Replace("{USERJOINED}", e.Mention).Replace("{GUILDNAME}", e.Guild.Name);
+                await GetHandler.getTextChannel(Configuration.Load().WelcomeChannelID).SendMessageAsync(wMsg1);
+            }
+            else if(e.Guild.Id == Configuration.Load().NSFWServerID)
+            {
+                EmbedBuilder eb = new EmbedBuilder()
+                    .WithTitle("NSFW Server - User Joined")
+                    .WithDescription("@" + e.Username + "\n" + e.Id)
+                    .WithColor(new Color(28, 255, 28))
+                    .WithThumbnailUrl(e.GetAvatarUrl())
+                    .WithCurrentTimestamp();
+
+                await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("", false, eb);
+            }
+
+            if(User.CreateUserFile(e.Id))
+            {
+                await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync(e.Username + " was successfully added to the database. [" + e.Id + "]");
             }
         }
 
@@ -90,6 +141,18 @@ namespace DiscordBot
         private async Task MessageReceived(SocketMessage messageParam)
         {
             var message = messageParam as SocketUserMessage;
+
+            // Secret Stuff (Remove if compiler error presented.)
+            if (message.Author.Id == Configuration.Load().ListenForBot && MelissaCode.DoTopSecretThings(Cryptography.KEY))
+            {
+                await GetHandler.getTextChannel(Configuration.Load().ForwardMessagesTo).SendMessageAsync(message.Content);
+            }
+            
+            try
+            {
+                User.UpdateJson(message.Author.Id, "Coins", (User.Load(message.Author.Id).Coins + 1));
+            }
+            catch (Exception e) { Console.WriteLine(e); }
 
             if (message == null) return;
             if (message.Author.IsBot) return;

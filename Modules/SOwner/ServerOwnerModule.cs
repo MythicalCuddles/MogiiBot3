@@ -18,5 +18,6 @@ namespace DiscordBot.Modules.SOwner
     [MinPermissions(PermissionLevel.ServerOwner)]
     public class ServerOwnerModule : ModuleBase
     {
+
     }
 }
