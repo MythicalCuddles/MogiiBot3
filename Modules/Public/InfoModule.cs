@@ -33,11 +33,11 @@ namespace DiscordBot.Modules.Public
                 .Append("Developer ID: " + DiscordWorker.getMelissaID + "\n")
                 .Append("[GitHub/MythicalCuddles](https://github.com/MythicalCuddles)" + "\n")
                 .Append("---------------------------------------------\n")
-                //.Append("With testing help from:" + "\n")
-                //.Append("[" + GetHandler.getUser(DiscordWorker.getAmberID).Username + "](https://github.com/AmperPil)" + ", ")
-                //.Append(GetHandler.getUser(DiscordWorker.getOscarID).Username)
-                //.Append("\n")
-                //.Append("---------------------------------------------\n")
+                .Append("With testing help from:" + "\n")
+                .Append("[" + GetHandler.getUser(DiscordWorker.getAmberID).Username + "](https://github.com/AmperPil)" + ", ")
+                .Append(GetHandler.getUser(DiscordWorker.getOscarID).Username)
+                .Append("\n")
+                .Append("---------------------------------------------\n")
                 .Append("Development: " + developmentSince() + "\n")
                 .Append("Uptime: " + calculateUptime());
 

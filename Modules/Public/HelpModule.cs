@@ -23,12 +23,13 @@ namespace DiscordBot.Modules.Public
         [Alias("commands")]
         public async Task HelpAsync()
         {
-            //await Context.User.CreateDMChannelAsync().Result.SendMessageAsync("Syntax: `$command` or `@MogiiBot#1772 command`." + "\n" + "You can also run some commands in this DM.To do so, simply use command with no prefix.");
+            await Context.User.CreateDMChannelAsync().Result.SendMessageAsync("Syntax: `$command` or `@MogiiBot#1772 command`." + "\n" + "You can also run some commands in this DM.To do so, simply use command with no prefix.");
 
             string prefix = Configuration.Load().Prefix;
 
             EmbedBuilder eb = new EmbedBuilder()
-                .WithColor(new Color(114, 137, 218));
+                .WithColor(new Color(114, 137, 218))
+                .WithTitle(Program._bot.CurrentUser.Username + " Command List");
 
             foreach (var module in Program.commandService.Modules)
             {
@@ -55,17 +56,6 @@ namespace DiscordBot.Modules.Public
             await Context.Message.DeleteAsync();
 
             await Context.User.CreateDMChannelAsync().Result.SendMessageAsync("", false, eb);
-
-            //await help.AddReactionAsync("🇦");
-            //await help.AddReactionAsync("");
-            //await help.AddReactionAsync("");
-            //await help.AddReactionAsync("");
-            //await help.AddReactionAsync("");
-            //await help.AddReactionAsync("");
-            //await help.AddReactionAsync("");
-            //await help.AddReactionAsync("");
-            //await help.AddReactionAsync("");
-            //await help.AddReactionAsync("");
         }
     }
 }
