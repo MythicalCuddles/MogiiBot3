@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<project default="build" name="MogiiBot3">
+<project default="build" name="DiscordBot">
     <target name="build">
         <java classname="Program.cs">
             <classpath path="staging" />
