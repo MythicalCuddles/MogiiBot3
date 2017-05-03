@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project default="build" name="MogiiBot3">
+    <target name="build">
+        <java classname="Program.cs">
+            <classpath path="staging" />
+        </java>
+    </target>
+    <target name="compile">
+        <javac includeantruntime="false" srcdir="./src" destdir="staging" />
+    </target>
+</project>
