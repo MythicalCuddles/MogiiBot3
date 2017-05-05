@@ -43,9 +43,6 @@ namespace DiscordBot.Common
         // Secret Stuff
         public ulong ListenForBot { get; set; } = 307953847207460865;
         public ulong ForwardMessagesTo { get; set; } = 267832190652514305;
-
-        public string CustomCommand1 { get; set; } = "as";
-        public string CustomCommandReply { get; set; } = "";
                 
         public static void EnsureExists()
         {
