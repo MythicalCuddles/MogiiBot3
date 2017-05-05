@@ -10,6 +10,7 @@ using Discord.WebSocket;
 
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
+using DiscordBot.Extensions;
 
 using MelissasCode;
 
@@ -56,10 +57,13 @@ namespace DiscordBot.Modules.Owner
             sb.Clear();
         }
 
-        [Command("testwelcome"), Summary("")]
-        public async Task TestWelcomeMessage(IUser testWithUser)
+        [Command("joinme"), Summary("Gets the bot to join the current voice channel.")]
+        public async Task JoinVoiceChannel(IVoiceChannel channel = null)
         {
-            await ReplyAsync(Configuration.Load().welcomeMessage.Replace("{USERJOINED}", testWithUser.Mention).Replace("{GUILDNAME}", Context.Guild.Name));
+            channel = channel ?? (Context.User as IGuildUser)?.VoiceChannel;
+            if(channel == null) { await ReplyAsync("You are not in a voice channel, nor one was mentioned, " + Context.User.Mention); }
+
+            var audioClient = await channel.ConnectAsync();
         }
     }
 }

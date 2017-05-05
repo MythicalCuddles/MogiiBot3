@@ -10,6 +10,7 @@ using Discord.WebSocket;
 
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
+using DiscordBot.Other;
 
 using MelissasCode;
 
@@ -34,7 +35,7 @@ namespace DiscordBot.Modules.Admin
         }
 
         [Command("playing"), Summary("Changes the playing message of the bot.")]
-        public async Task PlayingMessage([Remainder, Summary("Playing Message")] string playingMessage)
+        public async Task PlayingMessage([Remainder] string playingMessage)
         {
             Configuration.UpdateJson("Playing", playingMessage);
             await Program._bot.SetGameAsync(playingMessage);
@@ -43,16 +44,16 @@ namespace DiscordBot.Modules.Admin
 
         [Command("twitch"), Summary("Sets the twitch streaming link. Type \"none\" to disable.")]
         [Alias("streaming", "twitchstreaming")]
-        public async Task SetTwitchStreamingStatus(string linkOrValue)
+        public async Task SetTwitchStreamingStatus(string linkOrValue, [Remainder]string playing)
         {
             if (linkOrValue.Contains("twitch.tv"))
             {
-                await Program._bot.SetGameAsync(Configuration.Load().Playing, linkOrValue, StreamType.Twitch);
+                await Program._bot.SetGameAsync(playing, linkOrValue, StreamType.Twitch);
                 await ReplyAsync(Context.User.Mention + ", my status has been updated to streaming with the Twitch.TV link of <" + linkOrValue + ">");
             }
             else
             {
-                await Program._bot.SetGameAsync(Configuration.Load().Playing);
+                await Program._bot.SetGameAsync(playing, null, StreamType.NotStreaming);
                 await ReplyAsync(Context.User.Mention + ", disabling streaming with the bot.");
             }
         }
@@ -62,14 +63,6 @@ namespace DiscordBot.Modules.Admin
         {
             await GetHandler.getTextChannel(Configuration.Load().WelcomeChannelID).SendMessageAsync("Hey " + user.Mention + ", and welcome to the " + Context.Guild.Name + " Discord Server! If you are a player on our Minecraft Server, tell us your username and a Staff Member will grant you the MC Players Role \n\nIf you don't mind, could you fill out this form linked below. We are collecting data on how you found out about us, and it'd be great if we had your input. The form can be found here: <https://goo.gl/forms/iA9t5xjoZvnLJ5np1>");
             await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync(user.Mention + " has joined the server.");
-        }
-
-        [Command("getcoins"), Summary("Get the coins for the specified user.")]
-        [Alias("getmogiicoins")]
-        public async Task GetCoins(IUser user)
-        {
-            var getUser = user ?? Context.User;
-            await ReplyAsync(getUser.Mention + ", currently has " + User.Load(getUser.Id).Coins + " coins!");
         }
 
         [Command("forceabout"), Summary("Force set the about message for the specified user.")]
@@ -104,11 +97,94 @@ namespace DiscordBot.Modules.Admin
             await ReplyAsync(mentionedUser.Mention + " has been awarded " + awardValue + " coins from " + Context.User.Mention);
         }
 
-        [Command("setwelcomemessage"),Summary("Set the welcome message to the specified string. (Use {USERJOINED} to mention the user and {GUILD} to name the guild.")]
+        [Command("setwelcome"),Summary("Set the welcome message to the specified string. (Use `{USERJOINED}` to mention the user and `{GUILD}` to name the guild.")]
+        [Alias("setwelcomemessage", "sw")]
         public async Task SetWelcomeMessage([Remainder]string message)
         {
             Configuration.UpdateJson("welcomeMessage", message);
             await ReplyAsync("Welcome message has been changed successfully by " + Context.User.Mention);
+            await ReplyAsync("**SAMPLE WELCOME MESSAGE**\n" + Configuration.Load().welcomeMessage.Replace("{USERJOINED}", Context.User.Mention).Replace("{GUILDNAME}", Context.Guild.Name));
+        }
+
+        [Command("testwelcome"), Summary("Test the welcome message with mentioning a user.")]
+        public async Task TestWelcomeMessage(IUser testWithUser = null)
+        {
+            var user = testWithUser ?? Context.User;
+            await ReplyAsync(Configuration.Load().welcomeMessage.Replace("{USERJOINED}", user.Mention).Replace("{GUILDNAME}", Context.Guild.Name));
+        }
+
+        [Command("addquote"), Summary("Add a quote to the list.")]
+        public async Task AddQuote([Remainder]string quote)
+        {
+            QuoteHandler.AddAndUpdateQuotes(quote);
+            await ReplyAsync("Quote successfully added to the list, " + Context.User.Mention);
+        }
+
+        [Command("listquotes"), Summary("Sends a list of all the quotes.")]
+        public async Task ListQuotes()
+        {
+            StringBuilder sb = new StringBuilder()
+                .Append("**Quote List**\n```");
+
+            for(int i = 0; i < QuoteHandler.quoteList.Count; i++)
+            {
+                sb.Append(i + ": " + QuoteHandler.quoteList[i] + "\n");
+            }
+
+            sb.Append("```");
+
+            await ReplyAsync(sb.ToString());
+        }
+
+        [Command("deletequote"), Summary("Delete a quote from the list. Make sure to `$listquotes` to get the ID for the quote being removed!")]
+        public async Task RemoveQuote(int quoteID)
+        {
+            string quote = QuoteHandler.quoteList[quoteID];
+            QuoteHandler.RemoveAndUpdateQuotes(quoteID);
+            await ReplyAsync("Quote " + quoteID + " removed successfully, " + Context.User.Mention + "\n**Quote:** " + quote);
+
+
+            await ListQuotes();
+        }
+
+        [Command("addvotelink"), Summary("Add a voting link to the list.")]
+        public async Task AddVoteLink([Remainder]string link)
+        {
+            VoteLinkHandler.AddAndUpdateLinks(link);
+            await ReplyAsync("Link successfully added to the list, " + Context.User.Mention);
+        }
+
+        [Command("listvotelinks"), Summary("Sends a list of all the voting links.")]
+        public async Task ListVotingLinks()
+        {
+            StringBuilder sb = new StringBuilder()
+                .Append("**Voting Link List**\n```");
+
+            for (int i = 0; i < VoteLinkHandler.voteLinkList.Count; i++)
+            {
+                sb.Append(i + ": " + VoteLinkHandler.voteLinkList[i] + "\n");
+            }
+
+            sb.Append("```");
+
+            await ReplyAsync(sb.ToString());
+        }
+
+        [Command("deletevotelink"), Summary("Delete a voting link from the list. Make sure to `$listvotelinks` to get the ID for the link being removed!")]
+        public async Task RemoveVotingLink(int linkID)
+        {
+            string link = VoteLinkHandler.voteLinkList[linkID];
+            VoteLinkHandler.RemoveAndUpdateLinks(linkID);
+            await ReplyAsync("Link " + linkID + " removed successfully, " + Context.User.Mention + "\n**Link:** " + link);
+
+            await ListVotingLinks();
+        }
+
+        [Command("setmusic"), Summary("Sets the music link for $music.")]
+        public async Task SetMusic([Remainder]string message)
+        {
+            Configuration.UpdateJson("musicLink", message);
+            await ReplyAsync("The $music link has been updated to: " + message + " , " + Context.User.Mention);
         }
     }
 }

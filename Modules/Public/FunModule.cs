@@ -9,6 +9,7 @@ using Discord;
 
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
+using DiscordBot.Other;
 
 using MelissasCode;
 
@@ -88,7 +89,6 @@ namespace DiscordBot.Modules.Public
         {
             if (Configuration.Load().SenpaiEnabled)
             {
-                Random _r = new Random();
                 if (_r.Next(0, 20) == _r.Next(0, 20))
                 {
                     await ReplyAsync(Context.User.Mention + ", Senpai has noticed you!");
@@ -106,39 +106,26 @@ namespace DiscordBot.Modules.Public
 
         [Command("coins"), Summary("Returns the amount of coins you have earned")]
         [Alias("mogiicoins")]
-        public async Task Coins()
+        public async Task Coins(IUser user = null)
         {
-            await ReplyAsync(Context.User.Mention + ", you currently have " + User.Load(Context.User.Id).Coins + " coins!");
+            var mentionedUser = user ?? Context.User;
+
+            if(mentionedUser == Context.User)
+            {
+                await ReplyAsync(mentionedUser.Mention + ", you have " + User.Load(mentionedUser.Id).Coins + " coins!");
+            }
+            else
+            {
+                await ReplyAsync(mentionedUser.Mention + ", currently has " + User.Load(mentionedUser.Id).Coins + " coins!");
+            }
         }
 
-        [Command("setabout"), Summary("Set your about message! :)")]
-        public async Task SetUserAbout([Remainder]string aboutMessage)
+        [Command("quote"), Summary("Get a random quote from the list.")]
+        public async Task GenerateQuote()
         {
-            User.UpdateJson(Context.User.Id, "About", aboutMessage);
-            await ReplyAsync("Updated successfully, " + Context.User.Mention);
-        }
+            int generatedNumber = _r.Next(0, QuoteHandler.quoteList.Count());
 
-        [Command("about"), Summary("Returns the about description about the user specified.")]
-        public async Task UserAbout([Summary("The (optional) user to get info for")] IUser user = null)
-        {
-            var userAbout = user ?? Context.User;
-
-            await ReplyAsync("**About " + userAbout.Username + "**\n" + User.Load(userAbout.Id).About);
-        }
-
-        [Command("setpronouns"), Summary("Set your pronouns! :)")]
-        public async Task SetUserPronouns([Remainder]string pronouns)
-        {
-            User.UpdateJson(Context.User.Id, "Pronouns", pronouns);
-            await ReplyAsync("Updated successfully, " + Context.User.Mention);
-        }
-
-        [Command("pronouns"), Summary("Returns the users pronouns.")]
-        public async Task UserPronouns([Summary("The (optional) user to get info for")] IUser user = null)
-        {
-            var userSpecified = user ?? Context.User;
-            
-            await ReplyAsync("**" + userSpecified.Username + "'s Pronouns**\n" + User.Load(userSpecified.Id).Pronouns);
+            await ReplyAsync(Context.User.Mention + ", here's your generated quote: \n" + QuoteHandler.quoteList[generatedNumber]);
         }
     }
 }

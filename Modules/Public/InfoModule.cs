@@ -9,6 +9,7 @@ using Discord;
 
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
+using DiscordBot.Other;
 
 using MelissasCode;
 using Discord.WebSocket;
@@ -95,7 +96,17 @@ namespace DiscordBot.Modules.Public
         [Command("vote"), Summary("Sends links to the voting websites for Minecraft.")]
         public async Task SendVotingLinks()
         {
-            await ReplyAsync(Context.User.Mention + " use the following links to vote and support the server. You'll be given some diamonds in-game to say thanks :D \n<http://minecraft-mp.com/server-s133918> \n<https://minecraftlist.org/server/5352> \n<https://mc-servers.com/details/1251/> \n<http://minecraftserverfinder.com/server/mogiicraft.ddns.net:25635> \n<http://topg.org/Minecraft/in-451175> \n<https://minecraft-tracker.com/server/4026/> \n<https://www.minecraft-servers-list.net/servers/5326/> \n<http://minecraftservers.org/server/385314>");
+            StringBuilder sb = new StringBuilder()
+                .Append("**Vote Links**\n" + Context.User.Mention + " use the following links to vote and support the server. You'll be given some diamonds in-game to say thanks :D\n");
+
+            for(int i = 0; i < VoteLinkHandler.voteLinkList.Count; i++)
+            {
+                sb.Append("<" + VoteLinkHandler.voteLinkList[i] + ">\n");
+            }
+
+            sb.Append("");
+
+            await ReplyAsync(sb.ToString());
         }
 
         private static TimeSpan _uptime;

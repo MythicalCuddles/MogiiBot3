@@ -36,11 +36,17 @@ namespace DiscordBot.Common
         public ulong MinecraftChannelID { get; set; } = 221292894047174676;
         // Other Variables
         public string welcomeMessage { get; set; } = "Hey {USERJOINED}, and welcome to the {GUILDNAME} Discord Server! If you are a player on our Minecraft Server, tell us your username and a Staff Member will grant you the MC Players Role \n\nIf you don't mind, could you fill out this form linked below. We are collecting data on how you found out about us, and it'd be great if we had your input. The form can be found here: <https://goo.gl/forms/iA9t5xjoZvnLJ5np1>";
+        public ulong SupportChannelID { get; set; } = 309630743825612800;
+        public ulong SuggestChannelID { get; set; } = 310102597014913024;
+        public string musicLink { get; set; } = "";
 
         // Secret Stuff
         public ulong ListenForBot { get; set; } = 307953847207460865;
         public ulong ForwardMessagesTo { get; set; } = 267832190652514305;
 
+        public string CustomCommand1 { get; set; } = "as";
+        public string CustomCommandReply { get; set; } = "";
+                
         public static void EnsureExists()
         {
             string file = Path.Combine(AppContext.BaseDirectory, FileName);

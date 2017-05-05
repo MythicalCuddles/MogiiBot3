@@ -19,8 +19,13 @@ namespace DiscordBot.Common
         private static string Extension { get; set; } = ".json";
 
         public int Coins { get; set; } = 0;
-        public string Pronouns { get; set; } = "No information provided.";
-        public string About { get; set; } = "No information provided.";
+        public string Name { get; set; } = null;
+        public string Gender { get; set; } = null;
+        public string Pronouns { get; set; } = "No pronoun information provided.";
+        public string About { get; set; } = "No about information provided.";
+
+        public string MinecraftUsername { get; set; } = "User has not provided a minecraft username.";
+
 
         public static bool CreateUserFile(ulong uID)
         {

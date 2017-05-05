@@ -10,6 +10,7 @@ using Discord.Net.Providers.WS4Net;
 using Discord.Net.Providers.UDPClient;
 
 using DiscordBot.Common;
+using DiscordBot.Other;
 
 using MelissasCode;
 using Discord.Commands;
@@ -29,6 +30,8 @@ namespace DiscordBot
         public async Task RunBotAsync()
         {
             Configuration.EnsureExists();
+            QuoteHandler.EnsureExists();
+            VoteLinkHandler.EnsureExists();
 
             _bot = new DiscordSocketClient(new DiscordSocketConfig
             {
@@ -50,11 +53,25 @@ namespace DiscordBot
             _bot.ReactionAdded += ReactionAdded;
 
             await InstallCommands();
+            _bot.MessageDeleted += MessageDeleted;
+            _bot.MessageUpdated += MessageUpdated;
 
             await _bot.LoginAsync(TokenType.Bot, DiscordToken.MogiiBot);
             await _bot.StartAsync();
 
             await Task.Delay(-1);
+        }
+
+        private async Task MessageUpdated(Cacheable<IMessage, ulong> cachedMessage, SocketMessage message, ISocketMessageChannel channel)
+        {
+            var msg = message as SocketUserMessage;
+            Logging.MessageLogger.logEditMessage(msg);
+        }
+
+        private async Task MessageDeleted(Cacheable<IMessage, ulong> cachedMessage, ISocketMessageChannel channel)
+        {
+            var message = cachedMessage.Value as SocketUserMessage;
+            Logging.MessageLogger.logDeleteMessage(message);
         }
 
         private async Task ReactionAdded(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
@@ -108,8 +125,7 @@ namespace DiscordBot
                     .WithCurrentTimestamp();
 
                 await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("", false, eb);
-
-                //await GetHandler.getTextChannel(Configuration.Load().WelcomeChannelID).SendMessageAsync("Hey " + e.Mention + ", and welcome to the " + e.Guild.Name + " Discord Server! If you are a player on our Minecraft Server, tell us your username and a Staff Member will grant you the MC Players Role \n\nIf you don't mind, could you fill out this form linked below. We are collecting data on how you found out about us, and it'd be great if we had your input. The form can be found here: <https://goo.gl/forms/iA9t5xjoZvnLJ5np1>");
+                
                 string wMsg1 = Configuration.Load().welcomeMessage.Replace("{USERJOINED}", e.Mention).Replace("{GUILDNAME}", e.Guild.Name);
                 await GetHandler.getTextChannel(Configuration.Load().WelcomeChannelID).SendMessageAsync(wMsg1);
             }
@@ -156,7 +172,7 @@ namespace DiscordBot
 
             if (message == null) return;
             if (message.Author.IsBot) return;
-            
+
             if (!(messageParam.Channel is ITextChannel))
             {
                 Color color = new Color(255, 116, 140);
@@ -191,6 +207,8 @@ namespace DiscordBot
             {
                 await context.Channel.SendMessageAsync(messageParam.Author.Mention + ", " + result.ErrorReason);
             }
+            
+            Logging.MessageLogger.logNewMessage(message);
         }
 
         private Task Log(LogMessage logMessage)
