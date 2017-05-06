@@ -32,6 +32,7 @@ namespace DiscordBot
             Configuration.EnsureExists();
             QuoteHandler.EnsureExists();
             VoteLinkHandler.EnsureExists();
+            MusicHandler.EnsureExists();
 
             _bot = new DiscordSocketClient(new DiscordSocketConfig
             {

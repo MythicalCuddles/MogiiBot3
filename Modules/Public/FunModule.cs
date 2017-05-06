@@ -65,6 +65,12 @@ namespace DiscordBot.Modules.Public
             await ReplyAsync("https://media.giphy.com/media/9MFsKQ8A6HCN2/giphy.gif");
         }
 
+        [Command("gitgud"), Summary("git gud")]
+        public async Task github()
+        {
+            await ReplyAsync("https://cdn.discordapp.com/attachments/235124701964271618/310169979083423744/received_10206534636842919.jpeg");
+        }
+
         [Command("why"), Summary("y tho")]
         public async Task WhyTho()
         {
@@ -126,6 +132,14 @@ namespace DiscordBot.Modules.Public
             int generatedNumber = _r.Next(0, QuoteHandler.quoteList.Count());
 
             await ReplyAsync(Context.User.Mention + ", here's your generated quote: \n" + QuoteHandler.quoteList[generatedNumber]);
+        }
+
+        [Command("music"), Summary("Replies posting a music link which has been set by staff.")]
+        public async Task FavouriteMusicLink()
+        {
+            int generatedNumber = _r.Next(0, MusicHandler.musicLinkList.Count());
+
+            await ReplyAsync("Here's the music!\n" + MusicHandler.musicLinkList[generatedNumber]);
         }
     }
 }

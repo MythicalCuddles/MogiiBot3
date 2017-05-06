@@ -70,12 +70,6 @@ namespace DiscordBot.Modules.Public
             await ReplyAsync(user.Username + "'s Minecraft Username is: " + User.Load(user.Id).MinecraftUsername);
         }
 
-        [Command("music"), Summary("Replies posting a music link which has been set by staff.")]
-        public async Task FavouriteMusicLink()
-        {
-            await ReplyAsync("Here's the music!\n" + Configuration.Load().musicLink);
-        }
-
         [Command("suggest"), Summary("Send your suggestion for the bot!")]
         public async Task SendSupportRequest([Remainder]string message)
         {

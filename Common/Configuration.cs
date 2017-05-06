@@ -38,7 +38,6 @@ namespace DiscordBot.Common
         public string welcomeMessage { get; set; } = "Hey {USERJOINED}, and welcome to the {GUILDNAME} Discord Server! If you are a player on our Minecraft Server, tell us your username and a Staff Member will grant you the MC Players Role \n\nIf you don't mind, could you fill out this form linked below. We are collecting data on how you found out about us, and it'd be great if we had your input. The form can be found here: <https://goo.gl/forms/iA9t5xjoZvnLJ5np1>";
         public ulong SupportChannelID { get; set; } = 309630743825612800;
         public ulong SuggestChannelID { get; set; } = 310102597014913024;
-        public string musicLink { get; set; } = "";
 
         // Secret Stuff
         public ulong ListenForBot { get; set; } = 307953847207460865;

@@ -32,6 +32,7 @@ namespace DiscordBot.Modules.Public
                 .Append("---------------------------------------------\n")
                 .Append("Developer Name: " + GetHandler.getUser(DiscordWorker.getMelissaID).Username + "\n")
                 .Append("Developer ID: " + DiscordWorker.getMelissaID + "\n")
+                .Append("[MythicalCuddles](http://www.mythicalcuddles.xyz)" + "\n")
                 .Append("[GitHub/MythicalCuddles](https://github.com/MythicalCuddles)" + "\n")
                 .Append("---------------------------------------------\n")
                 .Append("With testing help from:" + "\n")
@@ -91,6 +92,12 @@ namespace DiscordBot.Modules.Public
         public async Task SendMinecraftIP()
         {
             await ReplyAsync("The Minecraft Server IP is: mogiicraft.ddns.net:25635");
+        }
+
+        [Command("email"), Summary("Posts the email address into the chat.")]
+        public async Task PostEmailAddress()
+        {
+            await ReplyAsync("Send complaints to `MogiiCraft.@pizza@gmail.com`");
         }
 
         [Command("vote"), Summary("Sends links to the voting websites for Minecraft.")]
