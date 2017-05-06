@@ -136,6 +136,14 @@ namespace DiscordBot.Modules.Admin
             await ReplyAsync(sb.ToString());
         }
 
+        [Command("editquote"), Summary("Edit a quote from the list.")]
+        public async Task EditQuote(int quoteID, [Remainder]string quote)
+        {
+            string oldQuote = QuoteHandler.quoteList[quoteID];
+            QuoteHandler.UpdateQuote(quoteID, quote);
+            await ReplyAsync(Context.User.Mention + " updated quote id: " + quoteID + "\nOld quote: `" + oldQuote + "`\nUpdated: `" + quote + "`");
+        }
+
         [Command("deletequote"), Summary("Delete a quote from the list. Make sure to `$listquotes` to get the ID for the quote being removed!")]
         public async Task RemoveQuote(int quoteID)
         {
@@ -170,6 +178,14 @@ namespace DiscordBot.Modules.Admin
             await ReplyAsync(sb.ToString());
         }
 
+        [Command("editvotelink"), Summary("Edit a voting link from the list.")]
+        public async Task EditVotingLink(int linkID, [Remainder]string link)
+        {
+            string oldLink = VoteLinkHandler.voteLinkList[linkID];
+            VoteLinkHandler.updateLink(linkID, link);
+            await ReplyAsync(Context.User.Mention + " updated vote link id: " + linkID + "\nOld link: `" + oldLink + "`\nUpdated: `" + link + "`");
+        }
+
         [Command("deletevotelink"), Summary("Delete a voting link from the list. Make sure to `$listvotelinks` to get the ID for the link being removed!")]
         public async Task RemoveVotingLink(int linkID)
         {
@@ -180,11 +196,45 @@ namespace DiscordBot.Modules.Admin
             await ListVotingLinks();
         }
 
-        [Command("setmusic"), Summary("Sets the music link for $music.")]
-        public async Task SetMusic([Remainder]string message)
+        [Command("addmusiclink"), Summary("Add a music link to the list.")]
+        public async Task AddMusicLink([Remainder]string link)
         {
-            Configuration.UpdateJson("musicLink", message);
-            await ReplyAsync("The $music link has been updated to: " + message + " , " + Context.User.Mention);
+            MusicHandler.AddAndUpdateLinks(link);
+            await ReplyAsync("Link successfully added to the list, " + Context.User.Mention);
+        }
+
+        [Command("listmusiclinks"), Summary("Sends a list of all the music links.")]
+        public async Task ListMusicLinks()
+        {
+            StringBuilder sb = new StringBuilder()
+                .Append("**Music Link List**\n```");
+
+            for (int i = 0; i < MusicHandler.musicLinkList.Count; i++)
+            {
+                sb.Append(i + ": " + MusicHandler.musicLinkList[i] + "\n");
+            }
+
+            sb.Append("```");
+
+            await ReplyAsync(sb.ToString());
+        }
+
+        [Command("editmusiclink"), Summary("Edit a music link from the list.")]
+        public async Task EditMusicLink(int linkID, [Remainder]string link)
+        {
+            string oldLink = MusicHandler.musicLinkList[linkID];
+            MusicHandler.updateLink(linkID, link);
+            await ReplyAsync(Context.User.Mention + " updated music link id: " + linkID + "\nOld link: `" + oldLink + "`\nUpdated: `" + link + "`");
+        }
+
+        [Command("deletemusiclink"), Summary("Delete a music link from the list. Make sure to `listmusiclinks` to get the ID for the link being removed!")]
+        public async Task RemoveMusicLink(int linkID)
+        {
+            string link = MusicHandler.musicLinkList[linkID];
+            MusicHandler.RemoveAndUpdateLinks(linkID);
+            await ReplyAsync("Link " + linkID + " removed successfully, " + Context.User.Mention + "\n**Link:** " + link);
+
+            await ListMusicLinks();
         }
     }
 }

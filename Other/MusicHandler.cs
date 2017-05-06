@@ -52,5 +52,11 @@ namespace DiscordBot.Other
             musicLinkList.RemoveAt(index);
             SaveLinks();
         }
+
+        public static void updateLink(int index, string link)
+        {
+            musicLinkList[index] = link;
+            SaveLinks();
+        }
     }
 }

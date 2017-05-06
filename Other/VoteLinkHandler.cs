@@ -52,5 +52,11 @@ namespace DiscordBot.Other
             voteLinkList.RemoveAt(index);
             SaveLinks();
         }
+
+        public static void updateLink(int index, string link)
+        {
+            voteLinkList[index] = link;
+            SaveLinks();
+        }
     }
 }

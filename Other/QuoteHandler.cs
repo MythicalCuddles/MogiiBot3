@@ -52,5 +52,11 @@ namespace DiscordBot.Other
             quoteList.RemoveAt(index);
             SaveQuotes();
         }
+
+        public static void UpdateQuote(int index, string quote)
+        {
+            quoteList[index] = quote;
+            SaveQuotes();
+        }
     }
 }
