@@ -61,7 +61,7 @@ namespace DiscordBot
             _bot.MessageUpdated += MessageUpdated;
 
             // Connect to Discord with Bot Login Details
-            await _bot.LoginAsync(TokenType.Bot, DiscordToken.MogiiMCBot);
+            await _bot.LoginAsync(TokenType.Bot, DiscordToken.MogiiBot);
             await _bot.StartAsync();
 
             // Keep the program running.
