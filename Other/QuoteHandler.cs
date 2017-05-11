@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DiscordBot.Extensions;
 
 namespace DiscordBot.Other
 {
@@ -11,6 +12,10 @@ namespace DiscordBot.Other
     {
         public static string fileName { get; private set; } = "common/quotes.txt";
         public static List<string> quoteList = new List<string>();
+        public static List<List<string>> splicedQuoteList = new List<List<string>>();
+
+        public static List<ulong> quoteMessages = new List<ulong>();
+        public static List<int> pageNumber = new List<int>();
 
         private static void LoadQuotes()
         {
@@ -57,6 +62,20 @@ namespace DiscordBot.Other
         {
             quoteList[index] = quote;
             SaveQuotes();
+        }
+
+        public static void SpliceQuotes()
+        {
+            splicedQuoteList = quoteList.splitList();
+        }
+        public static List<string> getQuotes(int pageNumber)
+        {
+            pageNumber = pageNumber - 1;
+            return splicedQuoteList[pageNumber];
+        }
+        public static int getQuotesListLength
+        {
+            get { return splicedQuoteList.Count(); }
         }
     }
 }

@@ -16,6 +16,7 @@ using MelissasCode;
 namespace DiscordBot.Modules.Public
 {
     [MinPermissions(PermissionLevel.User)]
+    [RequireContext(ContextType.Guild)]
     public class FunModule : ModuleBase
     {
         Random _r = new Random();
@@ -126,12 +127,32 @@ namespace DiscordBot.Modules.Public
             }
         }
 
+        [Command("givecoins"), Summary("Give some of coins to another user.")]
+        public async Task GiveCoins(IUser user, int coins)
+        {
+            int issuerCoins = User.Load(Context.User.Id).Coins;
+            int userCoins = User.Load(user.Id).Coins;
+
+            if(coins > issuerCoins)
+            {
+                await ReplyAsync(Context.User.Mention + ", you don't have that amount of coins!");
+                return;
+            }
+
+            User.UpdateJson(Context.User.Id, "Coins", (issuerCoins - coins));
+            User.UpdateJson(user.Id, "Coins", userCoins + coins);
+        }
+
+        int lastQuote;
         [Command("quote"), Summary("Get a random quote from the list.")]
         public async Task GenerateQuote()
         {
             int generatedNumber = _r.Next(0, QuoteHandler.quoteList.Count());
+            
+            while (generatedNumber == lastQuote)
+                generatedNumber = _r.Next(0, QuoteHandler.quoteList.Count());
 
-            await ReplyAsync(Context.User.Mention + ", here's your generated quote: \n" + QuoteHandler.quoteList[generatedNumber]);
+            await ReplyAsync(QuoteHandler.quoteList[generatedNumber]); // Context.User.Mention + ", here's your generated quote: \n" + 
         }
 
         [Command("music"), Summary("Replies posting a music link which has been set by staff.")]

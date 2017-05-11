@@ -31,7 +31,14 @@ namespace DiscordBot.Modules.Admin
         public async Task ToggleSenpai()
         {
             Configuration.UpdateJson("SenpaiEnabled", !Configuration.Load().SenpaiEnabled);
-            await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("Senpai has been toggled by " + Context.User.Mention + " (" + Configuration.Load().SenpaiEnabled + ")");
+            await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("Senpai has been toggled by " + Context.User.Mention + " (emabled: " + Configuration.Load().SenpaiEnabled + ")");
+        }
+
+        [Command("toggleunknowncommand"), Summary("Toggles the unknown command message.")]
+        public async Task ToggleUC()
+        {
+            Configuration.UpdateJson("UnknownCommandEnabled", !Configuration.Load().UnknownCommandEnabled);
+            await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("UnknownCommand has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().UnknownCommandEnabled + ")");
         }
 
         [Command("playing"), Summary("Changes the playing message of the bot.")]
@@ -63,30 +70,6 @@ namespace DiscordBot.Modules.Admin
         {
             await GetHandler.getTextChannel(Configuration.Load().WelcomeChannelID).SendMessageAsync("Hey " + user.Mention + ", and welcome to the " + Context.Guild.Name + " Discord Server! If you are a player on our Minecraft Server, tell us your username and a Staff Member will grant you the MC Players Role \n\nIf you don't mind, could you fill out this form linked below. We are collecting data on how you found out about us, and it'd be great if we had your input. The form can be found here: <https://goo.gl/forms/iA9t5xjoZvnLJ5np1>");
             await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync(user.Mention + " has joined the server.");
-        }
-
-        [Command("forceabout"), Summary("Force set the about message for the specified user.")]
-        public async Task ForceSetAbout(IUser user, [Remainder]string about)
-        {
-            string oldAbout = User.Load(user.Id).About;
-            User.UpdateJson(user.Id, "About", about);
-            await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s about message!");
-        }
-
-        [Command("forcepronouns"), Summary("Force set the pronouns message for the specified user.")]
-        public async Task ForceSetPronouns(IUser user, [Remainder]string pronouns)
-        {
-            string oldPronouns = User.Load(user.Id).Pronouns;
-            User.UpdateJson(user.Id, "Pronouns", pronouns);
-            await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s pronouns message!");
-        }
-
-        [Command("forcecoins"), Summary("Force set the coins for the specified user.")]
-        public async Task ForceSetCoins(IUser user, int newValue)
-        {
-            int oldCoins = User.Load(user.Id).Coins;
-            User.UpdateJson(user.Id, "Coins", newValue);
-            await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s coins value to " + newValue + " (Was: " + oldCoins + ")");
         }
 
         [Command("awardcoins"), Summary("Award the specified user the specified amount of coins.")]
@@ -124,16 +107,22 @@ namespace DiscordBot.Modules.Admin
         public async Task ListQuotes()
         {
             StringBuilder sb = new StringBuilder()
-                .Append("**Quote List**\n```");
+                .Append("**Quote List** : *Page 1*\n```");
 
-            for(int i = 0; i < QuoteHandler.quoteList.Count; i++)
+            QuoteHandler.SpliceQuotes();
+            List<string> quotes = QuoteHandler.getQuotes(1);
+
+            for (int i = 0; i < quotes.Count; i++)
             {
-                sb.Append(i + ": " + QuoteHandler.quoteList[i] + "\n");
+                sb.Append(i + ": " + quotes[i] + "\n");
             }
 
             sb.Append("```");
 
-            await ReplyAsync(sb.ToString());
+            IUserMessage msg = await ReplyAsync(sb.ToString());
+            QuoteHandler.quoteMessages.Add(msg.Id);
+            QuoteHandler.pageNumber.Add(1);
+            await msg.AddReactionAsync(Extensions.Extensions.arrow_right);
         }
 
         [Command("editquote"), Summary("Edit a quote from the list.")]
@@ -150,8 +139,7 @@ namespace DiscordBot.Modules.Admin
             string quote = QuoteHandler.quoteList[quoteID];
             QuoteHandler.RemoveAndUpdateQuotes(quoteID);
             await ReplyAsync("Quote " + quoteID + " removed successfully, " + Context.User.Mention + "\n**Quote:** " + quote);
-
-
+            
             await ListQuotes();
         }
 
@@ -196,14 +184,14 @@ namespace DiscordBot.Modules.Admin
             await ListVotingLinks();
         }
 
-        [Command("addmusiclink"), Summary("Add a music link to the list.")]
+        [Command("addmusic"), Summary("Add a music link to the list.")]
         public async Task AddMusicLink([Remainder]string link)
         {
             MusicHandler.AddAndUpdateLinks(link);
             await ReplyAsync("Link successfully added to the list, " + Context.User.Mention);
         }
 
-        [Command("listmusiclinks"), Summary("Sends a list of all the music links.")]
+        [Command("listmusic"), Summary("Sends a list of all the music links.")]
         public async Task ListMusicLinks()
         {
             StringBuilder sb = new StringBuilder()
@@ -219,7 +207,7 @@ namespace DiscordBot.Modules.Admin
             await ReplyAsync(sb.ToString());
         }
 
-        [Command("editmusiclink"), Summary("Edit a music link from the list.")]
+        [Command("editmusic"), Summary("Edit a music link from the list.")]
         public async Task EditMusicLink(int linkID, [Remainder]string link)
         {
             string oldLink = MusicHandler.musicLinkList[linkID];
@@ -227,7 +215,7 @@ namespace DiscordBot.Modules.Admin
             await ReplyAsync(Context.User.Mention + " updated music link id: " + linkID + "\nOld link: `" + oldLink + "`\nUpdated: `" + link + "`");
         }
 
-        [Command("deletemusiclink"), Summary("Delete a music link from the list. Make sure to `listmusiclinks` to get the ID for the link being removed!")]
+        [Command("deletemusic"), Summary("Delete a music link from the list. Make sure to `listmusiclinks` to get the ID for the link being removed!")]
         public async Task RemoveMusicLink(int linkID)
         {
             string link = MusicHandler.musicLinkList[linkID];
@@ -235,6 +223,26 @@ namespace DiscordBot.Modules.Admin
             await ReplyAsync("Link " + linkID + " removed successfully, " + Context.User.Mention + "\n**Link:** " + link);
 
             await ListMusicLinks();
+        }
+
+        [Command("mclist"), Summary("")]
+        public async Task GetMinecraftUsernames()
+        {
+            var guild = Context.Guild as SocketGuild;
+            StringBuilder sb = new StringBuilder()
+                .Append("**Minecraft Username List**\n*Key (Discord Username : Minecraft Username)*\n```");
+
+            foreach(SocketUser u in guild.Users)
+            {
+                string minecraftUsername = User.Load(u.Id).MinecraftUsername;
+                if (minecraftUsername != null)
+                {
+                    sb.Append("@" + u.Username + " : " + minecraftUsername + "\n");
+                }
+            }
+
+            sb.Append("```");
+            await ReplyAsync(sb.ToString());
         }
     }
 }

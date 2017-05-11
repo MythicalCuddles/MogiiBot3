@@ -18,7 +18,7 @@ namespace DiscordBot.Modules.Admin
     [Group("set")]
     [RequireContext(ContextType.Guild | ContextType.DM)]
     [MinPermissions(PermissionLevel.ServerAdmin)]
-    public class SetModule : ModuleBase<SocketCommandContext>
+    public class SetModule : ModuleBase//<SocketCommandContext>
     {
         [Group("status")]
         public class StatusModule : ModuleBase
@@ -29,7 +29,7 @@ namespace DiscordBot.Modules.Admin
             {
                 Configuration.UpdateJson("Status", (int)UserStatus.Online);
                 await Program._bot.SetStatusAsync(UserStatus.Online);
-                await Context.Message.DeleteAsync();
+                await ReplyAsync("Status updated to Online, " + Context.User.Mention);
             }
 
             [Command("donotdisturb"), Summary("Sets the bot's status to do not disturb.")]
@@ -38,7 +38,7 @@ namespace DiscordBot.Modules.Admin
             {
                 Configuration.UpdateJson("Status", (int)UserStatus.DoNotDisturb);
                 await Program._bot.SetStatusAsync(UserStatus.DoNotDisturb);
-                await Context.Message.DeleteAsync();
+                await ReplyAsync("Status updated to Do Not Disturb, " + Context.User.Mention);
             }
 
             [Command("idle"), Summary("Sets the bot's status to idle.")]
@@ -47,7 +47,7 @@ namespace DiscordBot.Modules.Admin
             {
                 Configuration.UpdateJson("Status", (int)UserStatus.AFK);
                 await Program._bot.SetStatusAsync(UserStatus.AFK);
-                await Context.Message.DeleteAsync();
+                await ReplyAsync("Status updated to Idle, " + Context.User.Mention);
             }
 
             [Command("invisible"), Summary("Sets the bot's status to invisible.")]
@@ -56,8 +56,16 @@ namespace DiscordBot.Modules.Admin
             {
                 Configuration.UpdateJson("Status", (int)UserStatus.Invisible);
                 await Program._bot.SetStatusAsync(UserStatus.Invisible);
-                await Context.Message.DeleteAsync();
+                await ReplyAsync("Status updated to Invisible, " + Context.User.Mention);
             }
+        }
+
+        [Command("rule34"), Summary("Set the max random value for the Rule34 Gamble.")]
+        public async Task SetRule34Max(int value)
+        {
+            int oldValue = Configuration.Load().MaxRuleXGamble;
+            Configuration.UpdateJson("MaxRuleXGamble", value);
+            await ReplyAsync(Context.User.Mention + " has updated the Rule34 Max to: " + value + " (was: " + oldValue + ")");
         }
     }
 }

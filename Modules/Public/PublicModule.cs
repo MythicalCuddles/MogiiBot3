@@ -35,9 +35,35 @@ namespace DiscordBot.Modules.Public
         [Command("about"), Summary("Returns the about description about the user specified.")]
         public async Task UserAbout(IUser user = null)
         {
-            var userAbout = user ?? Context.User;
+            var userSpecified = user ?? Context.User;
+            
+            EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
+                .WithName("About " + userSpecified.Username)
+                .WithIconUrl(userSpecified.GetAvatarUrl());
+            EmbedBuilder eb = new EmbedBuilder()
+                .WithAuthor(eab)
+                .WithDescription(User.Load(userSpecified.Id).About)
+                .WithColor(new Color(140, 90, 210));
 
-            await ReplyAsync("**About " + userAbout.Username + "**\n" + User.Load(userAbout.Id).About);
+
+            if (User.Load(userSpecified.Id).Name != null)
+                eb.AddInlineField("Name", User.Load(userSpecified.Id).Name);
+
+            if (User.Load(userSpecified.Id).Gender != null)
+                eb.AddInlineField("Gender", User.Load(userSpecified.Id).Gender);
+
+            if (User.Load(userSpecified.Id).Pronouns != null)
+                eb.AddInlineField("Pronouns", User.Load(userSpecified.Id).Pronouns);
+            
+            eb.AddInlineField("Coin(s)", User.Load(userSpecified.Id).Coins);
+
+            if(User.Load(userSpecified.Id).Chips != 0)
+                eb.AddInlineField("Chip(s)", User.Load(userSpecified.Id).Chips);
+
+            if (User.Load(userSpecified.Id).MinecraftUsername != null)
+                eb.AddInlineField("Minecraft Username", User.Load(userSpecified.Id).MinecraftUsername);
+
+            await ReplyAsync("", false, eb);
         }
 
         [Command("setpronouns"), Summary("Set your pronouns!")]
@@ -45,14 +71,6 @@ namespace DiscordBot.Modules.Public
         {
             User.UpdateJson(Context.User.Id, "Pronouns", pronouns);
             await ReplyAsync("Updated successfully, " + Context.User.Mention);
-        }
-
-        [Command("pronouns"), Summary("Returns the users pronouns.")]
-        public async Task UserPronouns(IUser user = null)
-        {
-            var userSpecified = user ?? Context.User;
-
-            await ReplyAsync("**" + userSpecified.Username + "'s Pronouns**\n" + User.Load(userSpecified.Id).Pronouns);
         }
 
         [Command("setmcusername"), Summary("")]
@@ -63,11 +81,18 @@ namespace DiscordBot.Modules.Public
             await ReplyAsync("Updated successfully, " + Context.User.Mention);
         }
 
-        [Command("mcusername"), Summary("")]
-        public async Task MinecraftUsername(IUser user = null)
+        [Command("setname"), Summary("")]
+        public async Task SetName([Remainder]string name)
         {
-            user = user ?? Context.User;
-            await ReplyAsync(user.Username + "'s Minecraft Username is: " + User.Load(user.Id).MinecraftUsername);
+            User.UpdateJson(Context.User.Id, "Name", name);
+            await ReplyAsync("Updated successfully, " + Context.User.Mention);
+        }
+
+        [Command("setgender"), Summary("")]
+        public async Task SetGender([Remainder]string gender)
+        {
+            User.UpdateJson(Context.User.Id, "Gender", gender);
+            await ReplyAsync("Updated successfully, " + Context.User.Mention);
         }
 
         [Command("suggest"), Summary("Send your suggestion for the bot!")]

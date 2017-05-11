@@ -20,6 +20,8 @@ namespace DiscordBot.Common
         public string Playing { get; set; }
         public UserStatus Status { get; set; } = UserStatus.Online;
         public bool SenpaiEnabled { get; set; } = true;
+        public bool UnknownCommandEnabled { get; set; } = true;
+        public int CoinToChipRatio { get; set; } = 10; // Exchange 10 coins for 1 chip.
 
         /// NSFW Server Variables
         // Rule 34 Gamble Game Variables

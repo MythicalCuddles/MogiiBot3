@@ -65,5 +65,27 @@ namespace DiscordBot.Modules.Owner
 
             var audioClient = await channel.ConnectAsync();
         }
+
+        [Command("botignore"), Summary("Make the bot ignore a user.")]
+        public async Task BotIgnore(IUser user)
+        {
+            User.UpdateJson(user.Id, "IsBotIgnoringUser", !User.Load(user.Id).IsBotIgnoringUser);
+
+            if(User.Load(user.Id).IsBotIgnoringUser)
+            {
+                await ReplyAsync(Context.User.Mention + ", " + Program._bot.CurrentUser.Username + " will start ignoring " + user.Mention);
+            }
+            else
+            {
+                await ReplyAsync(Context.User.Mention + ", " + Program._bot.CurrentUser.Username + " will start to listen to " + user.Mention);
+            }
+        }
+
+        [Command("setcointochipratio"), Summary("")]
+        public async Task SetCoinToChipRatio(int coinRatio)
+        {
+            Configuration.UpdateJson("CoinToChipRatio", coinRatio);
+            await ReplyAsync(Context.User.Mention + " has changed the coin:chip ratio to: " + coinRatio + ":1");
+        }
     }
 }
