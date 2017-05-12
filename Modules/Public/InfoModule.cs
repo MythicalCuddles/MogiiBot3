@@ -26,14 +26,13 @@ namespace DiscordBot.Modules.Public
         {
             StringBuilder sb = new StringBuilder()
                 .Append("---------------------------------------------\n")
-                .Append("Bot: " + Program._bot.CurrentUser.Mention + "\n")
-                .Append("Bot ID: " + Program._bot.CurrentUser.Id + "\n")
+                .Append("Bot: " + MogiiBot3._bot.CurrentUser.Mention + "\n")
+                .Append("Bot ID: " + MogiiBot3._bot.CurrentUser.Id + "\n")
                 .Append("[MogiiBot Repository](https://github.com/MythicalCuddles/MogiiBot3)" + "\n")
                 .Append("---------------------------------------------\n")
                 .Append("Developer Name: " + GetHandler.getUser(DiscordWorker.getMelissaID).Username + "\n")
                 .Append("Developer ID: " + DiscordWorker.getMelissaID + "\n")
-                .Append("[MythicalCuddles](http://www.mythicalcuddles.xyz)" + "\n")
-                .Append("[GitHub/MythicalCuddles](https://github.com/MythicalCuddles)" + "\n")
+                .Append("[MythicalCuddles.xyz](http://www.mythicalcuddles.xyz)" + " | [GitHub/MythicalCuddles](https://github.com/MythicalCuddles)" + "\n")
                 .Append("---------------------------------------------\n")
                 .Append("With testing help from:" + "\n")
                 .Append("[" + GetHandler.getUser(DiscordWorker.getAmberID).Username + "](https://github.com/AmperPil)" + ", ")
@@ -44,7 +43,7 @@ namespace DiscordBot.Modules.Public
                 .Append("Uptime: " + calculateUptime());
 
             int userCount = 0, channelCount = 0, tChannelCount = 0;
-            foreach(SocketGuild g in Program._bot.Guilds)
+            foreach(SocketGuild g in MogiiBot3._bot.Guilds)
             {
                 foreach (SocketChannel c in g.Channels)
                     channelCount++;
@@ -55,19 +54,19 @@ namespace DiscordBot.Modules.Public
             }
 
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
-                .WithName(Program._bot.CurrentUser.Username + " Version " + _v.Major + "." + _v.Minor + "." + _v.Build + "." + _v.Revision);
+                .WithName(MogiiBot3._bot.CurrentUser.Username + " Version " + _v.Major + "." + _v.Minor + "." + _v.Build + "." + _v.Revision);
             EmbedFooterBuilder efb = new EmbedFooterBuilder()
-                .WithText("Total Guilds: " + Program._bot.Guilds.Count() + " | Total Users: " + userCount + " | Total Channels: " + channelCount + " (" + tChannelCount + "/" + (channelCount - tChannelCount) + ")");
+                .WithText("Total Guilds: " + MogiiBot3._bot.Guilds.Count() + " | Total Users: " + userCount + " | Total Channels: " + channelCount + " (" + tChannelCount + "/" + (channelCount - tChannelCount) + ")");
             EmbedBuilder eb = new EmbedBuilder()
                 .WithAuthor(eab)
                 .WithDescription(sb.ToString())
                 .WithColor(new Color(255, 116, 140))
                 .WithTitle("MelissasCode Version " + MelissaCode.Version)
-                .WithThumbnailUrl(Program._bot.CurrentUser.GetAvatarUrl())
+                .WithThumbnailUrl(MogiiBot3._bot.CurrentUser.GetAvatarUrl())
                 .WithFooter(efb);
 
             await ReplyAsync("", false, eb);
-        } 
+        }
 
         [Command("hotlines"), Summary("Sends hotline links for the user.")]
         public async Task LinkHotlines()
@@ -124,7 +123,7 @@ namespace DiscordBot.Modules.Public
             return (_uptime.Days.ToString() + " day(s), " + _uptime.Hours.ToString() + " hour(s), " + _uptime.Minutes.ToString() + " minute(s), " + _uptime.Seconds.ToString() + " second(s)");
         }
 
-        private static DateTime startDevelopment = DiscordWorker.developmentTime(Program._bot.CurrentUser.Id);
+        private static DateTime startDevelopment = DiscordWorker.developmentTime(MogiiBot3._bot.CurrentUser.Id);
         private string developmentSince()
         {
             TimeSpan DevelopmentCounter = DateTime.Now - startDevelopment;

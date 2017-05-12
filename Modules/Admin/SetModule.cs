@@ -28,7 +28,7 @@ namespace DiscordBot.Modules.Admin
             public async Task SetOnline()
             {
                 Configuration.UpdateJson("Status", (int)UserStatus.Online);
-                await Program._bot.SetStatusAsync(UserStatus.Online);
+                await MogiiBot3._bot.SetStatusAsync(UserStatus.Online);
                 await ReplyAsync("Status updated to Online, " + Context.User.Mention);
             }
 
@@ -37,7 +37,7 @@ namespace DiscordBot.Modules.Admin
             public async Task SetBusy()
             {
                 Configuration.UpdateJson("Status", (int)UserStatus.DoNotDisturb);
-                await Program._bot.SetStatusAsync(UserStatus.DoNotDisturb);
+                await MogiiBot3._bot.SetStatusAsync(UserStatus.DoNotDisturb);
                 await ReplyAsync("Status updated to Do Not Disturb, " + Context.User.Mention);
             }
 
@@ -46,7 +46,7 @@ namespace DiscordBot.Modules.Admin
             public async Task SetIdle()
             {
                 Configuration.UpdateJson("Status", (int)UserStatus.AFK);
-                await Program._bot.SetStatusAsync(UserStatus.AFK);
+                await MogiiBot3._bot.SetStatusAsync(UserStatus.AFK);
                 await ReplyAsync("Status updated to Idle, " + Context.User.Mention);
             }
 
@@ -55,7 +55,7 @@ namespace DiscordBot.Modules.Admin
             public async Task SetInvisible()
             {
                 Configuration.UpdateJson("Status", (int)UserStatus.Invisible);
-                await Program._bot.SetStatusAsync(UserStatus.Invisible);
+                await MogiiBot3._bot.SetStatusAsync(UserStatus.Invisible);
                 await ReplyAsync("Status updated to Invisible, " + Context.User.Mention);
             }
         }

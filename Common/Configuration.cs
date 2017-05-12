@@ -22,6 +22,7 @@ namespace DiscordBot.Common
         public bool SenpaiEnabled { get; set; } = true;
         public bool UnknownCommandEnabled { get; set; } = true;
         public int CoinToChipRatio { get; set; } = 10; // Exchange 10 coins for 1 chip.
+        public int ChipToCoinRatio { get; set; } = 8; // Exchange 1 chip for 8 coins.
 
         /// NSFW Server Variables
         // Rule 34 Gamble Game Variables
@@ -40,11 +41,7 @@ namespace DiscordBot.Common
         public string welcomeMessage { get; set; } = "Hey {USERJOINED}, and welcome to the {GUILDNAME} Discord Server! If you are a player on our Minecraft Server, tell us your username and a Staff Member will grant you the MC Players Role \n\nIf you don't mind, could you fill out this form linked below. We are collecting data on how you found out about us, and it'd be great if we had your input. The form can be found here: <https://goo.gl/forms/iA9t5xjoZvnLJ5np1>";
         public ulong SupportChannelID { get; set; } = 309630743825612800;
         public ulong SuggestChannelID { get; set; } = 310102597014913024;
-
-        // Secret Stuff
-        public ulong ListenForBot { get; set; } = 307953847207460865;
-        public ulong ForwardMessagesTo { get; set; } = 267832190652514305;
-                
+                        
         public static void EnsureExists()
         {
             string file = Path.Combine(AppContext.BaseDirectory, FileName);
@@ -56,10 +53,19 @@ namespace DiscordBot.Common
 
                 var config = new Configuration();
                 config.SaveJson();
-
-                Console.WriteLine(FileName + " Created.");
+                
+                Console.Write("status: [");
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.Write("ok");
+                Console.ResetColor();
+                Console.WriteLine("]    " + FileName + ": created.");
             }
-            Console.WriteLine(FileName + " Loaded");
+            
+            Console.Write("status: [");
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.Write("ok");
+            Console.ResetColor();
+            Console.WriteLine("]    " + FileName + ": loaded.");
         }
         
         public void SaveJson()

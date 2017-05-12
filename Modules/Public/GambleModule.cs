@@ -22,6 +22,12 @@ namespace DiscordBot.Modules.Public
         [Command("buychips"), Summary("")]
         public async Task BuyChips(int chipAmount)
         {
+            if(chipAmount < 1)
+            {
+                await ReplyAsync("You can not buy " + chipAmount + " chips!");
+                return;
+            }
+
             int userCoins = User.Load(Context.User.Id).Coins;
             int chipCost = chipAmount * Configuration.Load().CoinToChipRatio;
 

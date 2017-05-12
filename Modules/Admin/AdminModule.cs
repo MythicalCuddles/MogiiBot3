@@ -45,7 +45,7 @@ namespace DiscordBot.Modules.Admin
         public async Task PlayingMessage([Remainder] string playingMessage)
         {
             Configuration.UpdateJson("Playing", playingMessage);
-            await Program._bot.SetGameAsync(playingMessage);
+            await MogiiBot3._bot.SetGameAsync(playingMessage);
             await Context.Message.DeleteAsync();
         }
 
@@ -55,12 +55,12 @@ namespace DiscordBot.Modules.Admin
         {
             if (linkOrValue.Contains("twitch.tv"))
             {
-                await Program._bot.SetGameAsync(playing, linkOrValue, StreamType.Twitch);
+                await MogiiBot3._bot.SetGameAsync(playing, linkOrValue, StreamType.Twitch);
                 await ReplyAsync(Context.User.Mention + ", my status has been updated to streaming with the Twitch.TV link of <" + linkOrValue + ">");
             }
             else
             {
-                await Program._bot.SetGameAsync(playing, null, StreamType.NotStreaming);
+                await MogiiBot3._bot.SetGameAsync(playing, null, StreamType.NotStreaming);
                 await ReplyAsync(Context.User.Mention + ", disabling streaming with the bot.");
             }
         }

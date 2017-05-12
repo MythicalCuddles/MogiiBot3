@@ -33,7 +33,7 @@ namespace DiscordBot.Modules.Owner
 
             sb.Append("**Database Report**\n```");
 
-            foreach (SocketGuild g in Program._bot.Guilds)
+            foreach (SocketGuild g in MogiiBot3._bot.Guilds)
             {
                 if (g.Id == Configuration.Load().ServerID)
                 {
@@ -73,11 +73,11 @@ namespace DiscordBot.Modules.Owner
 
             if(User.Load(user.Id).IsBotIgnoringUser)
             {
-                await ReplyAsync(Context.User.Mention + ", " + Program._bot.CurrentUser.Username + " will start ignoring " + user.Mention);
+                await ReplyAsync(Context.User.Mention + ", " + MogiiBot3._bot.CurrentUser.Username + " will start ignoring " + user.Mention);
             }
             else
             {
-                await ReplyAsync(Context.User.Mention + ", " + Program._bot.CurrentUser.Username + " will start to listen to " + user.Mention);
+                await ReplyAsync(Context.User.Mention + ", " + MogiiBot3._bot.CurrentUser.Username + " will start to listen to " + user.Mention);
             }
         }
 

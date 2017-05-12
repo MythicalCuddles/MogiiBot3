@@ -16,7 +16,12 @@ namespace DiscordBot.Other
         {
             string file = Path.Combine(AppContext.BaseDirectory, fileName);
             musicLinkList = File.ReadAllLines(file).ToList();
-            Console.WriteLine(fileName + " Loaded");
+            
+            Console.Write("status: [");
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.Write("ok");
+            Console.ResetColor();
+            Console.WriteLine("]    " + fileName + ": loaded.");
         }
 
         public static void EnsureExists()
@@ -29,8 +34,12 @@ namespace DiscordBot.Other
                     Directory.CreateDirectory(path);
 
                 SaveLinks();
-
-                Console.WriteLine(fileName + " Created.");
+                
+                Console.Write("status: [");
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.Write("ok");
+                Console.ResetColor();
+                Console.WriteLine("]    " + fileName + ": created.");
             }
             LoadMusic();
         }

@@ -14,28 +14,28 @@ namespace DiscordBot
     {
         public static SocketUser getUser(ulong id)
         {
-            var user = Program._bot.GetUser(id) as SocketUser;
+            var user = MogiiBot3._bot.GetUser(id) as SocketUser;
             if (user == null) return null;
             return user;
         }
 
         public static SocketTextChannel getTextChannel(ulong id)
         {
-            var channel = Program._bot.GetChannel(id) as SocketTextChannel;
+            var channel = MogiiBot3._bot.GetChannel(id) as SocketTextChannel;
             if (channel == null) return null;
             return channel;
         }
 
         public static SocketVoiceChannel getVoiceChannel(ulong id)
         {
-            var channel = Program._bot.GetChannel(id) as SocketVoiceChannel;
+            var channel = MogiiBot3._bot.GetChannel(id) as SocketVoiceChannel;
             if (channel == null) return null;
             return channel;
         }
 
         public static SocketGuild getGuild(ulong id)
         {
-            var guild = Program._bot.GetGuild(id) as SocketGuild;
+            var guild = MogiiBot3._bot.GetGuild(id) as SocketGuild;
             if (guild == null) return null;
             return guild;
         }

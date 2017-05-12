@@ -20,6 +20,7 @@ namespace DiscordBot.Common
         
         public int Coins { get; set; } = 0;
         public int Chips { get; set; } = 0;
+
         public string Name { get; set; } = null;
         public string Gender { get; set; } = null;
         public string Pronouns { get; set; } = null;

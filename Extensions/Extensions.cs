@@ -28,7 +28,7 @@ namespace DiscordBot.Extensions
 
         public static bool IsMessageOnNSFWChannel(this IUserMessage message)
         {
-            foreach (SocketGuild g in Program._bot.Guilds)
+            foreach (SocketGuild g in MogiiBot3._bot.Guilds)
             {
                 if (g.Id == Configuration.Load().NSFWServerID)
                 {

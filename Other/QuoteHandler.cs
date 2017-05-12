@@ -21,7 +21,12 @@ namespace DiscordBot.Other
         {
             string file = Path.Combine(AppContext.BaseDirectory, fileName);
             quoteList = File.ReadAllLines(file).ToList();
-            Console.WriteLine(fileName + " Loaded");
+
+            Console.Write("status: [");
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.Write("ok");
+            Console.ResetColor();
+            Console.WriteLine("]    " + fileName + ": loaded.");
         }
 
         public static void EnsureExists()
@@ -35,7 +40,11 @@ namespace DiscordBot.Other
 
                 SaveQuotes();
 
-                Console.WriteLine(fileName + " Created.");
+                Console.Write("status: [");
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.Write("ok");
+                Console.ResetColor();
+                Console.WriteLine("]    " + fileName + ": created.");
             }
             LoadQuotes();
         }
