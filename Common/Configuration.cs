@@ -21,6 +21,7 @@ namespace DiscordBot.Common
         public UserStatus Status { get; set; } = UserStatus.Online;
         public bool SenpaiEnabled { get; set; } = true;
         public bool UnknownCommandEnabled { get; set; } = true;
+        public int LeaderboardAmount { get; set; } = 5;
         public int CoinToChipRatio { get; set; } = 10; // Exchange 10 coins for 1 chip.
         public int ChipToCoinRatio { get; set; } = 8; // Exchange 1 chip for 8 coins.
 

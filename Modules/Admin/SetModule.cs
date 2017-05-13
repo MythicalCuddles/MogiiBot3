@@ -67,5 +67,13 @@ namespace DiscordBot.Modules.Admin
             Configuration.UpdateJson("MaxRuleXGamble", value);
             await ReplyAsync(Context.User.Mention + " has updated the Rule34 Max to: " + value + " (was: " + oldValue + ")");
         }
+
+        [Command("leaderboardamount"), Summary("Set the amount of users who show up in the leaderboards.")]
+        public async Task SetLeaderboardAmount(int value)
+        {
+            int oldValue = Configuration.Load().LeaderboardAmount;
+            Configuration.UpdateJson("LeaderboardAmount", value);
+            await ReplyAsync(Context.User.Mention + " has updated the Leaderboard amount to: " + value + " (was: " + oldValue + ")");
+        }
     }
 }
