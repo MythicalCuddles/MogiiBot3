@@ -24,6 +24,8 @@ namespace DiscordBot.Modules.Public
         [Command("stats"), Summary("Sends information about the bot.")]
         public async Task About()
         {
+            var awaitMessage = await ReplyAsync("Please wait whilst I calculate my values. This shouldn't take long.");
+
             StringBuilder sb = new StringBuilder()
                 .Append("---------------------------------------------\n")
                 .Append("Bot: " + MogiiBot3._bot.CurrentUser.Mention + "\n")
@@ -32,31 +34,38 @@ namespace DiscordBot.Modules.Public
                 .Append("---------------------------------------------\n")
                 .Append("Developer Name: " + GetHandler.getUser(DiscordWorker.getMelissaID).Username + "\n")
                 .Append("Developer ID: " + DiscordWorker.getMelissaID + "\n")
-                .Append("[MythicalCuddles.xyz](http://www.mythicalcuddles.xyz)" + " | [GitHub/MythicalCuddles](https://github.com/MythicalCuddles)" + "\n")
-                .Append("---------------------------------------------\n")
-                .Append("With testing help from:" + "\n")
-                .Append("[" + GetHandler.getUser(DiscordWorker.getAmberID).Username + "](https://github.com/AmperPil)" + ", ")
-                .Append(GetHandler.getUser(DiscordWorker.getOscarID).Username)
-                .Append("\n")
+                .Append("[MythicalCuddles.xyz](http://www.mythicalcuddles.xyz)" + "\n")
+                .Append("[GitHub/MythicalCuddles](https://github.com/MythicalCuddles)" + "\n")
                 .Append("---------------------------------------------\n")
                 .Append("Development: " + developmentSince() + "\n")
                 .Append("Uptime: " + calculateUptime());
 
-            int userCount = 0, channelCount = 0, tChannelCount = 0;
+            int totalUserCount = 0, totalChannelCount = 0, totalTextChannelCount = 0, totalCoins = 0;
+            ulong mogiiCraft = Configuration.Load().ServerID;
+
             foreach(SocketGuild g in MogiiBot3._bot.Guilds)
             {
                 foreach (SocketChannel c in g.Channels)
-                    channelCount++;
+                {
+                    totalChannelCount++;
+                }
                 foreach (SocketTextChannel t in g.TextChannels)
-                    tChannelCount++;
-                foreach (SocketUser u in g.Users) 
-                    userCount++;
+                {
+                    totalTextChannelCount++;
+                }
+                foreach (SocketUser u in g.Users)
+                {
+                    totalUserCount++;
+                    
+                    if (g.Id == mogiiCraft) // Count the coins only once per user.
+                        totalCoins += User.Load(u.Id).Coins;
+                }
             }
 
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
                 .WithName(MogiiBot3._bot.CurrentUser.Username + " Version " + _v.Major + "." + _v.Minor + "." + _v.Build + "." + _v.Revision);
             EmbedFooterBuilder efb = new EmbedFooterBuilder()
-                .WithText("Total Guilds: " + MogiiBot3._bot.Guilds.Count() + " | Total Users: " + userCount + " | Total Channels: " + channelCount + " (" + tChannelCount + "/" + (channelCount - tChannelCount) + ")");
+                .WithText("Total Guilds: " + MogiiBot3._bot.Guilds.Count() + " | Total Users: " + totalUserCount + " | Total Channels: " + totalChannelCount + " (" + totalTextChannelCount + "/" + (totalChannelCount - totalTextChannelCount) + ")" + " | Total Coins: " + totalCoins);
             EmbedBuilder eb = new EmbedBuilder()
                 .WithAuthor(eab)
                 .WithDescription(sb.ToString())
@@ -66,6 +75,7 @@ namespace DiscordBot.Modules.Public
                 .WithFooter(efb);
 
             await ReplyAsync("", false, eb);
+            await awaitMessage.DeleteAsync();
         }
 
         [Command("hotlines"), Summary("Sends hotline links for the user.")]

@@ -145,7 +145,7 @@ namespace DiscordBot
                     .WithThumbnailUrl(e.GetAvatarUrl())
                     .WithCurrentTimestamp();
 
-                await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("", false, eb);
+                await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
             }
             else if (e.Guild.Id == Configuration.Load().NSFWServerID)
             {
@@ -156,7 +156,7 @@ namespace DiscordBot
                     .WithThumbnailUrl(e.GetAvatarUrl())
                     .WithCurrentTimestamp();
 
-                await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("", false, eb);
+                await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
             }
         }
 
@@ -171,10 +171,10 @@ namespace DiscordBot
                     .WithThumbnailUrl(e.GetAvatarUrl())
                     .WithCurrentTimestamp();
 
-                await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("", false, eb);
+                await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
 
                 string wMsg1 = Configuration.Load().welcomeMessage.Replace("{USERJOINED}", e.Mention).Replace("{GUILDNAME}", e.Guild.Name);
-                await GetHandler.getTextChannel(Configuration.Load().WelcomeChannelID).SendMessageAsync(wMsg1);
+                await GetHandler.getTextChannel(Configuration.Load().MCWelcomeChannelID).SendMessageAsync(wMsg1);
             }
             else if (e.Guild.Id == Configuration.Load().NSFWServerID)
             {
@@ -185,7 +185,7 @@ namespace DiscordBot
                     .WithThumbnailUrl(e.GetAvatarUrl())
                     .WithCurrentTimestamp();
 
-                await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("", false, eb);
+                await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
             }
 
             if (User.CreateUserFile(e.Id))
@@ -206,23 +206,25 @@ namespace DiscordBot
             var message = messageParam as SocketUserMessage;
 
             if (message == null) return;
-            if (message.Author.IsBot) return;
+            if (message.Author.IsBot)
+            {
+                try
+                {
+                    User.UpdateJson(message.Author.Id, "Coins", (User.Load(message.Author.Id).Coins + 1));
+                }
+                catch (Exception e) { Console.WriteLine(e); }
 
-            // Add the message to the log file
+                return;
+            }
+
+            // Adds the message to the log file
             Logging.MessageLogger.logNewMessage(message);
 
             // Is the bot told to ignore the user? If so, is the user NOT Melissa? Iff => escape Task
             if (User.Load(message.Author.Id).IsBotIgnoringUser && message.Author.Id != DiscordWorker.getMelissaID) return;
-
-            // Coin System to add a coin for each message the user sends.
-            try
-            {
-                User.UpdateJson(message.Author.Id, "Coins", (User.Load(message.Author.Id).Coins + 1));
-            }
-            catch (Exception e) { Console.WriteLine(e); }
-
+            
             // Only respond on the NSFW Server if the channel id matches the rule34gamble channel id
-            if (message.IsMessageOnNSFWChannel() && message.Channel.Id != Configuration.Load().RuleGambleChannelID) return;
+            if (message.IsMessageOnNSFWChannel() && message.Channel.Id != Configuration.Load().RuleGambleChannelID && message.Author.Id != Configuration.Load().Developer) return;
 
             // If the message came from somewhere that is not a text channel -> Private Message
             if (!(messageParam.Channel is ITextChannel))
@@ -240,7 +242,7 @@ namespace DiscordBot
                     .WithFooter(efb)
                     .WithCurrentTimestamp();
 
-                await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("", false, eb);
+                await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
             }
 
             // If the message is just "F", pay respects.
@@ -252,7 +254,17 @@ namespace DiscordBot
 
             // If the message does not contain the prefix or mentioning the bot
             int argPos = 0;
-            if (!(message.HasStringPrefix(Configuration.Load().Prefix, ref argPos) || message.HasMentionPrefix(_bot.CurrentUser, ref argPos))) return;
+            if (!(message.HasStringPrefix(Configuration.Load().Prefix, ref argPos) || message.HasMentionPrefix(_bot.CurrentUser, ref argPos)))
+            {
+                // Coin System to add a coin for each message the user sends.
+                try
+                {
+                    User.UpdateJson(message.Author.Id, "Coins", (User.Load(message.Author.Id).Coins + 1));
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+
+                return;
+            }
 
             var context = new CommandContext(_bot, message);
             // Execute Commands in dir \Modules

@@ -141,18 +141,26 @@ namespace DiscordBot.Modules.Public
 
             User.UpdateJson(Context.User.Id, "Coins", (issuerCoins - coins));
             User.UpdateJson(user.Id, "Coins", userCoins + coins);
+            await ReplyAsync(Context.User.Mention + " has given " + user.Mention + " " + coins + " coin(s)");
         }
 
         int lastQuote;
         [Command("quote"), Summary("Get a random quote from the list.")]
         public async Task GenerateQuote()
         {
-            int generatedNumber = _r.Next(0, QuoteHandler.quoteList.Count());
-            
-            while (generatedNumber == lastQuote)
-                generatedNumber = _r.Next(0, QuoteHandler.quoteList.Count());
+            if (Configuration.Load().QuotesEnabled)
+            {
+                int generatedNumber = _r.Next(0, QuoteHandler.quoteList.Count());
 
-            await ReplyAsync(QuoteHandler.quoteList[generatedNumber]); // Context.User.Mention + ", here's your generated quote: \n" + 
+                while (generatedNumber == lastQuote)
+                    generatedNumber = _r.Next(0, QuoteHandler.quoteList.Count());
+
+                await ReplyAsync(QuoteHandler.quoteList[generatedNumber]); // Context.User.Mention + ", here's your generated quote: \n" + 
+            }
+            else
+            {
+                await ReplyAsync("Quotes are currently disabled. Try again later.");
+            }
         }
 
         [Command("music"), Summary("Replies posting a music link which has been set by staff.")]

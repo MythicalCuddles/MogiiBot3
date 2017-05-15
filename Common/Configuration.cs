@@ -21,6 +21,7 @@ namespace DiscordBot.Common
         public UserStatus Status { get; set; } = UserStatus.Online;
         public bool SenpaiEnabled { get; set; } = true;
         public bool UnknownCommandEnabled { get; set; } = true;
+        public bool QuotesEnabled { get; set; } = true;
         public int LeaderboardAmount { get; set; } = 5;
         public int CoinToChipRatio { get; set; } = 10; // Exchange 10 coins for 1 chip.
         public int ChipToCoinRatio { get; set; } = 8; // Exchange 1 chip for 8 coins.
@@ -35,14 +36,15 @@ namespace DiscordBot.Common
         // Server Variables
         public ulong ServerID { get; set; } = 221250721046069249;
         // Channel Variables
-        public ulong WelcomeChannelID { get; set; } = 225721556435730433;
-        public ulong LogChannelID { get; set; } = 235179833053675522;
-        public ulong MinecraftChannelID { get; set; } = 221292894047174676;
+        public ulong MCWelcomeChannelID { get; set; } = 225721556435730433;
+        public ulong MCLogChannelID { get; set; } = 235179833053675522;
+        public ulong MCMinecraftChannelID { get; set; } = 221292894047174676;
         // Other Variables
         public string welcomeMessage { get; set; } = "Hey {USERJOINED}, and welcome to the {GUILDNAME} Discord Server! If you are a player on our Minecraft Server, tell us your username and a Staff Member will grant you the MC Players Role \n\nIf you don't mind, could you fill out this form linked below. We are collecting data on how you found out about us, and it'd be great if we had your input. The form can be found here: <https://goo.gl/forms/iA9t5xjoZvnLJ5np1>";
         public ulong SupportChannelID { get; set; } = 309630743825612800;
         public ulong SuggestChannelID { get; set; } = 310102597014913024;
-                        
+        public ulong LogChannelID { get; set; } = 313318109500932096;
+
         public static void EnsureExists()
         {
             string file = Path.Combine(AppContext.BaseDirectory, FileName);
