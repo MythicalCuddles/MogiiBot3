@@ -87,5 +87,13 @@ namespace DiscordBot.Modules.Owner
             Configuration.UpdateJson("CoinToChipRatio", coinRatio);
             await ReplyAsync(Context.User.Mention + " has changed the coin:chip ratio to: " + coinRatio + ":1");
         }
+
+        [Command("setchiptocoinratio"), Summary("")]
+        public async Task SetChipToCoinRatio(int chipRatio)
+        {
+            Configuration.UpdateJson("ChipToCoinRatio", chipRatio);
+            await ReplyAsync(Context.User.Mention + " has changed the chip:coin ratio to: " + chipRatio + ":1");
+        }
+
     }
 }

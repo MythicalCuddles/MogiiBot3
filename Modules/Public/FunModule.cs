@@ -9,6 +9,7 @@ using Discord;
 
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
+using DiscordBot.Extensions;
 using DiscordBot.Other;
 
 using MelissasCode;
@@ -20,19 +21,27 @@ namespace DiscordBot.Modules.Public
     public class FunModule : ModuleBase
     {
         Random _r = new Random();
-
-        [Command("dice"), Summary("Rolls a 6 sided dice.")]
-        public async Task Roll6Dice()
+        
+        [Command("dice"), Summary("Rolls a x sided dice.")]
+        public async Task RollDice(int numberOfSides = 6)
         {
-            int value = _r.Next(1, 7);
-            await ReplyAsync("A 6-sided dice has been rolled, and landed on: " + value);
+            int value = _r.RandomNumber(1, numberOfSides);
+            await ReplyAsync("A " + numberOfSides + "-sided dice was rolled, and landed on: " + value);
+        }
+
+        [Command("dice20"), Summary("Rolls a 20 sided dice.")]
+        [Alias("d20")]
+        public async Task Roll20Dice()
+        {
+            int value = _r.RandomNumber(1, 20);
+            await ReplyAsync("A 20-sided dice was rolled, and landed on: " + value);
         }
 
         [Command("flipcoin"), Summary("Flips a two sided coin.")]
         [Alias("flip", "tosscoin", "coinflip")]
         public async Task FlipCoin()
         {
-            int value = _r.Next(1, 3);
+            int value = _r.RandomNumber(1, 2);
 
             if(value == 1)
             {
@@ -51,7 +60,7 @@ namespace DiscordBot.Modules.Public
         [Command("approve"), Summary("Sends a picture stating \"Harold Likes This\".")]
         public async Task HaroldApproves()
         {
-            await ReplyAsync("http://i.imgur.com/AgXT80B.jpg");
+            await ReplyAsync("https://i.imgur.com/wHrJIfT.png");
         }
 
         [Command("nice"), Summary("NOICE!")]

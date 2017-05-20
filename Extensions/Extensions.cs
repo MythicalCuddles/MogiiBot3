@@ -15,6 +15,31 @@ namespace DiscordBot.Extensions
         public const string arrow_left = "⬅";
         public const string arrow_right = "➡";
 
+        private static Dictionary<int, string> reactions = new Dictionary<int, string>
+        {
+            { 1, "1⃣" },
+            { 2, "2⃣" },
+            { 3, "3⃣" },
+            { 4, "4⃣" },
+            { 5, "5⃣" },
+            { 6, "6⃣" },
+            { 7, "7⃣" },
+            { 8, "8⃣" },
+            { 9, "9⃣" },
+            { 10, "0⃣" },
+            { 11, "🇦" },
+            { 12, "🇧" },
+            { 13, "🇨" },
+            { 14, "🇩" },
+            { 15, "🇪" },
+            { 16, "🇫" },
+            { 17, "🇬" },
+            { 18, "🇭" },
+            { 19, "🇮" },
+            { 20, "🇯" }
+        };
+
+
         public static IMessage DeleteAfter(this IUserMessage msg, int seconds)
         {
             Task.Run(async () =>
@@ -55,6 +80,11 @@ namespace DiscordBot.Extensions
             }
 
             return list;
+        }
+
+        public static int RandomNumber(this Random source, int minValue, int maxValue)
+        {
+            return source.Next(minValue, maxValue + 1);
         }
     }
 }

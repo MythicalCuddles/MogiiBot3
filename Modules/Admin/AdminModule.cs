@@ -60,7 +60,7 @@ namespace DiscordBot.Modules.Admin
         [Alias("streaming", "twitchstreaming")]
         public async Task SetTwitchStreamingStatus(string linkOrValue, [Remainder]string playing)
         {
-            if (linkOrValue.Contains("twitch.tv"))
+            if (linkOrValue.Contains("https://www.twitch.tv/"))
             {
                 await MogiiBot3._bot.SetGameAsync(playing, linkOrValue, StreamType.Twitch);
                 await ReplyAsync(Context.User.Mention + ", my status has been updated to streaming with the Twitch.TV link of <" + linkOrValue + ">");
@@ -68,8 +68,9 @@ namespace DiscordBot.Modules.Admin
             else
             {
                 await MogiiBot3._bot.SetGameAsync(playing, null, StreamType.NotStreaming);
-                await ReplyAsync(Context.User.Mention + ", disabling streaming with the bot.");
             }
+
+            await Context.Message.DeleteAsync();
         }
 
         [Command("welcome"), Summary("Send the welcome messages to the user specified.")]

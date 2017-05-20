@@ -11,6 +11,10 @@ namespace DiscordBot.Other
     {
         public static string fileName { get; private set; } = "common/musicLinks.txt";
         public static List<string> musicLinkList = new List<string>();
+        public static List<List<string>> splicedMusicList = new List<List<string>>();
+
+        public static List<ulong> musicMessages = new List<ulong>();
+        public static List<int> pageNumber = new List<int>();
 
         private static void LoadMusic()
         {
