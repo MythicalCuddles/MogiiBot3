@@ -53,7 +53,7 @@ namespace DiscordBot
             _bot.MessageUpdated += MessageUpdated;
 
             // Connect to Discord with Bot Login Details
-            await _bot.LoginAsync(TokenType.Bot, DiscordToken.MogiiBot);
+            await _bot.LoginAsync(TokenType.Bot, DiscordToken.MogiiDevBot);
             await _bot.StartAsync();
 
             // Keep the program running.
@@ -206,16 +206,7 @@ namespace DiscordBot
             var message = messageParam as SocketUserMessage;
 
             if (message == null) return;
-            if (message.Author.IsBot)
-            {
-                try
-                {
-                    User.UpdateJson(message.Author.Id, "Coins", (User.Load(message.Author.Id).Coins + 1));
-                }
-                catch (Exception e) { Console.WriteLine(e); }
-
-                return;
-            }
+            if (message.Author.IsBot) return;
 
             // Adds the message to the log file
             Logging.MessageLogger.logNewMessage(message);

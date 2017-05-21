@@ -51,6 +51,9 @@ namespace DiscordBot.Common.Preconditions
 
                 if (user.GuildPermissions.Administrator)
                     return PermissionLevel.ServerAdmin;
+                
+                if (user.GuildPermissions.KickMembers && user.GuildPermissions.ManageMessages && user.GuildPermissions.ManageChannels)
+                    return PermissionLevel.ServerMod;
             }
 
             return PermissionLevel.User;

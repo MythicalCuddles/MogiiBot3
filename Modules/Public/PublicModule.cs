@@ -10,6 +10,7 @@ using Discord.WebSocket;
 
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
+using DiscordBot.Extensions;
 
 using MelissasCode;
 
@@ -36,12 +37,25 @@ namespace DiscordBot.Modules.Public
         public async Task UserAbout(IUser user = null)
         {
             var userSpecified = user ?? Context.User;
-            
+
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
-                .WithName("About " + userSpecified.Username)
-                .WithIconUrl(userSpecified.GetAvatarUrl());
+                .WithName("About " + userSpecified.Username);
+            if (User.Load(userSpecified.Id).BOTDevelopmentTeamMember)
+            {
+                eab.WithIconUrl("http://i.imgur.com/Ny5Qcto.png");
+            }
+
+            EmbedFooterBuilder efb = new EmbedFooterBuilder();
+            if (User.Load(userSpecified.Id).MythicalCuddlesTeamMember)
+            {
+                efb.WithText(userSpecified.Username + " is a member of the MythicalCuddles Team.");
+                efb.WithIconUrl("http://i.imgur.com/Ny5Qcto.png");
+            }
+
             EmbedBuilder eb = new EmbedBuilder()
                 .WithAuthor(eab)
+                .WithFooter(efb)
+                .WithThumbnailUrl(userSpecified.GetAvatarUrl())
                 .WithDescription(User.Load(userSpecified.Id).About)
                 .WithColor(new Color(140, 90, 210));
 
@@ -62,6 +76,7 @@ namespace DiscordBot.Modules.Public
 
             if (User.Load(userSpecified.Id).MinecraftUsername != null)
                 eb.AddInlineField("Minecraft Username", User.Load(userSpecified.Id).MinecraftUsername);
+            
 
             await ReplyAsync("", false, eb);
         }

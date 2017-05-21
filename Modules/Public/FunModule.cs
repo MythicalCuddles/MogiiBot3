@@ -23,10 +23,28 @@ namespace DiscordBot.Modules.Public
         Random _r = new Random();
         
         [Command("dice"), Summary("Rolls a x sided dice.")]
-        public async Task RollDice(int numberOfSides = 6)
+        public async Task RollDice(int numberOfDice = 1)
         {
-            int value = _r.RandomNumber(1, numberOfSides);
-            await ReplyAsync("A " + numberOfSides + "-sided dice was rolled, and landed on: " + value);
+            if (numberOfDice > 10)
+            {
+                await ReplyAsync("You can not roll more than 10 dice at one time, " + Context.User.Mention);
+                numberOfDice = 10;
+            }
+            else if(numberOfDice < 1)
+            {
+                await ReplyAsync("You can need to roll at least 1 dice, " + Context.User.Mention);
+                return;
+            }
+
+            StringBuilder sb = new StringBuilder()
+                .Append(Context.User.Mention + " has rolled " + numberOfDice + " 6-sided dice.\n\n");
+            
+            for(int i = 0; i < numberOfDice; i++)
+            {
+                sb.Append("Dice " + (i + 1) + " landed on: " + _r.RandomNumber(1, 6) + "\n");
+            }
+
+            await ReplyAsync(sb.ToString());
         }
 
         [Command("dice20"), Summary("Rolls a 20 sided dice.")]
@@ -67,6 +85,12 @@ namespace DiscordBot.Modules.Public
         public async Task Noice()
         {
             await ReplyAsync("https://media.giphy.com/media/yJFeycRK2DB4c/giphy.gif");
+        }
+
+        [Command("disagree"), Summary("")]
+        public async Task Disagree()
+        {
+            await ReplyAsync("https://i.imgur.com/3qfnX5M.png");
         }
 
         [Command("hehe"), Summary("Hehe!")]
@@ -137,6 +161,7 @@ namespace DiscordBot.Modules.Public
         }
 
         [Command("givecoins"), Summary("Give some of coins to another user.")]
+        [Alias("pay")]
         public async Task GiveCoins(IUser user, int coins)
         {
             int issuerCoins = User.Load(Context.User.Id).Coins;

@@ -10,6 +10,7 @@ namespace DiscordBot.Common
     {
         Bot,
         User,
+        ServerMod,
         ServerAdmin,
         ServerOwner,
         BotOwner

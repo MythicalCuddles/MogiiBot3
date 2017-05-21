@@ -26,7 +26,7 @@ namespace DiscordBot.Modules.Admin
         {
             string oldAbout = User.Load(user.Id).About;
             User.UpdateJson(user.Id, "About", about);
-            await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s about message!");
+            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s about message!");
         }
 
         [Command("name"), Summary("Force set the name message for the specified user.")]
@@ -34,7 +34,7 @@ namespace DiscordBot.Modules.Admin
         {
             string oldName = User.Load(user.Id).Name;
             User.UpdateJson(user.Id, "Name", name);
-            await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s name message!");
+            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s name message!");
         }
 
         [Command("gender"), Summary("Force set the gender message for the specified user.")]
@@ -42,7 +42,7 @@ namespace DiscordBot.Modules.Admin
         {
             string oldGender = User.Load(user.Id).Gender;
             User.UpdateJson(user.Id, "Gender", gender);
-            await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s gender message!");
+            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s gender message!");
         }
 
         [Command("pronouns"), Summary("Force set the pronouns message for the specified user.")]
@@ -50,7 +50,7 @@ namespace DiscordBot.Modules.Admin
         {
             string oldPronouns = User.Load(user.Id).Pronouns;
             User.UpdateJson(user.Id, "Pronouns", pronouns);
-            await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s pronouns message!");
+            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s pronouns message!");
         }
 
         [Command("coins"), Summary("Force set the coins for the specified user.")]
@@ -58,7 +58,7 @@ namespace DiscordBot.Modules.Admin
         {
             int oldCoins = User.Load(user.Id).Coins;
             User.UpdateJson(user.Id, "Coins", newValue);
-            await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s coins value to " + newValue + " (Was: " + oldCoins + ")");
+            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s coins value to " + newValue + " (Was: " + oldCoins + ")");
         }
 
         [Command("minecraftusername"), Summary("Force set the minecraft username for the specified user.")]
@@ -66,7 +66,7 @@ namespace DiscordBot.Modules.Admin
         {
             string oldName = User.Load(user.Id).MinecraftUsername;
             User.UpdateJson(Context.User.Id, "MinecraftUsername", username);
-            await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s minecraft username to " + username + " (Was: " + oldName + ")");
+            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s minecraft username to " + username + " (Was: " + oldName + ")");
         }
     }
 }

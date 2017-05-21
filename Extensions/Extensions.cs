@@ -86,5 +86,19 @@ namespace DiscordBot.Extensions
         {
             return source.Next(minValue, maxValue + 1);
         }
+
+        public static string GetDiceFace(int value)
+        {
+            switch(value)
+            {
+                case 1: return "http://i.imgur.com/NYn89EU.png";
+                case 2: return "http://i.imgur.com/5pCUMdv.png";
+                case 3: return "http://i.imgur.com/oD4kjaD.png";
+                case 4: return "http://i.imgur.com/pzWG3gL.png";
+                case 5: return "http://i.imgur.com/yTfdVP1.png";
+                case 6: return "http://i.imgur.com/mgTCYtk.png";
+                default: return "";
+            }
+        }
     }
 }

@@ -25,7 +25,14 @@ namespace DiscordBot.Common
         public string Gender { get; set; } = null;
         public string Pronouns { get; set; } = null;
         public string About { get; set; } = null;
+        public bool BOTDevelopmentTeamMember { get; set; } = false;
+        public bool MythicalCuddlesTeamMember { get; set; } = false;
+
+        // Socials
         public string MinecraftUsername { get; set; } = null;
+        public string TumblrUsername { get; set; } = null;
+        public string XboxGamertag { get; set; } = null;
+        public string PSN { get; set; } = null;
 
         public bool IsBotIgnoringUser { get; set; } = false;
         

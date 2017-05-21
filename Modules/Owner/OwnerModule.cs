@@ -57,6 +57,62 @@ namespace DiscordBot.Modules.Owner
             sb.Clear();
         }
 
+        [Command("addteammember"), Summary("Add a member to the team. Gives them a star on $about")]
+        public async Task AddTeamMember(IUser user)
+        {
+            if (!User.Load(user.Id).BOTDevelopmentTeamMember)
+            {
+                User.UpdateJson(user.Id, "BOTDevelopmentTeamMember", true);
+                await ReplyAsync(user.Mention + " has been added to the team by " + Context.User.Mention);
+            }
+            else
+            {
+                await ReplyAsync(user.Mention + " is already part of the team, " + Context.User.Mention + "!");
+            }
+        }
+
+        [Command("removeteammember"), Summary("Add a member to the team. Gives them a star on $about")]
+        public async Task RemoveTeamMember(IUser user)
+        {
+            if (User.Load(user.Id).BOTDevelopmentTeamMember)
+            {
+                User.UpdateJson(user.Id, "BOTDevelopmentTeamMember", false);
+                await ReplyAsync(user.Mention + " has been removed from the team by " + Context.User.Mention);
+            }
+            else
+            {
+                await ReplyAsync(user.Mention + " is not part of the team, " + Context.User.Mention + "!");
+            }
+        }
+
+        [Command("addmythicalcuddlesmember"), Summary("Add a member to the beta team.")]
+        public async Task AddBetaMember(IUser user)
+        {
+            if (!User.Load(user.Id).MythicalCuddlesTeamMember)
+            {
+                User.UpdateJson(user.Id, "MythicalCuddlesTeamMember", true);
+                await ReplyAsync(user.Mention + " has been added to the MythicalCuddles Team by " + Context.User.Mention);
+            }
+            else
+            {
+                await ReplyAsync(user.Mention + " is already part of the MythicalCuddles Team, " + Context.User.Mention + "!");
+            }
+        }
+
+        [Command("removemythicalcuddlesmember"), Summary("Add a member to the beta team.")]
+        public async Task RemoveBetaMember(IUser user)
+        {
+            if (User.Load(user.Id).MythicalCuddlesTeamMember)
+            {
+                User.UpdateJson(user.Id, "MythicalCuddlesTeamMember", false);
+                await ReplyAsync(user.Mention + " has been removed from the MythicalCuddles Team by " + Context.User.Mention);
+            }
+            else
+            {
+                await ReplyAsync(user.Mention + " is not part of the MythicalCuddles Team, " + Context.User.Mention + "!");
+            }
+        }
+
         [Command("joinme"), Summary("Gets the bot to join the current voice channel.")]
         public async Task JoinVoiceChannel(IVoiceChannel channel = null)
         {
