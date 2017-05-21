@@ -69,22 +69,6 @@ namespace DiscordBot.Modules.Admin
             await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s minecraft username to " + username + " (Was: " + oldName + ")");
         }
 
-        [Command("tumblrnsfw"), Summary("")]
-        public async Task ForceTumblrUsername(IUser user)
-        {
-            bool oldValue = User.Load(user.Id).IsTumblrNSFW;
-            User.UpdateJson(Context.User.Id, "IsTumblrNSFW", !oldValue);
-            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s Tumblr NSFW status to " + !oldValue + " (Was: " + oldValue + ")");
-        }
-
-        [Command("tumblrusername"), Summary("")]
-        public async Task ForceTumblrUsername(IUser user, [Remainder]string username)
-        {
-            string oldName = User.Load(user.Id).TumblrUsername;
-            User.UpdateJson(Context.User.Id, "TumblrUsername", username);
-            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s Tumblr username to " + username + " (Was: " + oldName + ")");
-        }
-
         [Command("xboxgamertag"), Summary("")]
         public async Task ForceXboxGamertag(IUser user, [Remainder]string username)
         {

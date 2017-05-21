@@ -30,8 +30,6 @@ namespace DiscordBot.Common
 
         // Socials
         public string MinecraftUsername { get; set; } = null;
-        public string TumblrUsername { get; set; } = null;
-        public bool IsTumblrNSFW { get; set; } = false;
         public string XboxGamertag { get; set; } = null;
         public string PSN { get; set; } = null;
         public string NintendoID { get; set; } = null;
