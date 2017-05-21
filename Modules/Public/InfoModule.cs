@@ -84,6 +84,12 @@ namespace DiscordBot.Modules.Public
             await ReplyAsync("**International Helplines** \nhttp://togetherweare-strong.tumblr.com/helpline \nhttps://reddit.com/r/SuicideWatch/wiki/hotlines");
         }
 
+        [Command("currentvalue"), Summary("")]
+        public async Task ViewStockMarketValue()
+        {
+            await ReplyAsync("**Current Stock Prices**\nYou can buy **1** chip ** for " + Configuration.Load().CoinToChipRatio + "** coin(s).\nYou can sell **1** chip for **" + Configuration.Load().ChipToCoinRatio + "** coin(s).");
+        }
+
         [Command("poll"), Summary("Sends a link to the poll for the minecraft server.")]
         public async Task SendPollLink()
         {

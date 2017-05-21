@@ -17,7 +17,7 @@ namespace DiscordBot.Common
         [JsonIgnore]
         private static string DirectoryPath { get; set; } = "users/";
         private static string Extension { get; set; } = ".json";
-        
+
         public int Coins { get; set; } = 0;
         public int Chips { get; set; } = 0;
 
@@ -31,8 +31,11 @@ namespace DiscordBot.Common
         // Socials
         public string MinecraftUsername { get; set; } = null;
         public string TumblrUsername { get; set; } = null;
+        public bool IsTumblrNSFW { get; set; } = false;
         public string XboxGamertag { get; set; } = null;
         public string PSN { get; set; } = null;
+        public string NintendoID { get; set; } = null;
+        public string SteamID { get; set; } = null;
 
         public bool IsBotIgnoringUser { get; set; } = false;
         

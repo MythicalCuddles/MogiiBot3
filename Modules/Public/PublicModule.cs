@@ -76,7 +76,30 @@ namespace DiscordBot.Modules.Public
 
             if (User.Load(userSpecified.Id).MinecraftUsername != null)
                 eb.AddInlineField("Minecraft Username", User.Load(userSpecified.Id).MinecraftUsername);
+
+            if(User.Load(userSpecified.Id).TumblrUsername != null)
+            {
+                if(User.Load(userSpecified.Id).IsTumblrNSFW)
+                {
+                    eb.AddInlineField("Tumblr [NSFW]", User.Load(userSpecified.Id).TumblrUsername);
+                }
+                else
+                {
+                    eb.AddInlineField("Tumblr", User.Load(userSpecified.Id).TumblrUsername);
+                }
+            }
             
+            if(User.Load(userSpecified.Id).XboxGamertag != null)
+                eb.AddInlineField("Xbox", User.Load(userSpecified.Id).XboxGamertag);
+
+            if (User.Load(userSpecified.Id).PSN != null)
+                eb.AddInlineField("Playstation", User.Load(userSpecified.Id).PSN);
+
+            if (User.Load(userSpecified.Id).NintendoID != null)
+                eb.AddInlineField("Nintendo ID", User.Load(userSpecified.Id).NintendoID);
+
+            if (User.Load(userSpecified.Id).SteamID != null)
+                eb.AddInlineField("Steam", User.Load(userSpecified.Id).SteamID);
 
             await ReplyAsync("", false, eb);
         }
@@ -93,6 +116,58 @@ namespace DiscordBot.Modules.Public
         public async Task SetMinecraftUsername([Remainder]string username)
         {
             User.UpdateJson(Context.User.Id, "MinecraftUsername", username);
+            await ReplyAsync("Updated successfully, " + Context.User.Mention);
+        }
+
+        [Command("settumblr"), Summary("")]
+        public async Task SetTumblrUsername([Remainder]string username)
+        {
+            User.UpdateJson(Context.User.Id, "TumblrUsername", username);
+            await ReplyAsync("Updated successfully, " + Context.User.Mention);
+        }
+
+        [Command("toggletumblensfw"), Summary("")]
+        public async Task ToggleNSFWTumblr()
+        {
+            bool isNSFW = User.Load(Context.User.Id).IsTumblrNSFW;
+
+            if(isNSFW)
+            {
+                User.UpdateJson(Context.User.Id, "IsTumblrNSFW", !isNSFW);
+                await ReplyAsync("Your Tumblr is no longer marked as NSFW, " + Context.User.Mention);
+            }
+            else
+            {
+                User.UpdateJson(Context.User.Id, "IsTumblrNSFW", !isNSFW);
+                await ReplyAsync("Your Tumblr has been marked as NSFW, " + Context.User.Mention);
+            }
+        }
+
+        [Command("setxbox"), Summary("")]
+        public async Task SetXboxGamertag([Remainder]string username)
+        {
+            User.UpdateJson(Context.User.Id, "XboxGamertag", username);
+            await ReplyAsync("Updated successfully, " + Context.User.Mention);
+        }
+
+        [Command("setpsn"), Summary("")]
+        public async Task SetPSN([Remainder]string username)
+        {
+            User.UpdateJson(Context.User.Id, "PSN", username);
+            await ReplyAsync("Updated successfully, " + Context.User.Mention);
+        }
+
+        [Command("setnintendoid"), Summary("")]
+        public async Task SetNintendoID([Remainder]string username)
+        {
+            User.UpdateJson(Context.User.Id, "NintendoID", username);
+            await ReplyAsync("Updated successfully, " + Context.User.Mention);
+        }
+
+        [Command("setsteam"), Summary("")]
+        public async Task SetSteamID([Remainder]string username)
+        {
+            User.UpdateJson(Context.User.Id, "SteamID", username);
             await ReplyAsync("Updated successfully, " + Context.User.Mention);
         }
 

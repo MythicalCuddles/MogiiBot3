@@ -68,5 +68,53 @@ namespace DiscordBot.Modules.Admin
             User.UpdateJson(Context.User.Id, "MinecraftUsername", username);
             await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s minecraft username to " + username + " (Was: " + oldName + ")");
         }
+
+        [Command("tumblrnsfw"), Summary("")]
+        public async Task ForceTumblrUsername(IUser user)
+        {
+            bool oldValue = User.Load(user.Id).IsTumblrNSFW;
+            User.UpdateJson(Context.User.Id, "IsTumblrNSFW", !oldValue);
+            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s Tumblr NSFW status to " + !oldValue + " (Was: " + oldValue + ")");
+        }
+
+        [Command("tumblrusername"), Summary("")]
+        public async Task ForceTumblrUsername(IUser user, [Remainder]string username)
+        {
+            string oldName = User.Load(user.Id).TumblrUsername;
+            User.UpdateJson(Context.User.Id, "TumblrUsername", username);
+            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s Tumblr username to " + username + " (Was: " + oldName + ")");
+        }
+
+        [Command("xboxgamertag"), Summary("")]
+        public async Task ForceXboxGamertag(IUser user, [Remainder]string username)
+        {
+            string oldName = User.Load(user.Id).XboxGamertag;
+            User.UpdateJson(Context.User.Id, "XboxGamertag", username);
+            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s Xbox Gamertag to " + username + " (Was: " + oldName + ")");
+        }
+
+        [Command("psn"), Summary("")]
+        public async Task ForcePSN(IUser user, [Remainder]string username)
+        {
+            string oldName = User.Load(user.Id).PSN;
+            User.UpdateJson(Context.User.Id, "PSN", username);
+            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s PSN to " + username + " (Was: " + oldName + ")");
+        }
+
+        [Command("nintendoid"), Summary("")]
+        public async Task ForceNintendoID(IUser user, [Remainder]string username)
+        {
+            string oldName = User.Load(user.Id).NintendoID;
+            User.UpdateJson(Context.User.Id, "NintendoID", username);
+            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s Nintendo ID to " + username + " (Was: " + oldName + ")");
+        }
+
+        [Command("steamid"), Summary("")]
+        public async Task ForceSteamID(IUser user, [Remainder]string username)
+        {
+            string oldName = User.Load(user.Id).SteamID;
+            User.UpdateJson(Context.User.Id, "SteamID", username);
+            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s Steam ID to " + username + " (Was: " + oldName + ")");
+        }
     }
 }

@@ -14,6 +14,40 @@ namespace DiscordBot.Extensions
     {
         public const string arrow_left = "⬅";
         public const string arrow_right = "➡";
+        public static List<string> SlotEmotes = new List<string>()
+        {           
+            ":green_apple:",
+            ":apple:",
+            ":pear:",
+            ":tangerine:",
+            ":lemon:",
+            ":banana:",
+            ":watermelon:",
+            ":grapes:",
+            ":strawberry:",
+            ":melon:",
+            ":cherries:",
+            ":peach:",
+            ":pineapple:",
+            ":tomato:",
+            ":eggplant:",
+            ":hot_pepper:",
+            ":corn:",
+            ":sweet_potato:",
+            ":carrot:"
+            //":honey_pot:",
+            //":bread:",
+            //":cheese:",
+            //":poultry_leg:",
+            //":meat_on_bone:",
+            //":fried_shrimp:",
+            //":cooking:",
+            //":hamburger:",
+            //":fries:",
+            //":hotdog:",
+            //":pizza:",
+            //":rice_ball:"
+        };
 
         private static Dictionary<int, string> reactions = new Dictionary<int, string>
         {
