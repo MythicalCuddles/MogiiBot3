@@ -144,6 +144,18 @@ namespace DiscordBot.Modules.Public
             }
         }
 
+        [Command("wallet"), Summary("")]
+        [Alias("purse", "balance", "bal")]
+        public async Task LoadUserBalance()
+        {
+            int userCoins = User.Load(Context.User.Id).Coins,
+                userChips = User.Load(Context.User.Id).Chips;
+            await ReplyAsync(":moneybag: **" + Context.User.Username + "'s Balance** :moneybag:\n" + 
+                "\n" +
+                "**" + userCoins + "** coins\n" +
+                "**" + userChips + "** chips\n");
+        }
+
         [Command("coins"), Summary("Returns the amount of coins you have earned")]
         [Alias("mogiicoins")]
         public async Task Coins(IUser user = null)
@@ -195,6 +207,25 @@ namespace DiscordBot.Modules.Public
             {
                 await ReplyAsync("Quotes are currently disabled. Try again later.");
             }
+        }
+
+        [Command("buyquote"), Summary("Request a quote to be added for a price.")]
+        public async Task RequestToAddQuote([Remainder]string quote)
+        {
+            int userCoins = User.Load(Context.User.Id).Coins;
+            int quoteCost = Configuration.Load().QuoteCost;
+
+            if (userCoins < quoteCost)
+            {
+                await ReplyAsync(Context.User.Mention + ", you don't have enough coins! You need " + quoteCost + " coins to buy a quote request.");
+                return;
+            }
+
+            QuoteHandler.AddAndUpdateRequestQuotes(quote);
+            User.UpdateJson(Context.User.Id, "Coins", (userCoins - quoteCost));
+            await ReplyAsync(Context.User.Mention + ", thank you for your quote. This costed you " + quoteCost + " coins. Your quote has been added to a wait list, and should be verified by a staff member shortly.");
+            await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**New Quote**\nQuote requested by: **" + Context.User.Mention + "**\nQuote: " + quote);
+            await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("**New Quote**\n" + quote + "\n\n*Do $listrequestquotes to view the ID and other quotes.*");
         }
 
         [Command("music"), Summary("Replies posting a music link which has been set by staff.")]

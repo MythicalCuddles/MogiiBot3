@@ -1,5 +1,4 @@
-﻿using Discord;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -115,6 +114,54 @@ namespace DiscordBot
                     await message.Value.AddReactionAsync(Extensions.Extensions.arrow_right);
                 }
                 else if (QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)] == QuoteHandler.getQuotesListLength)
+                {
+                    await message.Value.AddReactionAsync(Extensions.Extensions.arrow_left);
+                }
+                else
+                {
+                    await message.Value.AddReactionAsync(Extensions.Extensions.arrow_left);
+                    await message.Value.AddReactionAsync(Extensions.Extensions.arrow_right);
+                }
+            }
+
+            if (QuoteHandler.requestQuoteMessages.Contains(message.Id))
+            {
+                // Check to see if the next page or previous page was clicked.
+                if (reaction.Emoji.Name == Extensions.Extensions.arrow_left)
+                {
+                    if (QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] == 1)
+                        return;
+
+                    QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)]--;
+                }
+                else if (reaction.Emoji.Name == Extensions.Extensions.arrow_right)
+                {
+                    if (QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] == QuoteHandler.getRequestQuotesListLength)
+                        return;
+
+                    QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)]++;
+                }
+
+                StringBuilder sb = new StringBuilder()
+                .Append("**Request Quote List** : *Page " + QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] + "*\nTo accept a quote, type **$acceptquote [id]**.\nTo reject a quote, type **$denyquote [id]**.\n```");
+
+                List<string> requestQuotes = QuoteHandler.getRequestQuotes(QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)]);
+
+                for (int i = 0; i < requestQuotes.Count; i++)
+                {
+                    sb.Append((i + ((QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] - 1) * 10)) + ": " + requestQuotes[i] + "\n");
+                }
+
+                sb.Append("```");
+
+                await message.Value.ModifyAsync(msg => msg.Content = sb.ToString());
+                await message.Value.RemoveAllReactionsAsync();
+
+                if (QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] == 1)
+                {
+                    await message.Value.AddReactionAsync(Extensions.Extensions.arrow_right);
+                }
+                else if (QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] == QuoteHandler.getRequestQuotesListLength)
                 {
                     await message.Value.AddReactionAsync(Extensions.Extensions.arrow_left);
                 }
@@ -264,7 +311,8 @@ namespace DiscordBot
             // If the command modules doesn't contain a task for the message, return an error iff UnknownCommand is enabled
             if (!result.IsSuccess && Configuration.Load().UnknownCommandEnabled)
             {
-                await context.Channel.SendMessageAsync(messageParam.Author.Mention + ", " + result.ErrorReason);
+                var errorMessage = await context.Channel.SendMessageAsync(messageParam.Author.Mention + ", " + result.ErrorReason);
+                errorMessage.DeleteAfter(20);
             }
         }
 

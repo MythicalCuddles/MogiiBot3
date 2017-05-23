@@ -87,7 +87,7 @@ namespace DiscordBot.Modules.Public
         [Command("currentvalue"), Summary("")]
         public async Task ViewStockMarketValue()
         {
-            await ReplyAsync("**Current Stock Prices**\nYou can buy **1** chip ** for " + Configuration.Load().CoinToChipRatio + "** coin(s).\nYou can sell **1** chip for **" + Configuration.Load().ChipToCoinRatio + "** coin(s).");
+            await ReplyAsync("**Current Stock Prices**\nYou can buy **1** chip for **" + Configuration.Load().CoinToChipRatio + "** coin(s).\nYou can sell **1** chip for **" + Configuration.Load().ChipToCoinRatio + "** coin(s).");
         }
 
         [Command("poll"), Summary("Sends a link to the poll for the minecraft server.")]

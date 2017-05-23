@@ -27,6 +27,7 @@ namespace DiscordBot.Common
         public int ChipToCoinRatio { get; set; } = 8; // Exchange 1 chip for 8 coins.
         public string ChangelogLink { get; set; } = "https://github.com/MythicalCuddles/MogiiBot3/wiki/Change-log";
         public bool PostedLastMonth { get; set; } = false;
+        public int QuoteCost { get; set; } = 250;
 
         /// NSFW Server Variables
         // Rule 34 Gamble Game Variables

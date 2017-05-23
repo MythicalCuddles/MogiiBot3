@@ -150,7 +150,9 @@ namespace DiscordBot.Modules.Admin
             IUserMessage msg = await ReplyAsync(sb.ToString());
             QuoteHandler.quoteMessages.Add(msg.Id);
             QuoteHandler.pageNumber.Add(1);
-            await msg.AddReactionAsync(Extensions.Extensions.arrow_right);
+
+            if(quotes.Count() == 10)
+                await msg.AddReactionAsync(Extensions.Extensions.arrow_right);
         }
 
         [Command("editquote"), Summary("Edit a quote from the list.")]
@@ -169,6 +171,64 @@ namespace DiscordBot.Modules.Admin
             await ReplyAsync("Quote " + quoteID + " removed successfully, " + Context.User.Mention + "\n**Quote:** " + quote);
             
             await ListQuotes();
+        }
+
+        [Command("listrequestquotes"), Summary("Sends a list of all the request quotes.")]
+        public async Task ListRequestQuotes()
+        {
+            if(QuoteHandler.requestQuoteList.Count() > 0)
+            {
+                StringBuilder sb = new StringBuilder()
+                .Append("**Request Quote List** : *Page 1*\nTo accept a quote, type **$acceptquote [id]**.\nTo reject a quote, type **$denyquote [id]**.\n```");
+
+                QuoteHandler.SpliceRequestQuotes();
+                List<string> requestQuotes = QuoteHandler.getRequestQuotes(1);
+
+                for (int i = 0; i < requestQuotes.Count; i++)
+                {
+                    sb.Append(i + ": " + requestQuotes[i] + "\n");
+                }
+
+                sb.Append("```");
+
+                IUserMessage msg = await ReplyAsync(sb.ToString());
+                QuoteHandler.requestQuoteMessages.Add(msg.Id);
+                QuoteHandler.requestPageNumber.Add(1);
+
+                if (requestQuotes.Count() == 10)
+                    await msg.AddReactionAsync(Extensions.Extensions.arrow_right);
+            }
+            else
+            {
+                await ReplyAsync("There are currently 0 pending request quotes.");
+            }
+        }
+
+        [Command("acceptquote"), Summary("Add a quote to the list.")]
+        public async Task AcceptQuote(int quoteID)
+        {
+            string quote = QuoteHandler.requestQuoteList[quoteID];
+            QuoteHandler.AddAndUpdateQuotes(quote);
+            QuoteHandler.RemoveAndUpdateRequestQuotes(quoteID);
+            await ReplyAsync(Context.User.Mention + " has accepted Quote " + quoteID + " from the request quote list.\nQuote: " + quote);
+        }
+
+        [Command("denyquote"), Summary("")]
+        [Alias("rejectquote")]
+        public async Task DenyQuote(int quoteID)
+        {
+            string quote = QuoteHandler.requestQuoteList[quoteID];
+            QuoteHandler.RemoveAndUpdateRequestQuotes(quoteID);
+            await ReplyAsync(Context.User.Mention + " has denied Quote " + quoteID + " from the request quote list.\nQuote: " + quote);
+        }
+
+        [Command("quoteprice"), Summary("")]
+        [Alias("changequoteprice", "updatequoteprice")]
+        public async Task ChangeQuotePrice(int price)
+        {
+            int oldPrice = Configuration.Load().QuoteCost;
+            Configuration.UpdateJson("QuoteCost", price);
+            await ReplyAsync("**" + Context.User.Mention + "** has updated the quote cost to **" + price + "** coins. (Was: **" + oldPrice + "** coins)");
         }
 
         [Command("addvotelink"), Summary("Add a voting link to the list.")]
