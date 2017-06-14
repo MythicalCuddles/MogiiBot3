@@ -9,6 +9,7 @@ using Discord;
 
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
+using DiscordBot.Extensions;
 
 using MelissasCode;
 using Discord.WebSocket;
@@ -26,35 +27,42 @@ namespace DiscordBot.Modules.Public
             await ReplyAsync(Context.User.Mention + ", you can find the full list of commands here: [GitHub/MythicalCuddles/MogiiBot3/Wiki](https://github.com/MythicalCuddles/MogiiBot3/wiki/Commands)");
             //await Context.User.CreateDMChannelAsync().Result.SendMessageAsync("Syntax: `$command` or `@MogiiBot#1772 command`." + "\n" + "You can also run some commands in this DM.To do so, simply use command with no prefix.");
 
-            //string prefix = Configuration.Load().Prefix;
-
-            //EmbedBuilder eb = new EmbedBuilder().WithColor(new Color(114, 137, 218)).WithTitle("Command List");
-
-            //foreach (var module in Program.commandService.Modules)
+            //try
             //{
-            //    string description = null;
+            //    string prefix = Configuration.Load().Prefix;
 
-            //    foreach (var cmd in module.Commands)
+            //    foreach (var module in MogiiBot3.commandService.Modules)
             //    {
-            //        var result = await cmd.CheckPreconditionsAsync(Context);
-            //        if (result.IsSuccess)
-            //            description += prefix + cmd.Aliases.First() + " - " + cmd.Summary + "\n";
-            //    }
+            //        EmbedBuilder eb = new EmbedBuilder().WithColor(new Color(114, 137, 218)).WithTitle("Command List");
+            //        string description = null;
 
-            //    if (!string.IsNullOrWhiteSpace(description))
-            //    {
-            //        eb.AddField(x =>
+            //        foreach (var cmd in module.Commands)
             //        {
-            //            x.Name = module.Name;
-            //            x.Value = description;
-            //            x.IsInline = false;
-            //        });
+            //            var result = await cmd.CheckPreconditionsAsync(Context);
+            //            if (result.IsSuccess)
+            //                description += prefix + cmd.Aliases.First() + " - " + cmd.Summary + "\n";
+            //        }
+
+            //        if (!string.IsNullOrWhiteSpace(description))
+            //        {
+            //            eb.AddField(x =>
+            //            {
+            //                x.Name = module.Name;
+            //                x.Value = description;
+            //                x.IsInline = false;
+            //            });
+            //        }
+
+            //        await Context.User.CreateDMChannelAsync().Result.SendMessageAsync("", false, eb);
             //    }
+
+            //    await Context.Message.DeleteAsync();
+
             //}
-
-            //await Context.Message.DeleteAsync();
-
-            //await Context.User.CreateDMChannelAsync().Result.SendMessageAsync("", false, eb);
+            //catch(Exception ex)
+            //{
+            //    Console.WriteLine(ex.ToString());
+            //}            
         }
 
         [Command("support"), Summary("Sends a message out for support.")]

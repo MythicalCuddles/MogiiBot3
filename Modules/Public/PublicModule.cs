@@ -33,6 +33,30 @@ namespace DiscordBot.Modules.Public
             await ReplyAsync("Updated successfully, " + Context.User.Mention);
         }
 
+        [Command("setaboutrgb"), Summary("Custom set the color of the about embed message.")]
+        public async Task SetUserAboutRGB(int r = -1, int g = -1, int b = -1)
+        {
+            if(r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
+            {
+                await ReplyAsync(Context.User.Mention + ", you have entered an invalid value. You can use this website to help get your RGB values - <http://www.colorhexa.com/>\n\n" +
+                    "**Syntax:** $setaboutrgb [R value] [G value] [B value]\n**Example:** $setaboutrgb 140 90 210");
+                return;
+            }
+
+            User.UpdateJson(Context.User.Id, "AboutR", r);
+            User.UpdateJson(Context.User.Id, "AboutG", g);
+            User.UpdateJson(Context.User.Id, "AboutB", b);
+
+            Color aboutColor = new Color(User.Load(Context.User.Id).AboutR, User.Load(Context.User.Id).AboutG, User.Load(Context.User.Id).AboutB);
+
+            EmbedBuilder eb = new EmbedBuilder()
+                .WithTitle("Sample Message")
+                .WithDescription("<-- FYI, this is what you updated.")
+                .WithColor(aboutColor);
+
+            await ReplyAsync(Context.User.Mention + ", updated successfully.", false, eb);
+        }
+
         [Command("about"), Summary("Returns the about description about the user specified.")]
         public async Task UserAbout(IUser user = null)
         {
@@ -40,25 +64,25 @@ namespace DiscordBot.Modules.Public
 
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
                 .WithName("About " + userSpecified.Username);
-            if (User.Load(userSpecified.Id).BOTDevelopmentTeamMember)
-            {
-                eab.WithIconUrl("http://i.imgur.com/Ny5Qcto.png");
-            }
-
             EmbedFooterBuilder efb = new EmbedFooterBuilder();
-            if (User.Load(userSpecified.Id).MythicalCuddlesTeamMember)
+            if (User.Load(userSpecified.Id).TeamMember)
             {
-                efb.WithText(userSpecified.Username + " is a member of the MythicalCuddles Team.");
-                efb.WithIconUrl("http://i.imgur.com/Ny5Qcto.png");
+                eab.WithIconUrl(User.Load(userSpecified.Id).EmbedAuthorBuilderIconUrl);
+
+                efb.WithIconUrl(User.Load(userSpecified.Id).EmbedFooterBuilderIconUrl);
             }
+            
+            if (User.Load(userSpecified.Id).FooterText != null)
+                efb.WithText(User.Load(userSpecified.Id).FooterText);
+
+            Color aboutColor = new Color(User.Load(userSpecified.Id).AboutR, User.Load(userSpecified.Id).AboutG, User.Load(userSpecified.Id).AboutB);
 
             EmbedBuilder eb = new EmbedBuilder()
                 .WithAuthor(eab)
                 .WithFooter(efb)
                 .WithThumbnailUrl(userSpecified.GetAvatarUrl())
                 .WithDescription(User.Load(userSpecified.Id).About)
-                .WithColor(new Color(140, 90, 210));
-
+                .WithColor(aboutColor);
 
             if (User.Load(userSpecified.Id).Name != null)
                 eb.AddInlineField("Name", User.Load(userSpecified.Id).Name);
@@ -71,23 +95,42 @@ namespace DiscordBot.Modules.Public
             
             eb.AddInlineField("Coin(s)", User.Load(userSpecified.Id).Coins);
 
-            if(User.Load(userSpecified.Id).Chips != 0)
-                eb.AddInlineField("Chip(s)", User.Load(userSpecified.Id).Chips);
-
             if (User.Load(userSpecified.Id).MinecraftUsername != null)
+            {
                 eb.AddInlineField("Minecraft Username", User.Load(userSpecified.Id).MinecraftUsername);
+            }
             
             if(User.Load(userSpecified.Id).XboxGamertag != null)
+            {
                 eb.AddInlineField("Xbox", User.Load(userSpecified.Id).XboxGamertag);
+            }
 
             if (User.Load(userSpecified.Id).PSN != null)
+            {
                 eb.AddInlineField("Playstation", User.Load(userSpecified.Id).PSN);
+            }
 
             if (User.Load(userSpecified.Id).NintendoID != null)
+            {
                 eb.AddInlineField("Nintendo ID", User.Load(userSpecified.Id).NintendoID);
+            }
 
             if (User.Load(userSpecified.Id).SteamID != null)
-                eb.AddInlineField("Steam", User.Load(userSpecified.Id).SteamID);
+            {
+                string steamId = User.Load(userSpecified.Id).SteamID;
+                eb.AddInlineField("Steam", "[" + steamId + "](http://steamcommunity.com/id/" + steamId + "/)");
+            }
+
+            if(User.Load(userSpecified.Id).Website != null)
+            {
+                eb.AddInlineField("Website", User.Load(userSpecified.Id).Website);
+            }
+
+            if(User.Load(userSpecified.Id).GitHub != null)
+            {
+                string githubUsername = User.Load(userSpecified.Id).GitHub;
+                eb.AddInlineField("GitHub", "[" + githubUsername + "](https://github.com/" + githubUsername + "/)");
+            }
 
             await ReplyAsync("", false, eb);
         }

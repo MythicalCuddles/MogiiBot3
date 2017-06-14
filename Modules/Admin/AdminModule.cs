@@ -11,6 +11,7 @@ using Discord.WebSocket;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Other;
+using DiscordBot.Logging;
 
 using MelissasCode;
 
@@ -76,7 +77,7 @@ namespace DiscordBot.Modules.Admin
         [Command("welcome"), Summary("Send the welcome messages to the user specified.")]
         public async Task SendWelcomeMessage(IUser user)
         {
-            await GetHandler.getTextChannel(Configuration.Load().MCWelcomeChannelID).SendMessageAsync("Hey " + user.Mention + ", and welcome to the " + Context.Guild.Name + " Discord Server! If you are a player on our Minecraft Server, tell us your username and a Staff Member will grant you the MC Players Role \n\nIf you don't mind, could you fill out this form linked below. We are collecting data on how you found out about us, and it'd be great if we had your input. The form can be found here: <https://goo.gl/forms/iA9t5xjoZvnLJ5np1>");
+            await GetHandler.getTextChannel(Configuration.Load().MCWelcomeChannelID).SendMessageAsync(GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.Replace("{USERJOINED}", user.Mention).Replace("{GUILDNAME}", Context.Guild.Name));
             await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync(user.Mention + " has joined the server.");
         }
         
@@ -95,8 +96,14 @@ namespace DiscordBot.Modules.Admin
         }
 
         [Command("finecoins"), Summary("Fine the specified user the specified amount of coins.")]
-        public async Task FineCoins(IUser mentionedUser, int fineValue)
+        public async Task FineCoins(IUser mentionedUser = null, int fineValue = 0)
         {
+            if(mentionedUser == null || fineValue == 0)
+            {
+                await ReplyAsync("**Syntax:** $finecoins [@User] [Amount]");
+                return;
+            }
+
             if (fineValue <= 0)
             {
                 await ReplyAsync("You can not fine that amount of coins!");
@@ -108,20 +115,58 @@ namespace DiscordBot.Modules.Admin
             await ReplyAsync(mentionedUser.Mention + " has been fined " + fineValue + " coins from " + Context.User.Mention);
         }
 
-        [Command("setwelcome"),Summary("Set the welcome message to the specified string. (Use `{USERJOINED}` to mention the user and `{GUILD}` to name the guild.")]
+        [Command("setwelcome"),Summary("Set the welcome message to the specified string. (Use `{USERJOINED}` to mention the user and `{GUILDNAME}` to name the guild.")]
         [Alias("setwelcomemessage", "sw")]
-        public async Task SetWelcomeMessage([Remainder]string message)
+        public async Task SetWelcomeMessage([Remainder]string message = null)
         {
-            Configuration.UpdateJson("welcomeMessage", message);
-            await ReplyAsync("Welcome message has been changed successfully by " + Context.User.Mention);
-            await ReplyAsync("**SAMPLE WELCOME MESSAGE**\n" + Configuration.Load().welcomeMessage.Replace("{USERJOINED}", Context.User.Mention).Replace("{GUILDNAME}", Context.Guild.Name));
-        }
+            if(message == null)
+            {
+                StringBuilder sb = new StringBuilder()
+                    .Append("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "setwelcome [Welcome Message]\n\n")
+                    .Append("```Available Flags\n")
+                    .Append("{USERJOINED} - @" + Context.User.Username + "\n")
+                    .Append("{GUILDNAME} - " + Context.Guild.Name + "\n")
+                    .Append("\nFlags need to be in CAPITAL LETTERS!```");
 
+                await ReplyAsync(sb.ToString());
+                return;
+            }
+
+            GuildConfiguration.UpdateJson(Context.Guild.Id, "WelcomeMessage", message);
+            await ReplyAsync("Welcome message has been changed successfully by " + Context.User.Mention);
+            await ReplyAsync("**SAMPLE WELCOME MESSAGE**\n" + GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.Replace("{USERJOINED}", Context.User.Mention).Replace("{GUILDNAME}", Context.Guild.Name));
+        }
+        
         [Command("testwelcome"), Summary("Test the welcome message with mentioning a user.")]
         public async Task TestWelcomeMessage(IUser testWithUser = null)
         {
             var user = testWithUser ?? Context.User;
-            await ReplyAsync(Configuration.Load().welcomeMessage.Replace("{USERJOINED}", user.Mention).Replace("{GUILDNAME}", Context.Guild.Name));
+            await ReplyAsync(GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.Replace("{USERJOINED}", user.Mention).Replace("{GUILDNAME}", Context.Guild.Name));
+        }
+
+
+        [Command("listtransactions"), Summary("Sends a list of all the transactions.")]
+        public async Task ListTransactions()
+        {
+            StringBuilder sb = new StringBuilder()
+                .Append("**Transactions**\n**----------------**\n`Total Transactions: " + TransactionLogger.transactionsList.Count + "`\n```");
+
+            TransactionLogger.SpliceTransactionsIntoList();
+            List<string> transactions = TransactionLogger.GetSplicedTransactions(1);
+
+            for (int i = 0; i < transactions.Count; i++)
+            {
+                sb.Append((i + 1) + ": " + transactions[i] + "\n");
+            }
+
+            sb.Append("``` `Page 1`");
+
+            IUserMessage msg = await ReplyAsync(sb.ToString());
+            TransactionLogger.transactionMessages.Add(msg.Id);
+            TransactionLogger.pageNumber.Add(1);
+
+            if (TransactionLogger.transactionsList.Count() > 10)
+                await msg.AddReactionAsync(Extensions.Extensions.arrow_right);
         }
 
         [Command("addquote"), Summary("Add a quote to the list.")]
@@ -142,7 +187,7 @@ namespace DiscordBot.Modules.Admin
 
             for (int i = 0; i < quotes.Count; i++)
             {
-                sb.Append(i + ": " + quotes[i] + "\n");
+                sb.Append((i + 1) + ": " + quotes[i] + "\n");
             }
 
             sb.Append("```");
@@ -151,23 +196,23 @@ namespace DiscordBot.Modules.Admin
             QuoteHandler.quoteMessages.Add(msg.Id);
             QuoteHandler.pageNumber.Add(1);
 
-            if(quotes.Count() == 10)
+            if(QuoteHandler.quoteList.Count() > 10)
                 await msg.AddReactionAsync(Extensions.Extensions.arrow_right);
         }
 
         [Command("editquote"), Summary("Edit a quote from the list.")]
         public async Task EditQuote(int quoteID, [Remainder]string quote)
         {
-            string oldQuote = QuoteHandler.quoteList[quoteID];
-            QuoteHandler.UpdateQuote(quoteID, quote);
+            string oldQuote = QuoteHandler.quoteList[quoteID - 1];
+            QuoteHandler.UpdateQuote(quoteID - 1, quote);
             await ReplyAsync(Context.User.Mention + " updated quote id: " + quoteID + "\nOld quote: `" + oldQuote + "`\nUpdated: `" + quote + "`");
         }
 
         [Command("deletequote"), Summary("Delete a quote from the list. Make sure to `$listquotes` to get the ID for the quote being removed!")]
         public async Task RemoveQuote(int quoteID)
         {
-            string quote = QuoteHandler.quoteList[quoteID];
-            QuoteHandler.RemoveAndUpdateQuotes(quoteID);
+            string quote = QuoteHandler.quoteList[quoteID - 1];
+            QuoteHandler.RemoveAndUpdateQuotes(quoteID - 1);
             await ReplyAsync("Quote " + quoteID + " removed successfully, " + Context.User.Mention + "\n**Quote:** " + quote);
             
             await ListQuotes();
@@ -186,7 +231,7 @@ namespace DiscordBot.Modules.Admin
 
                 for (int i = 0; i < requestQuotes.Count; i++)
                 {
-                    sb.Append(i + ": " + requestQuotes[i] + "\n");
+                    sb.Append((i + 1) + ": " + requestQuotes[i] + "\n");
                 }
 
                 sb.Append("```");
@@ -195,7 +240,7 @@ namespace DiscordBot.Modules.Admin
                 QuoteHandler.requestQuoteMessages.Add(msg.Id);
                 QuoteHandler.requestPageNumber.Add(1);
 
-                if (requestQuotes.Count() == 10)
+                if (QuoteHandler.requestQuoteList.Count() > 10)
                     await msg.AddReactionAsync(Extensions.Extensions.arrow_right);
             }
             else
@@ -207,9 +252,9 @@ namespace DiscordBot.Modules.Admin
         [Command("acceptquote"), Summary("Add a quote to the list.")]
         public async Task AcceptQuote(int quoteID)
         {
-            string quote = QuoteHandler.requestQuoteList[quoteID];
+            string quote = QuoteHandler.requestQuoteList[quoteID - 1];
             QuoteHandler.AddAndUpdateQuotes(quote);
-            QuoteHandler.RemoveAndUpdateRequestQuotes(quoteID);
+            QuoteHandler.RemoveAndUpdateRequestQuotes(quoteID - 1);
             await ReplyAsync(Context.User.Mention + " has accepted Quote " + quoteID + " from the request quote list.\nQuote: " + quote);
         }
 
@@ -217,8 +262,8 @@ namespace DiscordBot.Modules.Admin
         [Alias("rejectquote")]
         public async Task DenyQuote(int quoteID)
         {
-            string quote = QuoteHandler.requestQuoteList[quoteID];
-            QuoteHandler.RemoveAndUpdateRequestQuotes(quoteID);
+            string quote = QuoteHandler.requestQuoteList[quoteID - 1];
+            QuoteHandler.RemoveAndUpdateRequestQuotes(quoteID - 1);
             await ReplyAsync(Context.User.Mention + " has denied Quote " + quoteID + " from the request quote list.\nQuote: " + quote);
         }
 

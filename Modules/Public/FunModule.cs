@@ -11,6 +11,7 @@ using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
 using DiscordBot.Other;
+using DiscordBot.Logging;
 
 using MelissasCode;
 
@@ -35,14 +36,19 @@ namespace DiscordBot.Modules.Public
                 await ReplyAsync("You can need to roll at least 1 dice, " + Context.User.Mention);
                 return;
             }
-
+            
             StringBuilder sb = new StringBuilder()
                 .Append(Context.User.Mention + " has rolled " + numberOfDice + " 6-sided dice.\n\n");
             
+            int totalOfRoll = 0, roll = 0;
             for(int i = 0; i < numberOfDice; i++)
             {
-                sb.Append("Dice " + (i + 1) + " landed on: " + _r.RandomNumber(1, 6) + "\n");
+                roll = _r.RandomNumber(1, 6);
+                totalOfRoll += roll;
+                sb.Append("Dice " + (i + 1) + " landed on: **" + roll + "** [" + roll.GetDiceFace() + "]\n");
             }
+
+            sb.Append("**-----------------------**\nSum of roll: **" + totalOfRoll + "**\n");
 
             await ReplyAsync(sb.ToString());
         }
@@ -63,11 +69,11 @@ namespace DiscordBot.Modules.Public
 
             if(value == 1)
             {
-                await ReplyAsync("A coin has been flipped, and landed on: Heads");
+                await ReplyAsync("A coin has been flipped, and landed on: **Heads**");
             }
             else if(value == 2)
             {
-                await ReplyAsync("A coin has been flipped, and landed on: Tails");
+                await ReplyAsync("A coin has been flipped, and landed on: **Tails**");
             }
             else
             {
@@ -108,7 +114,7 @@ namespace DiscordBot.Modules.Public
         [Command("why"), Summary("y tho")]
         public async Task WhyTho()
         {
-            await ReplyAsync("http://i.imgur.com/yNlQWRM.jpg");
+            await ReplyAsync("https://i.imgur.com/W2l8dvp.png");
         }
 
         [Command("groot"), Summary("Sends a picture of baby groot dancing.")]
@@ -148,12 +154,10 @@ namespace DiscordBot.Modules.Public
         [Alias("purse", "balance", "bal")]
         public async Task LoadUserBalance()
         {
-            int userCoins = User.Load(Context.User.Id).Coins,
-                userChips = User.Load(Context.User.Id).Chips;
+            int userCoins = User.Load(Context.User.Id).Coins;
             await ReplyAsync(":moneybag: **" + Context.User.Username + "'s Balance** :moneybag:\n" + 
                 "\n" +
-                "**" + userCoins + "** coins\n" +
-                "**" + userChips + "** chips\n");
+                "**" + userCoins + "** coins\n");
         }
 
         [Command("coins"), Summary("Returns the amount of coins you have earned")]
@@ -187,6 +191,7 @@ namespace DiscordBot.Modules.Public
 
             User.UpdateJson(Context.User.Id, "Coins", (issuerCoins - coins));
             User.UpdateJson(user.Id, "Coins", userCoins + coins);
+            TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") give " + user.Username + " (" + user.Id + ") " + coins + " coins.");
             await ReplyAsync(Context.User.Mention + " has given " + user.Mention + " " + coins + " coin(s)");
         }
 

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Discord.Net;
 using Discord.WebSocket;
 using DiscordBot.Common;
+using Discord.Commands;
 
 namespace DiscordBot.Extensions
 {
@@ -73,6 +74,10 @@ namespace DiscordBot.Extensions
             { 20, "🇯" }
         };
 
+        public static String GetTimestamp(this DateTime value)
+        {
+            return value.ToString("dd/MM/yyyy] [HH:mm:ss");
+        }
 
         public static IMessage DeleteAfter(this IUserMessage msg, int seconds)
         {
@@ -83,6 +88,67 @@ namespace DiscordBot.Extensions
                 catch { }
             });
             return msg;
+        }
+
+        public static SocketGuild GetGuild(this SocketChannel channel)
+        {
+            foreach(SocketGuild g in MogiiBot3._bot.Guilds)
+            {
+                foreach(SocketTextChannel t in g.TextChannels)
+                {
+                    if(channel.Id == t.Id)
+                    {
+                        return g;
+                    }
+                }
+
+                foreach(SocketVoiceChannel v in g.VoiceChannels)
+                {
+                    if(channel.Id == v.Id)
+                    {
+                        return g;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public static IGuild getGuild(this ISocketMessageChannel textChannel)
+        {
+            foreach (SocketGuild g in MogiiBot3._bot.Guilds)
+            {
+                foreach (SocketTextChannel tc in g.TextChannels)
+                {
+                    if (tc.Id == textChannel.Id)
+                    {
+                        return g;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public static bool NSFWMember(this IUser iUser)
+        {
+            var cUser = iUser as SocketGuildUser;
+
+            foreach(SocketGuild g in MogiiBot3._bot.Guilds)
+            {
+                if(g.Id == Configuration.Load().NSFWServerID)
+                {
+                    foreach(SocketGuildUser u in g.Users)
+                    {
+                        if(u == cUser)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
         }
 
         public static bool IsMessageOnNSFWChannel(this IUserMessage message)
@@ -121,16 +187,16 @@ namespace DiscordBot.Extensions
             return source.Next(minValue, maxValue + 1);
         }
 
-        public static string GetDiceFace(int value)
+        public static string GetDiceFace(this int value)
         {
             switch(value)
             {
-                case 1: return "http://i.imgur.com/NYn89EU.png";
-                case 2: return "http://i.imgur.com/5pCUMdv.png";
-                case 3: return "http://i.imgur.com/oD4kjaD.png";
-                case 4: return "http://i.imgur.com/pzWG3gL.png";
-                case 5: return "http://i.imgur.com/yTfdVP1.png";
-                case 6: return "http://i.imgur.com/mgTCYtk.png";
+                case 1: return "http://i.imgur.com/IMdC6hG.png";
+                case 2: return "http://i.imgur.com/3F0qYkC.png";
+                case 3: return "http://i.imgur.com/vje4R3X.png";
+                case 4: return "http://i.imgur.com/o5UiOW6.png";
+                case 5: return "http://i.imgur.com/iM3HSaU.png";
+                case 6: return "http://i.imgur.com/2KTFim8.png";
                 default: return "";
             }
         }

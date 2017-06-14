@@ -43,7 +43,7 @@ namespace DiscordBot.Other
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.Write("ok");
             Console.ResetColor();
-            Console.WriteLine("]    " + fileName + ": loaded.");
+            Console.WriteLine("]    " + requestQuotesFileName + ": loaded.");
         }
 
         public static void EnsureExists()
@@ -77,7 +77,7 @@ namespace DiscordBot.Other
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Console.Write("ok");
                 Console.ResetColor();
-                Console.WriteLine("]    " + fileName + ": created.");
+                Console.WriteLine("]    " + requestQuotesFileName + ": created.");
             }
 
             LoadAllQuotes( );

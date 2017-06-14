@@ -19,14 +19,22 @@ namespace DiscordBot.Common
         private static string Extension { get; set; } = ".json";
 
         public int Coins { get; set; } = 0;
-        public int Chips { get; set; } = 0;
 
         public string Name { get; set; } = null;
         public string Gender { get; set; } = null;
         public string Pronouns { get; set; } = null;
         public string About { get; set; } = null;
-        public bool BOTDevelopmentTeamMember { get; set; } = false;
-        public bool MythicalCuddlesTeamMember { get; set; } = false;
+        public string Website { get; set; } = null;
+        public string GitHub { get; set; } = null;
+
+        public byte AboutR { get; set; } = 140;
+        public byte AboutG { get; set; } = 90;
+        public byte AboutB { get; set; } = 210;
+        
+        public bool TeamMember { get; set; } = false;
+        public string EmbedAuthorBuilderIconUrl { get; set; } = "http://i.imgur.com/Ny5Qcto.png";
+        public string EmbedFooterBuilderIconUrl { get; set; } = "http://i.imgur.com/Ny5Qcto.png";
+        public string FooterText { get; set; } = null;
 
         // Socials
         public string MinecraftUsername { get; set; } = null;

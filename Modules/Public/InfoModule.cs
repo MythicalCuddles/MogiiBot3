@@ -13,6 +13,7 @@ using DiscordBot.Other;
 
 using MelissasCode;
 using Discord.WebSocket;
+using System.Diagnostics;
 
 namespace DiscordBot.Modules.Public
 {
@@ -24,43 +25,59 @@ namespace DiscordBot.Modules.Public
         [Command("stats"), Summary("Sends information about the bot.")]
         public async Task About()
         {
-            var awaitMessage = await ReplyAsync("Please wait whilst I calculate my values. This shouldn't take long.");
-
             StringBuilder sb = new StringBuilder()
-                .Append("---------------------------------------------\n")
-                .Append("Bot: " + MogiiBot3._bot.CurrentUser.Mention + "\n")
-                .Append("Bot ID: " + MogiiBot3._bot.CurrentUser.Id + "\n")
-                .Append("[MogiiBot Repository](https://github.com/MythicalCuddles/MogiiBot3)" + "\n")
-                .Append("---------------------------------------------\n")
-                .Append("Developer Name: " + GetHandler.getUser(DiscordWorker.getMelissaID).Username + "\n")
-                .Append("Developer ID: " + DiscordWorker.getMelissaID + "\n")
-                .Append("[MythicalCuddles.xyz](http://www.mythicalcuddles.xyz)" + "\n")
-                .Append("[GitHub/MythicalCuddles](https://github.com/MythicalCuddles)" + "\n")
-                .Append("---------------------------------------------\n")
-                .Append("Development: " + developmentSince() + "\n")
-                .Append("Uptime: " + calculateUptime());
+                .Append("**---------------------------------------------**\n")
+                .Append("**Bot Name:** " + MogiiBot3._bot.CurrentUser.Username + "\n")
+                .Append("**Bot ID:** " + MogiiBot3._bot.CurrentUser.Id + "\n")
+                .Append("**---------------------------------------------**\n")
+                .Append("**Developer Name:** " + GetHandler.getUser(DiscordWorker.getMelissaID).Username + "\n")
+                .Append("**Developer ID:** " + DiscordWorker.getMelissaID + "\n")
+                .Append("**---------------------------------------------**\n")
+                .Append("**Development:** " + developmentSince() + "\n")
+                .Append("**Uptime:** " + calculateUptime() + "\n")
+                .Append("**---------------------------------------------**\n");
 
             int totalUserCount = 0, totalChannelCount = 0, totalTextChannelCount = 0, totalCoins = 0;
-            ulong mogiiCraft = Configuration.Load().ServerID;
+            int totalGuildUserCount = 0, totalGuildChannelCount = 0, totalGuildTextChannelCount = 0, totalGuildCoins = 0;
 
             foreach(SocketGuild g in MogiiBot3._bot.Guilds)
             {
                 foreach (SocketChannel c in g.Channels)
                 {
                     totalChannelCount++;
+
+                    if (g.Id == Context.Guild.Id)
+                    {
+                        totalGuildChannelCount++;
+                    }
                 }
                 foreach (SocketTextChannel t in g.TextChannels)
                 {
                     totalTextChannelCount++;
+
+                    if(g.Id == Context.Guild.Id)
+                    {
+                        totalGuildTextChannelCount++;
+                    }
                 }
                 foreach (SocketUser u in g.Users)
                 {
                     totalUserCount++;
-                    
-                    if (g.Id == mogiiCraft) // Count the coins only once per user.
-                        totalCoins += User.Load(u.Id).Coins;
+                    totalCoins += User.Load(u.Id).Coins;
+
+                    if (g.Id == Context.Guild.Id)
+                    {
+                        totalGuildUserCount++;
+                        totalGuildCoins += User.Load(u.Id).Coins;
+                    }
                 }
             }
+
+            sb.Append("**Guild Information - " + Context.Guild.Name + "**\n")
+                .Append("**Total Channels:** " + totalGuildChannelCount + " (" + totalGuildTextChannelCount + "/" + (totalGuildChannelCount - totalGuildTextChannelCount) + ")" + "\n")
+                .Append("**Total Users:** " + totalGuildUserCount + "\n")
+                .Append("**Total Coins:** " + totalGuildCoins + "\n")
+                .Append("**---------------------------------------------**\n");
 
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
                 .WithName(MogiiBot3._bot.CurrentUser.Username + " Version " + _v.Major + "." + _v.Minor + "." + _v.Build + "." + _v.Revision);
@@ -75,19 +92,12 @@ namespace DiscordBot.Modules.Public
                 .WithFooter(efb);
 
             await ReplyAsync("", false, eb);
-            await awaitMessage.DeleteAsync();
         }
 
         [Command("hotlines"), Summary("Sends hotline links for the user.")]
         public async Task LinkHotlines()
         {
             await ReplyAsync("**International Helplines** \nhttp://togetherweare-strong.tumblr.com/helpline \nhttps://reddit.com/r/SuicideWatch/wiki/hotlines");
-        }
-
-        [Command("currentvalue"), Summary("")]
-        public async Task ViewStockMarketValue()
-        {
-            await ReplyAsync("**Current Stock Prices**\nYou can buy **1** chip for **" + Configuration.Load().CoinToChipRatio + "** coin(s).\nYou can sell **1** chip for **" + Configuration.Load().ChipToCoinRatio + "** coin(s).");
         }
 
         [Command("poll"), Summary("Sends a link to the poll for the minecraft server.")]
@@ -130,6 +140,8 @@ namespace DiscordBot.Modules.Public
 
             await ReplyAsync(sb.ToString());
         }
+
+
 
         private static TimeSpan _uptime;
         public static DateTime _dt = new DateTime();

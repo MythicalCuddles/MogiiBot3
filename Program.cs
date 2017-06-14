@@ -12,6 +12,7 @@ using Discord.Net.Providers.UDPClient;
 using DiscordBot.Common;
 using DiscordBot.Other;
 using DiscordBot.Extensions;
+using DiscordBot.Logging;
 
 using MelissasCode;
 using Discord.Commands;
@@ -21,25 +22,46 @@ namespace DiscordBot
 {
     class Program
     {
+        private static Version _v = Assembly.GetExecutingAssembly().GetName().Version;
+
         static void Main(string[] args)
         {
-            Console.WriteLine("MogiiBot 3");
-            Console.WriteLine("A Discord.Net Bot");
-            Console.WriteLine("------------------------------------------");
+            Console.Write("MogiiBot 3: [");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write("Version " + _v.Major + "." + _v.Minor + "." + _v.Build + "." + _v.Revision);
+            Console.ResetColor();
+            Console.WriteLine("]    ");
 
-            Console.WriteLine("Developed by Melissa B. (@MythicalCuddles)");
-            Console.WriteLine("www.mythicalcuddles.xyz");
-            Console.WriteLine("Copyright 2017 Melissa B.");
-            Console.WriteLine("------------------------------------------");
+            Console.WriteLine("A Discord.Net Bot");
+            Console.WriteLine("-----------------------------------------------------------------");
+            
+            Console.Write("Developed by Melissa B. (");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.Write("@MythicalCuddles");
+            Console.ResetColor();
+            Console.WriteLine(")");
+
+            Console.Write("MelissasCode: [");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write("Version " + MelissaCode.Version);
+            Console.ResetColor();
+            Console.WriteLine("]    ");
+
+            Console.WriteLine("Web: www.mythicalcuddles.xyz");
+            Console.WriteLine("Contact: melissa@mythicalcuddles.xyz \n");
+            Console.WriteLine("Copyright 2017 Melissa B. | Licensed under the MIT License.");
+            Console.WriteLine("-----------------------------------------------------------------");
 
             License.PrintMIT();
-            Console.WriteLine("------------------------------------------");
+            Console.WriteLine("-----------------------------------------------------------------");
 
             Configuration.EnsureExists();
+
             QuoteHandler.EnsureExists();
             VoteLinkHandler.EnsureExists();
             MusicHandler.EnsureExists();
-            Console.WriteLine("------------------------------------------");
+            TransactionLogger.EnsureExists();
+            Console.WriteLine("-----------------------------------------------------------------");
 
             new MogiiBot3().RunBotAsync().GetAwaiter().GetResult();
         }

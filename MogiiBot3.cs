@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 using System.Threading.Tasks;
 
 using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using Discord.Net.Providers.WS4Net;
 using Discord.Net.Providers.UDPClient;
@@ -12,10 +14,9 @@ using Discord.Net.Providers.UDPClient;
 using DiscordBot.Common;
 using DiscordBot.Other;
 using DiscordBot.Extensions;
+using DiscordBot.Logging;
 
 using MelissasCode;
-using Discord.Commands;
-using System.Reflection;
 
 namespace DiscordBot
 {
@@ -24,6 +25,7 @@ namespace DiscordBot
         public static DiscordSocketClient _bot;
         public static CommandService commandService;
         public static DependencyMap dependencyMap;
+        Random _r = new Random();
 
         public async Task RunBotAsync()
         {
@@ -39,10 +41,14 @@ namespace DiscordBot
 
             // Create Tasks for Bot Events
             _bot.Log += Log;
-
+            
             _bot.UserJoined += UserJoined;
             _bot.UserLeft += UserLeft;
 
+            _bot.ChannelCreated += ChannelCreated;
+            _bot.ChannelDestroyed += ChannelDestroyed;
+            //_bot.ChannelUpdated += ChannelUpdated;
+            
             _bot.Ready += Ready;
 
             _bot.ReactionAdded += ReactionAdded;
@@ -59,128 +65,322 @@ namespace DiscordBot
             await Task.Delay(-1);
         }
 
-        private async Task MessageUpdated(Cacheable<IMessage, ulong> cachedMessage, SocketMessage message, ISocketMessageChannel channel)
+        // Log messages to the console in different colors
+        private Task Log(LogMessage logMessage)
         {
-            var msg = message as SocketUserMessage;
-            Logging.MessageLogger.logEditMessage(msg);
-        }
-
-        private async Task MessageDeleted(Cacheable<IMessage, ulong> cachedMessage, ISocketMessageChannel channel)
-        {
-            var message = cachedMessage.Value as SocketUserMessage;
-            Logging.MessageLogger.logDeleteMessage(message);
-        }
-
-        private async Task ReactionAdded(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
-        {
-            if (reaction.User.Value.IsBot)
-                return;
-
-            if (QuoteHandler.quoteMessages.Contains(message.Id))
+            var cc = Console.ForegroundColor;
+            switch (logMessage.Severity)
             {
-                // Check to see if the next page or previous page was clicked.
-                if (reaction.Emoji.Name == Extensions.Extensions.arrow_left)
-                {
-                    if (QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)] == 1)
-                        return;
-
-                    QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)]--;
-                }
-                else if (reaction.Emoji.Name == Extensions.Extensions.arrow_right)
-                {
-                    if (QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)] == QuoteHandler.getQuotesListLength)
-                        return;
-
-                    QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)]++;
-                }
-
-                StringBuilder sb = new StringBuilder()
-                .Append("**Quote List** : *Page " + QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)] + "*\n```");
-
-                List<string> quotes = QuoteHandler.getQuotes(QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)]);
-
-                for (int i = 0; i < quotes.Count; i++)
-                {
-                    sb.Append((i + ((QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)] - 1) * 10)) + ": " + quotes[i] + "\n");
-                }
-
-                sb.Append("```");
-
-                await message.Value.ModifyAsync(msg => msg.Content = sb.ToString());
-                await message.Value.RemoveAllReactionsAsync();
-
-                if (QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)] == 1)
-                {
-                    await message.Value.AddReactionAsync(Extensions.Extensions.arrow_right);
-                }
-                else if (QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)] == QuoteHandler.getQuotesListLength)
-                {
-                    await message.Value.AddReactionAsync(Extensions.Extensions.arrow_left);
-                }
-                else
-                {
-                    await message.Value.AddReactionAsync(Extensions.Extensions.arrow_left);
-                    await message.Value.AddReactionAsync(Extensions.Extensions.arrow_right);
-                }
+                case LogSeverity.Critical:
+                case LogSeverity.Error:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    break;
+                case LogSeverity.Warning:
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    break;
+                case LogSeverity.Info:
+                    Console.ForegroundColor = ConsoleColor.White;
+                    break;
+                case LogSeverity.Verbose:
+                case LogSeverity.Debug:
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    break;
             }
-
-            if (QuoteHandler.requestQuoteMessages.Contains(message.Id))
-            {
-                // Check to see if the next page or previous page was clicked.
-                if (reaction.Emoji.Name == Extensions.Extensions.arrow_left)
-                {
-                    if (QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] == 1)
-                        return;
-
-                    QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)]--;
-                }
-                else if (reaction.Emoji.Name == Extensions.Extensions.arrow_right)
-                {
-                    if (QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] == QuoteHandler.getRequestQuotesListLength)
-                        return;
-
-                    QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)]++;
-                }
-
-                StringBuilder sb = new StringBuilder()
-                .Append("**Request Quote List** : *Page " + QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] + "*\nTo accept a quote, type **$acceptquote [id]**.\nTo reject a quote, type **$denyquote [id]**.\n```");
-
-                List<string> requestQuotes = QuoteHandler.getRequestQuotes(QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)]);
-
-                for (int i = 0; i < requestQuotes.Count; i++)
-                {
-                    sb.Append((i + ((QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] - 1) * 10)) + ": " + requestQuotes[i] + "\n");
-                }
-
-                sb.Append("```");
-
-                await message.Value.ModifyAsync(msg => msg.Content = sb.ToString());
-                await message.Value.RemoveAllReactionsAsync();
-
-                if (QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] == 1)
-                {
-                    await message.Value.AddReactionAsync(Extensions.Extensions.arrow_right);
-                }
-                else if (QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] == QuoteHandler.getRequestQuotesListLength)
-                {
-                    await message.Value.AddReactionAsync(Extensions.Extensions.arrow_left);
-                }
-                else
-                {
-                    await message.Value.AddReactionAsync(Extensions.Extensions.arrow_left);
-                    await message.Value.AddReactionAsync(Extensions.Extensions.arrow_right);
-                }
-            }
+            Console.WriteLine($"{DateTime.Now,-19} [{logMessage.Severity,8}] {logMessage.Source}: {logMessage.ToString()}");
+            Console.ForegroundColor = cc;
+            return Task.CompletedTask;
         }
-
+        
         private async Task Ready()
         {
             await _bot.SetGameAsync(Configuration.Load().Playing);
             await _bot.SetStatusAsync(Configuration.Load().Status);
 
             Modules.Public.InfoModule._dt = DateTime.Now;
+
+            Console.WriteLine("-----------------------------------------------------------------");
+            foreach (SocketGuild g in _bot.Guilds)
+            {
+                Console.Write("status: [");
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                Console.Write("find");
+                Console.ResetColor();
+                Console.WriteLine("]  " + g.Name + ": attempting to load.");
+
+                GuildConfiguration.EnsureExists(g.Id);
+            }
+            Console.WriteLine("-----------------------------------------------------------------");
         }
 
+        private async Task ChannelCreated(SocketChannel channel)
+        {
+            if (channel is ITextChannel)
+            {
+                var channelParam = channel as ITextChannel;
+                await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**New Text Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
+                    + "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
+                    + "\nTopic: " + channelParam.Topic + "```");
+            }
+            else if (channel is IVoiceChannel)
+            {
+                var channelParam = channel as IVoiceChannel;
+                await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**New Voice Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
+                    + "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
+                    + "\nUser Limit: " + channelParam.UserLimit + "```");
+            }
+            else
+            {
+                Console.Write("status: [");
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.Write("error");
+                Console.ResetColor();
+                Console.WriteLine("]    " + ": " + channel.Id + " type is unknown.");
+            }
+        }
+        //private async Task ChannelUpdated(SocketChannel cachedChannel, SocketChannel channel)
+        //{
+        //    if(channel is ITextChannel && cachedChannel is ITextChannel)
+        //    {
+        //        var cachedChannelParam = cachedChannel as ITextChannel;
+        //        var channelParam = channel as ITextChannel;
+        //        await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**Text Channel Updated**\n```ID: " + cachedChannelParam.Id + " / " + channelParam.Id 
+        //            + "\nOld Name: " + cachedChannelParam.Name
+        //            + "\nNew Name: " + channelParam.Name
+        //            + "\nGuild ID: " + cachedChannelParam.GuildId + " / " + channelParam.GuildId
+        //            + "\nGuild: " + cachedChannelParam.Guild.Name + " / " + channelParam.Guild.Name
+        //            + "\nOld Topic: " + cachedChannelParam.Topic
+        //            + "\nNew Topic: " + channelParam.Topic + "```");
+        //    }
+        //    else if(channel is IVoiceChannel && cachedChannel is IVoiceChannel)
+        //    {
+        //        var cachedChannelParam = cachedChannel as IVoiceChannel;
+        //        var channelParam = channel as IVoiceChannel;
+        //        await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**Text Channel Updated**\n```ID: " + cachedChannelParam.Id + " / " + channelParam.Id
+        //            + "\nOld Name: " + cachedChannelParam.Name
+        //            + "\nNew Name: " + channelParam.Name
+        //            + "\nGuild ID: " + cachedChannelParam.GuildId + " / " + channelParam.GuildId
+        //            + "\nGuild: " + cachedChannelParam.Guild.Name + " / " + channelParam.Guild.Name
+        //            + "\nOld User Limit: " + cachedChannelParam.UserLimit
+        //            + "\nNew User Limit: " + channelParam.UserLimit + "```");
+        //    }
+        //    else
+        //    {
+        //        Console.Write("status: [");
+        //        Console.ForegroundColor = ConsoleColor.DarkRed;
+        //        Console.Write("error");
+        //        Console.ResetColor();
+        //        Console.WriteLine("]    " + ": " + cachedChannel.Id + " does not match types with " + channel.Id);
+        //    }
+        //}
+        private async Task ChannelDestroyed(SocketChannel channel)
+        {
+            if (channel is ITextChannel)
+            {
+                var channelParam = channel as ITextChannel;
+                await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**Removed Text Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
+                    + "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
+                    + "\nTopic: " + channelParam.Topic + "```");
+            }
+            else if (channel is IVoiceChannel)
+            {
+                var channelParam = channel as IVoiceChannel;
+                await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**Removed Voice Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
+                    + "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
+                    + "\nUser Limit: " + channelParam.UserLimit + "```");
+            }
+            else
+            {
+                Console.Write("status: [");
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.Write("error");
+                Console.ResetColor();
+                Console.WriteLine("]    " + ": " + channel.Id + " type is unknown.");
+            }
+        }
+
+        private async Task MessageUpdated(Cacheable<IMessage, ulong> cachedMessage, SocketMessage message, ISocketMessageChannel channel)
+        {
+            var msg = message as SocketUserMessage;
+            MessageLogger.logEditMessage(msg);
+        }
+        private async Task MessageDeleted(Cacheable<IMessage, ulong> cachedMessage, ISocketMessageChannel channel)
+        {
+            var message = cachedMessage.Value as SocketUserMessage;
+            MessageLogger.logDeleteMessage(message);
+        }
+
+        private async Task HandleQuoteReactions(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
+        {
+            // Check to see if the next page or previous page was clicked.
+            if (reaction.Emoji.Name == Extensions.Extensions.arrow_left)
+            {
+                if (QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)] == 1)
+                    return;
+
+                QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)]--;
+            }
+            else if (reaction.Emoji.Name == Extensions.Extensions.arrow_right)
+            {
+                if (QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)] == QuoteHandler.getQuotesListLength)
+                    return;
+
+                QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)]++;
+            }
+
+            StringBuilder sb = new StringBuilder()
+            .Append("**Quote List** : *Page " + QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)] + "*\n```");
+
+            List<string> quotes = QuoteHandler.getQuotes(QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)]);
+
+            for (int i = 0; i < quotes.Count; i++)
+            {
+                sb.Append(((i + 1) + ((QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)] - 1) * 10)) + ": " + quotes[i] + "\n");
+            }
+
+            sb.Append("```");
+
+            await message.Value.ModifyAsync(msg => msg.Content = sb.ToString());
+            await message.Value.RemoveAllReactionsAsync();
+
+            if (QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)] == 1)
+            {
+                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_right);
+            }
+            else if (QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)] == QuoteHandler.getQuotesListLength)
+            {
+                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_left);
+            }
+            else
+            {
+                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_left);
+                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_right);
+            }
+        }
+        private async Task HandleRequestQuoteReactions(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
+        {
+            // Check to see if the next page or previous page was clicked.
+            if (reaction.Emoji.Name == Extensions.Extensions.arrow_left)
+            {
+                if (QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] == 1)
+                    return;
+
+                QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)]--;
+            }
+            else if (reaction.Emoji.Name == Extensions.Extensions.arrow_right)
+            {
+                if (QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] == QuoteHandler.getRequestQuotesListLength)
+                    return;
+
+                QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)]++;
+            }
+
+            StringBuilder sb = new StringBuilder()
+            .Append("**Request Quote List** : *Page " + QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] + "*\nTo accept a quote, type **$acceptquote [id]**.\nTo reject a quote, type **$denyquote [id]**.\n```");
+
+            List<string> requestQuotes = QuoteHandler.getRequestQuotes(QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)]);
+
+            for (int i = 0; i < requestQuotes.Count; i++)
+            {
+                sb.Append(((i + 1) + ((QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] - 1) * 10)) + ": " + requestQuotes[i] + "\n");
+            }
+
+            sb.Append("```");
+
+            await message.Value.ModifyAsync(msg => msg.Content = sb.ToString());
+            await message.Value.RemoveAllReactionsAsync();
+
+            if (QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] == 1)
+            {
+                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_right);
+            }
+            else if (QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] == QuoteHandler.getRequestQuotesListLength)
+            {
+                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_left);
+            }
+            else
+            {
+                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_left);
+                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_right);
+            }
+        }
+        private async Task HandleTransactionReactions(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
+        {
+            // Check to see if the next page or previous page was clicked.
+            if (reaction.Emoji.Name == Extensions.Extensions.arrow_left)
+            {
+                if (TransactionLogger.pageNumber[TransactionLogger.transactionMessages.IndexOf(message.Id)] == 1)
+                    return;
+
+                TransactionLogger.pageNumber[TransactionLogger.transactionMessages.IndexOf(message.Id)]--;
+            }
+            else if (reaction.Emoji.Name == Extensions.Extensions.arrow_right)
+            {
+                if (TransactionLogger.pageNumber[TransactionLogger.transactionMessages.IndexOf(message.Id)] == QuoteHandler.getRequestQuotesListLength)
+                    return;
+
+                TransactionLogger.pageNumber[TransactionLogger.transactionMessages.IndexOf(message.Id)]++;
+            }
+
+            StringBuilder sb = new StringBuilder()
+                .Append("**Transactions**\n**----------------**\n`Total Transactions: " + TransactionLogger.transactionsList.Count + "`\n```");
+
+            List<string> transactions = TransactionLogger.GetSplicedTransactions(TransactionLogger.pageNumber[TransactionLogger.transactionMessages.IndexOf(message.Id)]);
+
+            for (int i = 0; i < transactions.Count; i++)
+            {
+                sb.Append(((i + 1) + ((TransactionLogger.pageNumber[TransactionLogger.transactionMessages.IndexOf(message.Id)] - 1) * 10)) + ": " + transactions[i] + "\n");
+            }
+            
+            sb.Append("``` `Page " + TransactionLogger.pageNumber[TransactionLogger.transactionMessages.IndexOf(message.Id)] + "`");
+
+            await message.Value.ModifyAsync(msg => msg.Content = sb.ToString());
+            await message.Value.RemoveAllReactionsAsync();
+
+            if (TransactionLogger.pageNumber[TransactionLogger.transactionMessages.IndexOf(message.Id)] == 1)
+            {
+                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_right);
+            }
+            else if (TransactionLogger.pageNumber[TransactionLogger.transactionMessages.IndexOf(message.Id)] == QuoteHandler.getRequestQuotesListLength)
+            {
+                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_left);
+            }
+            else
+            {
+                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_left);
+                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_right);
+            }
+        }
+
+        private async Task ReactionAdded(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
+        {
+            if (reaction.User.Value.IsBot)
+                return;
+            
+            if (QuoteHandler.quoteMessages.Contains(message.Id))
+            {
+                await HandleQuoteReactions(message, channel, reaction);
+                return;
+            }
+
+            if (QuoteHandler.requestQuoteMessages.Contains(message.Id))
+            {
+                await HandleRequestQuoteReactions(message, channel, reaction);
+                return;
+            }
+
+            if(TransactionLogger.transactionMessages.Contains(message.Id))
+            {
+                await HandleTransactionReactions(message, channel, reaction);
+                return;
+            }
+
+            // Coin System to add a coin for each reaction that is added to a message.
+            if (Configuration.Load().CoinsForReactions)
+            {
+                AwardCoinsToPlayer(reaction.UserId);
+            }
+        }
+        
         private async Task UserLeft(SocketGuildUser e)
         {
             if (e.Guild.Id == Configuration.Load().ServerID)
@@ -206,7 +406,6 @@ namespace DiscordBot
                 await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
             }
         }
-
         private async Task UserJoined(SocketGuildUser e)
         {
             if (e.Guild.Id == Configuration.Load().ServerID)
@@ -220,7 +419,7 @@ namespace DiscordBot
 
                 await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
 
-                string wMsg1 = Configuration.Load().welcomeMessage.Replace("{USERJOINED}", e.Mention).Replace("{GUILDNAME}", e.Guild.Name);
+                string wMsg1 = GuildConfiguration.Load(e.Guild.Id).WelcomeMessage.Replace("{USERJOINED}", e.Mention).Replace("{GUILDNAME}", e.Guild.Name);
                 await GetHandler.getTextChannel(Configuration.Load().MCWelcomeChannelID).SendMessageAsync(wMsg1);
             }
             else if (e.Guild.Id == Configuration.Load().NSFWServerID)
@@ -247,16 +446,14 @@ namespace DiscordBot
 
             await commandService.AddModulesAsync(Assembly.GetEntryAssembly());
         }
-
         private async Task MessageReceived(SocketMessage messageParam)
         {
             var message = messageParam as SocketUserMessage;
+            // Adds the message to the log file
+            MessageLogger.logNewMessage(message);
 
             if (message == null) return;
             if (message.Author.IsBot) return;
-
-            // Adds the message to the log file
-            Logging.MessageLogger.logNewMessage(message);
 
             // Is the bot told to ignore the user? If so, is the user NOT Melissa? Iff => escape Task
             if (User.Load(message.Author.Id).IsBotIgnoringUser && message.Author.Id != DiscordWorker.getMelissaID) return;
@@ -292,14 +489,10 @@ namespace DiscordBot
 
             // If the message does not contain the prefix or mentioning the bot
             int argPos = 0;
-            if (!(message.HasStringPrefix(Configuration.Load().Prefix, ref argPos) || message.HasMentionPrefix(_bot.CurrentUser, ref argPos)))
+            if (!(message.HasStringPrefix(GuildConfiguration.Load(message.Channel.getGuild().Id).Prefix, ref argPos) || message.HasMentionPrefix(_bot.CurrentUser, ref argPos))) // Configuration.Load().Prefix
             {
                 // Coin System to add a coin for each message the user sends.
-                try
-                {
-                    User.UpdateJson(message.Author.Id, "Coins", (User.Load(message.Author.Id).Coins + 1));
-                }
-                catch (Exception e) { Console.WriteLine(e); }
+                AwardCoinsToPlayer(message.Author.Id);
 
                 return;
             }
@@ -311,35 +504,34 @@ namespace DiscordBot
             // If the command modules doesn't contain a task for the message, return an error iff UnknownCommand is enabled
             if (!result.IsSuccess && Configuration.Load().UnknownCommandEnabled)
             {
-                var errorMessage = await context.Channel.SendMessageAsync(messageParam.Author.Mention + ", " + result.ErrorReason);
+                IUserMessage errorMessage;
+                if (result.ErrorReason.ToUpper().Contains(MelissaCode.GetOldFullNameUpper))
+                {
+                    errorMessage = await context.Channel.SendMessageAsync(messageParam.Author.Mention + ", an error containing classified information has occured. Please contact Melissa.\n`Error Code/Log File: #Ex00f" + _r.RandomNumber(0, 1000000) + "`");
+                }
+                else
+                {
+                    errorMessage = await context.Channel.SendMessageAsync(messageParam.Author.Mention + ", " + result.ErrorReason);
+                }
+
+                Console.WriteLine(messageParam.Author.Mention + ", " + result.ErrorReason);
+
+                message.DeleteAfter(20);
                 errorMessage.DeleteAfter(20);
+
+                return;
             }
         }
 
-        // Log messages to the console in different colors
-        private Task Log(LogMessage logMessage)
+        private static void AwardCoinsToPlayer(ulong UserId, int CoinsToAward = 1)
         {
-            var cc = Console.ForegroundColor;
-            switch (logMessage.Severity)
+            try
             {
-                case LogSeverity.Critical:
-                case LogSeverity.Error:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    break;
-                case LogSeverity.Warning:
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    break;
-                case LogSeverity.Info:
-                    Console.ForegroundColor = ConsoleColor.White;
-                    break;
-                case LogSeverity.Verbose:
-                case LogSeverity.Debug:
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
-                    break;
+                User.UpdateJson(UserId, "Coins", (User.Load(UserId).Coins + CoinsToAward));
             }
-            Console.WriteLine($"{DateTime.Now,-19} [{logMessage.Severity,8}] {logMessage.Source}: {logMessage.ToString()}");
-            Console.ForegroundColor = cc;
-            return Task.CompletedTask;
+            catch (Exception e) { Console.WriteLine(e); }
+
+            return;
         }
     }
 }

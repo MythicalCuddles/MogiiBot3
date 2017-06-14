@@ -20,10 +20,22 @@ namespace DiscordBot.Modules.Admin
     [MinPermissions(PermissionLevel.ServerAdmin)]
     public class SendModule : ModuleBase
     {
+        [Command("")]
+        public async Task Send()
+        {
+            await ReplyAsync("**Syntax:** $send channelmessage [cmessage/channelmsg] / privatemessage [pm/dm/directmessage]");
+        }
+
         [Command("channelmessage"), Summary("Sends a message to the channel specified.")]
         [Alias("cmessage", "channelmsg")]
-        public async Task SendChannelMessage([Summary("The channel id to send the message to.")] ulong channel, [Remainder]string message)
+        public async Task SendChannelMessage([Summary("The channel id to send the message to.")] ulong channel = 0, [Remainder]string message = null)
         {
+            if(channel == 0 || message == null)
+            {
+                await ReplyAsync("**Syntax:** $send channelmessage [Channel ID] [Message]");
+                return;
+            }
+
             await GetHandler.getTextChannel(channel).SendMessageAsync(message);
 
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
@@ -43,8 +55,14 @@ namespace DiscordBot.Modules.Admin
 
         [Command("privatemessage"), Summary("Sends a private message to the user specified.")]
         [Alias("pm", "dm", "directmessage")]
-        public async Task SendPrivateMessage([Summary("The user to send the message to.")] IUser user, [Remainder]string message)
+        public async Task SendPrivateMessage([Summary("The user to send the message to.")] IUser user = null, [Remainder]string message = null)
         {
+            if (user == null || message == null)
+            {
+                await ReplyAsync("**Syntax:** $send privatemessage [@User] [Message]");
+                return;
+            }
+
             await user.CreateDMChannelAsync().Result.SendMessageAsync(message);
 
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder()

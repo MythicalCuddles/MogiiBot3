@@ -24,16 +24,16 @@ namespace DiscordBot.Modules.Public.Games
 
         [Command("buyslots"), Summary("")]
         [Alias("slots")]
-        public async Task PlaySlots(int inputChips)
+        public async Task PlaySlots(int inputCoins)
         {
-            if (inputChips < 1)
+            if (inputCoins < 1)
             {
-                await ReplyAsync("You can not play with " + inputChips + " chips!");
+                await ReplyAsync("You can not play with " + inputCoins + " coin(s)!");
                 return;
             }
-            else if (inputChips > User.Load(Context.User.Id).Chips)
+            else if (inputCoins > User.Load(Context.User.Id).Coins)
             {
-                await ReplyAsync(Context.User.Mention + ", you don't have enough chips to play with.");
+                await ReplyAsync(Context.User.Mention + ", you don't have enough coin(s) to play with.");
                 return;
             }
 
@@ -48,20 +48,20 @@ namespace DiscordBot.Modules.Public.Games
                 .Append(Extensions.Extensions.SlotEmotes[_r.Next(0, slotEmotesCount)] + " : " + Extensions.Extensions.SlotEmotes[_r.Next(0, slotEmotesCount)] + " : " + Extensions.Extensions.SlotEmotes[_r.Next(0, slotEmotesCount)] + "\n")
                 .Append("------------------\n");
 
-            User.UpdateJson(Context.User.Id, "Chips", (User.Load(Context.User.Id).Chips - inputChips));
+            User.UpdateJson(Context.User.Id, "Coins", (User.Load(Context.User.Id).Coins - inputCoins));
 
             if (one == two || two == three || one == three)
             {
                 sb.Append("| : : : : **WIN** : : : : |\n\n");
-                int chipsWon = (inputChips * 2) + inputChips;
-                sb.Append("**" + Context.User.Username + "** bet **" + inputChips + "** chip(s) and won **" + chipsWon + "** chip(s).");
+                int coinsWon = (inputCoins * 2) + inputCoins;
+                sb.Append("**" + Context.User.Username + "** bet **" + inputCoins + "** coin(s) and won **" + coinsWon + "** coin(s).");
 
-                User.UpdateJson(Context.User.Id, "Chips", (User.Load(Context.User.Id).Chips + chipsWon));
+                User.UpdateJson(Context.User.Id, "Coins", (User.Load(Context.User.Id).Coins + coinsWon));
             }
             else
             {
                 sb.Append("| : : :  **LOST**  : : : |\n\n");
-                sb.Append("**" + Context.User.Username + "** bet **" + inputChips + "** chip(s) and lost.");
+                sb.Append("**" + Context.User.Username + "** bet **" + inputCoins + "** coin(s) and lost.");
             }
 
             await ReplyAsync(sb.ToString());
