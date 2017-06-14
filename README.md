@@ -1,6 +1,9 @@
 # MogiiBot3
 MogiiBot3 is a Discord Bot, developed using Discord.Net 1.0. The Bot was developed for use on the MogiiCraft Discord Server.
 
+[![mogiibot0](http://i.imgur.com/HjSr9wF.png)](https://github.com/MythicalCuddles/MogiiBot3/wiki)
+[![mogiibot1](http://i.imgur.com/LCzc6vk.png)](https://github.com/MythicalCuddles/MogiiBot3/wiki/Commands)
+
 # Use of the code
 You may use the code within the terms of the license. Unfortunately, I can not help you set up the Bot or give you a detailed tutorial on how to do so, but I can provide some pointers.
 
