@@ -26,7 +26,7 @@ namespace DiscordBot.Common
         public string About { get; set; } = null;
         public string Website { get; set; } = null;
         public string GitHub { get; set; } = null;
-        public string CustomPrefix { get; set; }
+        //public string CustomPrefix { get; set; }
 
         public byte AboutR { get; set; } = 140;
         public byte AboutG { get; set; } = 90;
