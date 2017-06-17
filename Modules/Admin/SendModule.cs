@@ -23,7 +23,7 @@ namespace DiscordBot.Modules.Admin
         [Command("")]
         public async Task Send()
         {
-            await ReplyAsync("**Syntax:** $send channelmessage [cmessage/channelmsg] / privatemessage [pm/dm/directmessage]");
+            await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "send channelmessage [cmessage/channelmsg] / privatemessage [pm/dm/directmessage]");
         }
 
         [Command("channelmessage"), Summary("Sends a message to the channel specified.")]
@@ -32,7 +32,7 @@ namespace DiscordBot.Modules.Admin
         {
             if(channel == 0 || message == null)
             {
-                await ReplyAsync("**Syntax:** $send channelmessage [Channel ID] [Message]");
+                await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "send channelmessage [Channel ID] [Message]");
                 return;
             }
 
@@ -59,7 +59,7 @@ namespace DiscordBot.Modules.Admin
         {
             if (user == null || message == null)
             {
-                await ReplyAsync("**Syntax:** $send privatemessage [@User] [Message]");
+                await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "send privatemessage [@User] [Message]");
                 return;
             }
 

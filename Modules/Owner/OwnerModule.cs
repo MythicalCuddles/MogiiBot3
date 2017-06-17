@@ -83,7 +83,7 @@ namespace DiscordBot.Modules.Owner
         {
             if(user == null || footer == null)
             {
-                await ReplyAsync("**Syntax:** $editfooter [@User] [Footer]");
+                await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "editfooter [@User] [Footer]");
                 return;
             }
 

@@ -65,7 +65,7 @@ namespace DiscordBot.Modules.Admin
         public async Task ForceMinecraftUsername(IUser user, [Remainder]string username)
         {
             string oldName = User.Load(user.Id).MinecraftUsername;
-            User.UpdateJson(Context.User.Id, "MinecraftUsername", username);
+            User.UpdateJson(user.Id, "MinecraftUsername", username);
             await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s minecraft username to " + username + " (Was: " + oldName + ")");
         }
 
@@ -73,7 +73,7 @@ namespace DiscordBot.Modules.Admin
         public async Task ForceXboxGamertag(IUser user, [Remainder]string username)
         {
             string oldName = User.Load(user.Id).XboxGamertag;
-            User.UpdateJson(Context.User.Id, "XboxGamertag", username);
+            User.UpdateJson(user.Id, "XboxGamertag", username);
             await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s Xbox Gamertag to " + username + " (Was: " + oldName + ")");
         }
 
@@ -81,7 +81,7 @@ namespace DiscordBot.Modules.Admin
         public async Task ForcePSN(IUser user, [Remainder]string username)
         {
             string oldName = User.Load(user.Id).PSN;
-            User.UpdateJson(Context.User.Id, "PSN", username);
+            User.UpdateJson(user.Id, "PSN", username);
             await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s PSN to " + username + " (Was: " + oldName + ")");
         }
 
@@ -89,7 +89,7 @@ namespace DiscordBot.Modules.Admin
         public async Task ForceNintendoID(IUser user, [Remainder]string username)
         {
             string oldName = User.Load(user.Id).NintendoID;
-            User.UpdateJson(Context.User.Id, "NintendoID", username);
+            User.UpdateJson(user.Id, "NintendoID", username);
             await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s Nintendo ID to " + username + " (Was: " + oldName + ")");
         }
 
@@ -97,8 +97,16 @@ namespace DiscordBot.Modules.Admin
         public async Task ForceSteamID(IUser user, [Remainder]string username)
         {
             string oldName = User.Load(user.Id).SteamID;
-            User.UpdateJson(Context.User.Id, "SteamID", username);
+            User.UpdateJson(user.Id, "SteamID", username);
             await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s Steam ID to " + username + " (Was: " + oldName + ")");
+        }
+
+        [Command("prefix"), Summary("")]
+        public async Task ForcePrefix(IUser user, [Remainder]string prefix)
+        {
+            string oldPrefix = User.Load(user.Id).CustomPrefix;
+            User.UpdateJson(user.Id, "CustomPrefix", prefix);
+            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s Custom Prefix to " + prefix + " (Was: " + oldPrefix + ")");
         }
     }
 }

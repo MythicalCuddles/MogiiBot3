@@ -39,7 +39,7 @@ namespace DiscordBot.Modules.Public
             if(r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
             {
                 await ReplyAsync(Context.User.Mention + ", you have entered an invalid value. You can use this website to help get your RGB values - <http://www.colorhexa.com/>\n\n" +
-                    "**Syntax:** $setaboutrgb [R value] [G value] [B value]\n**Example:** $setaboutrgb 140 90 210");
+                    "**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "setaboutrgb [R value] [G value] [B value]\n**Example:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "setaboutrgb 140 90 210");
                 return;
             }
 
@@ -132,7 +132,28 @@ namespace DiscordBot.Modules.Public
                 eb.AddInlineField("GitHub", "[" + githubUsername + "](https://github.com/" + githubUsername + "/)");
             }
 
+            if(User.Load(userSpecified.Id).CustomPrefix != null)
+                eb.AddInlineField("Custom Prefix", User.Load(userSpecified.Id).CustomPrefix);
+
             await ReplyAsync("", false, eb);
+        }
+
+        [Command("setprefix"), Summary("Custom set the prefix for the user.")]
+        public async Task CustomUserPrefix([Remainder]string prefix = null)
+        {
+            if(prefix == null)
+            {
+                await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "setprefix [prefix]\n\n`This feature will cost you: " + Configuration.Load().PrefixCost + " coins`");
+                return;
+            }
+
+            if(User.Load(Context.User.Id).Coins >= Configuration.Load().PrefixCost)
+            {
+                User.UpdateJson(Context.User.Id, "CustomPrefix", prefix);
+                User.UpdateJson(Context.User.Id, "Coins", (User.Load(Context.User.Id).Coins - Configuration.Load().PrefixCost));
+                await ReplyAsync(Context.User.Mention + ", you have set `" + prefix + "` as a custom prefix for yourself. Please do take note that the following prefixes will work for you:\n```KEY: [Prefix][Command]\n" + prefix + " - User Set Prefix\n" + GuildConfiguration.Load(Context.Guild.Id).Prefix + " - Guild Set Prefix\n@" + MogiiBot3._bot.CurrentUser.Username + " - Global Prefix```");
+            }
+            
         }
 
         [Command("setpronouns"), Summary("Set your pronouns!")]
@@ -193,12 +214,30 @@ namespace DiscordBot.Modules.Public
         }
 
         [Command("suggest"), Summary("Send your suggestion for the bot!")]
-        public async Task SendSupportRequest([Remainder]string message)
+        public async Task SendSuggestion([Remainder]string message)
         {
             await GetHandler.getTextChannel(Configuration.Load().SuggestChannelID).SendMessageAsync("**Suggestion**" + "\n" +
                     Context.User.Mention + "\n" +
                     "*User Suggestion: *" + "\n" +
                     message);
+        }
+
+        [Command("support"), Summary("Sends a message out for support.")]
+        public async Task SendSupportRequest([Remainder]string message = null)
+        {
+            if (message == null)
+            {
+                await GetHandler.getTextChannel(Configuration.Load().SupportChannelID).SendMessageAsync("**Support Needed**" + "\n" +
+                    Context.User.Mention + " has issued the support command in <#" + Context.Channel.Id + ">\n" +
+                    "*User Added Notes*" + "\n" +
+                    "User has not provided any notes.");
+            }
+            else
+            {
+                await GetHandler.getTextChannel(Configuration.Load().SupportChannelID).SendMessageAsync("**Support Needed**" + "\n" +
+                     Context.User.Mention + " has issued the support command in <#" + Context.Channel.Id + ">\n" +
+                     "*User Added Notes*" + "\n" + message);
+            }
         }
     }
 }

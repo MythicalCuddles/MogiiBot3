@@ -18,7 +18,7 @@ namespace DiscordBot.Modules.SOwner
     [MinPermissions(PermissionLevel.ServerOwner)]
     public class ServerOwnerModule : ModuleBase
     {
-        [Command("prefix"), Summary("Set the prefix for the bot for the server.")]
+        [Command("guildprefix"), Summary("Set the prefix for the bot for the server.")]
         public async Task SetPrefix(string prefix)
         {
             GuildConfiguration.UpdateJson(Context.Guild.Id, "Prefix", prefix);

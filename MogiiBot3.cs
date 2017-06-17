@@ -275,7 +275,7 @@ namespace DiscordBot
             }
 
             StringBuilder sb = new StringBuilder()
-            .Append("**Request Quote List** : *Page " + QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] + "*\nTo accept a quote, type **$acceptquote [id]**.\nTo reject a quote, type **$denyquote [id]**.\n```");
+            .Append("**Request Quote List** : *Page " + QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] + "*\nTo accept a quote, type **" + GuildConfiguration.Load(channel.getGuild().Id).Prefix + "acceptquote[id]**.\nTo reject a quote, type **" + GuildConfiguration.Load(channel.getGuild().Id).Prefix + "denyquote[id]**.\n```");
 
             List<string> requestQuotes = QuoteHandler.getRequestQuotes(QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)]);
 
@@ -489,7 +489,7 @@ namespace DiscordBot
 
             // If the message does not contain the prefix or mentioning the bot
             int argPos = 0;
-            if (!(message.HasStringPrefix(GuildConfiguration.Load(message.Channel.getGuild().Id).Prefix, ref argPos) || message.HasMentionPrefix(_bot.CurrentUser, ref argPos))) // Configuration.Load().Prefix
+            if (!(message.HasStringPrefix(GuildConfiguration.Load(message.Channel.getGuild().Id).Prefix, ref argPos) || message.HasMentionPrefix(_bot.CurrentUser, ref argPos) || message.HasStringPrefix(User.Load(message.Author.Id).CustomPrefix, ref argPos))) // Configuration.Load().Prefix
             {
                 // Coin System to add a coin for each message the user sends.
                 AwardCoinsToPlayer(message.Author.Id);

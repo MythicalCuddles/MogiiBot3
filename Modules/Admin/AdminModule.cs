@@ -100,7 +100,7 @@ namespace DiscordBot.Modules.Admin
         {
             if(mentionedUser == null || fineValue == 0)
             {
-                await ReplyAsync("**Syntax:** $finecoins [@User] [Amount]");
+                await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "finecoins [@User] [Amount]");
                 return;
             }
 
@@ -224,7 +224,7 @@ namespace DiscordBot.Modules.Admin
             if(QuoteHandler.requestQuoteList.Count() > 0)
             {
                 StringBuilder sb = new StringBuilder()
-                .Append("**Request Quote List** : *Page 1*\nTo accept a quote, type **$acceptquote [id]**.\nTo reject a quote, type **$denyquote [id]**.\n```");
+                .Append("**Request Quote List** : *Page 1*\nTo accept a quote, type **" + GuildConfiguration.Load(Context.Guild.Id).Prefix + "acceptquote [id]**.\nTo reject a quote, type **" + GuildConfiguration.Load(Context.Guild.Id).Prefix + "denyquote [id]**.\n```");
 
                 QuoteHandler.SpliceRequestQuotes();
                 List<string> requestQuotes = QuoteHandler.getRequestQuotes(1);
@@ -276,6 +276,15 @@ namespace DiscordBot.Modules.Admin
             await ReplyAsync("**" + Context.User.Mention + "** has updated the quote cost to **" + price + "** coins. (Was: **" + oldPrice + "** coins)");
         }
 
+        [Command("prefixprice"), Summary("")]
+        [Alias("changeprefixprice", "updateprefixprice")]
+        public async Task ChangePrefixPrice(int price)
+        {
+            int oldPrice = Configuration.Load().PrefixCost;
+            Configuration.UpdateJson("PrefixCost", price);
+            await ReplyAsync("**" + Context.User.Mention + "** has updated the prefix cost to **" + price + "** coins. (Was: **" + oldPrice + "** coins)");
+        }
+
         [Command("addvotelink"), Summary("Add a voting link to the list.")]
         public async Task AddVoteLink([Remainder]string link)
         {
@@ -320,8 +329,15 @@ namespace DiscordBot.Modules.Admin
         [Command("addmusic"), Summary("Add a music link to the list.")]
         public async Task AddMusicLink([Remainder]string link)
         {
-            MusicHandler.AddAndUpdateLinks(link);
-            await ReplyAsync("Link successfully added to the list, " + Context.User.Mention);
+            if (MusicHandler.musicLinkList.Contains(link))
+            {
+                await ReplyAsync("\"Bitch no, it's already in the list\" - Flamesies.\nBut seriously... that link already is in the list, so you don't need to add it again.");
+            }
+            else
+            {
+                MusicHandler.AddAndUpdateLinks(link);
+                await ReplyAsync("Link successfully added to the list, " + Context.User.Mention);
+            }
         }
 
         [Command("listmusic"), Summary("Sends a list of all the music links.")]
