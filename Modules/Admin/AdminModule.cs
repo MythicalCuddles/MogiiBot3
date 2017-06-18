@@ -276,14 +276,14 @@ namespace DiscordBot.Modules.Admin
             await ReplyAsync("**" + Context.User.Mention + "** has updated the quote cost to **" + price + "** coins. (Was: **" + oldPrice + "** coins)");
         }
 
-        //[Command("prefixprice"), Summary("")]
-        //[Alias("changeprefixprice", "updateprefixprice")]
-        //public async Task ChangePrefixPrice(int price)
-        //{
-        //    int oldPrice = Configuration.Load().PrefixCost;
-        //    Configuration.UpdateJson("PrefixCost", price);
-        //    await ReplyAsync("**" + Context.User.Mention + "** has updated the prefix cost to **" + price + "** coins. (Was: **" + oldPrice + "** coins)");
-        //}
+        [Command("prefixprice"), Summary("")]
+        [Alias("changeprefixprice", "updateprefixprice")]
+        public async Task ChangePrefixPrice(int price)
+        {
+            int oldPrice = Configuration.Load().PrefixCost;
+            Configuration.UpdateJson("PrefixCost", price);
+            await ReplyAsync("**" + Context.User.Mention + "** has updated the prefix cost to **" + price + "** coins. (Was: **" + oldPrice + "** coins)");
+        }
 
         [Command("addvotelink"), Summary("Add a voting link to the list.")]
         public async Task AddVoteLink([Remainder]string link)
