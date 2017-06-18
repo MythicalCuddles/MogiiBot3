@@ -101,12 +101,12 @@ namespace DiscordBot.Modules.Admin
             await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s Steam ID to " + username + " (Was: " + oldName + ")");
         }
 
-        //[Command("prefix"), Summary("")]
-        //public async Task ForcePrefix(IUser user, [Remainder]string prefix)
-        //{
-        //    string oldPrefix = User.Load(user.Id).CustomPrefix;
-        //    User.UpdateJson(user.Id, "CustomPrefix", prefix);
-        //    await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s Custom Prefix to " + prefix + " (Was: " + oldPrefix + ")");
-        //}
+        [Command("prefix"), Summary("")]
+        public async Task ForcePrefix(IUser user, [Remainder]string prefix)
+        {
+            string oldPrefix = User.Load(user.Id).CustomPrefix;
+            User.UpdateJson(user.Id, "CustomPrefix", prefix);
+            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s Custom Prefix to " + prefix + " (Was: " + oldPrefix + ")");
+        }
     }
 }

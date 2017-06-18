@@ -132,33 +132,33 @@ namespace DiscordBot.Modules.Public
                 eb.AddInlineField("GitHub", "[" + githubUsername + "](https://github.com/" + githubUsername + "/)");
             }
 
-            //if(User.Load(userSpecified.Id).CustomPrefix != null)
-            //    eb.AddInlineField("Custom Prefix", User.Load(userSpecified.Id).CustomPrefix);
+            if (User.Load(userSpecified.Id).CustomPrefix != null)
+                eb.AddInlineField("Custom Prefix", User.Load(userSpecified.Id).CustomPrefix);
 
             await ReplyAsync("", false, eb);
         }
 
-        //[Command("setprefix"), Summary("Custom set the prefix for the user.")]
-        //public async Task CustomUserPrefix([Remainder]string prefix = null)
-        //{
-        //    if(prefix == null)
-        //    {
-        //        await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "setprefix [prefix]\n\n`This feature will cost you: " + Configuration.Load().PrefixCost + " coins`");
-        //        return;
-        //    }
+        [Command("setprefix"), Summary("Custom set the prefix for the user.")]
+        public async Task CustomUserPrefix([Remainder]string prefix = null)
+        {
+            if (prefix == null)
+            {
+                await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "setprefix [prefix]\n\n`This feature will cost you: " + Configuration.Load().PrefixCost + " coins`");
+                return;
+            }
 
-        //    if(User.Load(Context.User.Id).Coins >= Configuration.Load().PrefixCost)
-        //    {
-        //        User.UpdateJson(Context.User.Id, "CustomPrefix", prefix);
-        //        User.UpdateJson(Context.User.Id, "Coins", (User.Load(Context.User.Id).Coins - Configuration.Load().PrefixCost));
-        //        await ReplyAsync(Context.User.Mention + ", you have set `" + prefix + "` as a custom prefix for yourself. Please do take note that the following prefixes will work for you:\n```KEY: [Prefix][Command]\n" + prefix + " - User Set Prefix\n" + GuildConfiguration.Load(Context.Guild.Id).Prefix + " - Guild Set Prefix\n@" + MogiiBot3._bot.CurrentUser.Username + " - Global Prefix```");
-        //    }
-        //    else
-        //    {
-        //        await ReplyAsync("You do not have enough coins to pay for this feature, " + Context.User.Mention + "! This feature costs " + Configuration.Load().PrefixCost + " coins.");
-        //    }
-            
-        //}
+            if (User.Load(Context.User.Id).Coins >= Configuration.Load().PrefixCost)
+            {
+                User.UpdateJson(Context.User.Id, "CustomPrefix", prefix);
+                User.UpdateJson(Context.User.Id, "Coins", (User.Load(Context.User.Id).Coins - Configuration.Load().PrefixCost));
+                await ReplyAsync(Context.User.Mention + ", you have set `" + prefix + "` as a custom prefix for yourself. Please do take note that the following prefixes will work for you:\n```KEY: [Prefix][Command]\n" + prefix + " - User Set Prefix\n" + GuildConfiguration.Load(Context.Guild.Id).Prefix + " - Guild Set Prefix\n@" + MogiiBot3._bot.CurrentUser.Username + " - Global Prefix```");
+            }
+            else
+            {
+                await ReplyAsync("You do not have enough coins to pay for this feature, " + Context.User.Mention + "! This feature costs " + Configuration.Load().PrefixCost + " coins.");
+            }
+
+        }
 
         [Command("setpronouns"), Summary("Set your pronouns!")]
         public async Task SetUserPronouns([Remainder]string pronouns)

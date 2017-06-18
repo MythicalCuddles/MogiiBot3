@@ -81,17 +81,17 @@ namespace DiscordBot.Modules.Public
         [Command("")]
         public async Task HelpStuff()
         {
-            await ReplyAsync("**Help**\n" +
-                "For a full list of commands, please visit the Wiki : <http://mogiibot.mythicalcuddles.xyz>\n" + 
+            await Context.User.CreateDMChannelAsync().Result.SendMessageAsync("**Help**\n"  +
+                "**Available Commands for Help**\n```" +
+                "$help about - Sends information about the commands used for your about embed.```\n" +
                 "\n" +
-                "**Available Commands for Help**\n```" + 
-                "$help about - Sends information about the commands used for your about embed.```");
+                "For a full list of commands, please visit the Wiki : <http://mogiibot.mythicalcuddles.xyz>\n");
         }
 
         [Command("about")]
         public async Task HelpAbout()
         {
-            await ReplyAsync("**Help - About Embed & Your Profile**\n```" +
+            await Context.User.CreateDMChannelAsync().Result.SendMessageAsync("**Help - About Embed & Your Profile**\n```" +
                 "$setabout [Description] - Set your about message. This is just a message displayed telling others a little bit about yourself. You can use emotes and text formatting here.\n" +
                 "$setaboutrgb [R value] [G value] [B value] - Set the colour for your about embed. You can find RGB values for colours here: <http://www.colorhexa.com/> - If you need any help setting this up, don't be afraid to ask.\n" +
                 "$setpronouns [Pronouns] - Set your pronouns so others can know what they are.\n" +
