@@ -178,8 +178,17 @@ namespace DiscordBot.Modules.Public
 
         [Command("givecoins"), Summary("Give some of coins to another user.")]
         [Alias("pay")]
-        public async Task GiveCoins(IUser user, int coins)
+        public async Task GiveCoins(IUser user = null, int coins = 0)
         {
+            if(user == null || coins == 0)
+            {
+                await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "pay [@User] [Coins]\n\n" + 
+                    "**Disclaimer**\n" +
+                    "*There are no refunds for payments that have been made. Payments will only be refunded if a valid reason is presented. The team will discuss your situation in this case and come to a vote on whether or not your refund request will be granted.* " +
+                    "*Before making the payment, please ensure that you have mentioned the correct user, and have entered the right amount of coins you wish to send. Refunds will not be made for mistyped payments!*");
+                return;
+            }
+
             if(coins <= 0)
             {
                 await ReplyAsync("You need to pay a positive amount of coins.");
@@ -236,6 +245,7 @@ namespace DiscordBot.Modules.Public
 
             QuoteHandler.AddAndUpdateRequestQuotes(quote);
             User.UpdateJson(Context.User.Id, "Coins", (userCoins - quoteCost));
+            TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") paid " + quoteCost + " for a custom quote.");
             await ReplyAsync(Context.User.Mention + ", thank you for your quote. This costed you " + quoteCost + " coins. Your quote has been added to a wait list, and should be verified by a staff member shortly.");
             await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**New Quote**\nQuote requested by: **" + Context.User.Mention + "**\nQuote: " + quote);
             await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("**New Quote**\n" + quote + "\n\n*Do " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "listrequestquotes to view the ID and other quotes.*");

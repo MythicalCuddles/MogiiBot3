@@ -11,6 +11,7 @@ using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
 using DiscordBot.Other;
+using DiscordBot.Logging;
 
 using MelissasCode;
 
@@ -45,16 +46,19 @@ namespace DiscordBot.Modules.Public.Games
             if (botTotal > userTotal)
             {
                 sb.Append("**" + Context.User.Username + "** bet **" + coinsBet + "** coin(s) and lost.");
+                TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") bet " + coinsBet + " on higher and lost.");
             }
             else if (botTotal == userTotal)
             {
                 sb.Append("**" + Context.User.Username + "** bet **" + coinsBet + "** coin(s) and didn't win or lose anything.");
+                TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") bet " + coinsBet + " on higher and didn't win nor lose.");
                 User.UpdateJson(Context.User.Id, "Coins", (userCoins + coinsBet));
             }
             else
             {
                 int coinsWon = (coinsBet * 2);
                 sb.Append("**" + Context.User.Username + "** bet **" + coinsBet + "** coin(s) and won **" + coinsWon + "** coin(s).");
+                TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") bet " + coinsBet + " on higher and won " + coinsWon + " coins.");
                 User.UpdateJson(Context.User.Id, "Coins", (userCoins + coinsWon));
             }
 
@@ -83,16 +87,19 @@ namespace DiscordBot.Modules.Public.Games
             if (botTotal < userTotal)
             {
                 sb.Append("**" + Context.User.Username + "** bet **" + coinsBet + "** coin(s) and lost.");
+                TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") bet " + coinsBet + " on lower and lost.");
             }
             else if (botTotal == userTotal)
             {
                 sb.Append("**" + Context.User.Username + "** bet **" + coinsBet + "** coin(s) and didn't win or lose anything.");
+                TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") bet " + coinsBet + " on lower and didn't win nor lose.");
                 User.UpdateJson(Context.User.Id, "Coins", (userCoins + coinsBet));
             }
             else
             {
                 int coinsWon = (coinsBet * 2);
                 sb.Append("**" + Context.User.Username + "** bet **" + coinsBet + "** coin(s) and won **" + coinsWon + "** coin(s).");
+                TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") bet " + coinsBet + " on lower and won " + coinsWon + " coins.");
                 User.UpdateJson(Context.User.Id, "Coins", (userCoins + coinsWon));
             }
 

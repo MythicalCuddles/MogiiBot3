@@ -11,6 +11,7 @@ using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
 using DiscordBot.Other;
+using DiscordBot.Logging;
 
 using MelissasCode;
 
@@ -57,11 +58,13 @@ namespace DiscordBot.Modules.Public.Games
                 sb.Append("**" + Context.User.Username + "** bet **" + inputCoins + "** coin(s) and won **" + coinsWon + "** coin(s).");
 
                 User.UpdateJson(Context.User.Id, "Coins", (User.Load(Context.User.Id).Coins + coinsWon));
+                TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") bet " + inputCoins + " coins on the slots and won " + coinsWon + " coins.");
             }
             else
             {
                 sb.Append("| : : :  **LOST**  : : : |\n\n");
                 sb.Append("**" + Context.User.Username + "** bet **" + inputCoins + "** coin(s) and lost.");
+                TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") bet " + inputCoins + " coins on the slots and lost.");
             }
 
             await ReplyAsync(sb.ToString());
