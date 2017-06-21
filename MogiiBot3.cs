@@ -22,9 +22,12 @@ namespace DiscordBot
 {
     public class MogiiBot3
     {
+        private static string BotToken = DiscordToken.MogiiBot;
+
         public static DiscordSocketClient _bot;
         public static CommandService commandService;
         public static DependencyMap dependencyMap;
+
         Random _r = new Random();
 
         public async Task RunBotAsync()
@@ -58,7 +61,7 @@ namespace DiscordBot
             _bot.MessageUpdated += MessageUpdated;
 
             // Connect to Discord with Bot Login Details
-            await _bot.LoginAsync(TokenType.Bot, DiscordToken.MogiiBot);
+            await _bot.LoginAsync(TokenType.Bot, BotToken);
             await _bot.StartAsync();
 
             // Keep the program running.
@@ -508,6 +511,10 @@ namespace DiscordBot
                 if (result.ErrorReason.ToUpper().Contains(MelissaCode.GetOldFullNameUpper))
                 {
                     errorMessage = await context.Channel.SendMessageAsync(messageParam.Author.Mention + ", an error containing classified information has occured. Please contact Melissa.\n`Error Code/Log File: #Ex00f" + _r.RandomNumber(0, 1000000) + "`");
+                }
+                else if(result.ErrorReason.ToUpper().Contains("END ON AN INCOMPLETE ESCAPE") && context.Message.Content.ToUpper().Contains("$SETPREFIX"))
+                {
+                    errorMessage = await context.Channel.SendMessageAsync(messageParam.Author.Mention + ", you can not use that prefix as it contains an escape character.");
                 }
                 else
                 {
