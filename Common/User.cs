@@ -24,8 +24,6 @@ namespace DiscordBot.Common
         public string Gender { get; set; } = null;
         public string Pronouns { get; set; } = null;
         public string About { get; set; } = null;
-        public string Website { get; set; } = null;
-        public string GitHub { get; set; } = null;
         public string CustomPrefix { get; set; }
 
         public byte AboutR { get; set; } = 140;
@@ -36,13 +34,15 @@ namespace DiscordBot.Common
         public string EmbedAuthorBuilderIconUrl { get; set; } = "http://i.imgur.com/Ny5Qcto.png";
         public string EmbedFooterBuilderIconUrl { get; set; } = "http://i.imgur.com/Ny5Qcto.png";
         public string FooterText { get; set; } = null;
-
+        
+        public string GitHub { get; set; } = null;
         // Socials
         public string MinecraftUsername { get; set; } = null;
         public string XboxGamertag { get; set; } = null;
         public string PSN { get; set; } = null;
         public string NintendoID { get; set; } = null;
         public string SteamID { get; set; } = null;
+        public string Snapchat { get; set; } = null;
 
         public bool IsBotIgnoringUser { get; set; } = false;
         

@@ -121,9 +121,10 @@ namespace DiscordBot.Modules.Public
                 eb.AddInlineField("Steam", "[" + steamId + "](http://steamcommunity.com/id/" + steamId + "/)");
             }
 
-            if(User.Load(userSpecified.Id).Website != null)
+            if(User.Load(userSpecified.Id).Snapchat != null)
             {
-                eb.AddInlineField("Website", User.Load(userSpecified.Id).Website);
+                string snapchat = User.Load(userSpecified.Id).Snapchat;
+                eb.AddInlineField("Snapchat", "[" + snapchat + "](https://www.snapchat.com/add/" + snapchat + "/)");
             }
 
             if(User.Load(userSpecified.Id).GitHub != null)
@@ -200,6 +201,13 @@ namespace DiscordBot.Modules.Public
         public async Task SetSteamID([Remainder]string username)
         {
             User.UpdateJson(Context.User.Id, "SteamID", username);
+            await ReplyAsync("Updated successfully, " + Context.User.Mention);
+        }
+
+        [Command("setsnapchat"), Summary("")]
+        public async Task SetSnapchatUsername([Remainder]string username)
+        {
+            User.UpdateJson(Context.User.Id, "Snapchat", username);
             await ReplyAsync("Updated successfully, " + Context.User.Mention);
         }
 

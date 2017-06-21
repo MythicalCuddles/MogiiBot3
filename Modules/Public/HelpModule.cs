@@ -100,6 +100,7 @@ namespace DiscordBot.Modules.Public
                 "$setpsn [PSN Username] - Set your PSN Username if you have one so others can follow you.\n" +
                 "$setnintendoid [Nintendo ID] - Set your Nintendo ID if you have one so others can follow you.\n" +
                 "$setsteam [Steam ID] - Set your Steam ID so others can add you.\n" +
+                "$setsnapchat [Snapchat Username] - Set your Snapchat Username so others can add you.\n" +
                 "$setname [Name] - Set your name so others know what to call you.\n" +
                 "$setgender [Gender Identity] - Set your gender so others know.\n" +
                 "```");

@@ -101,6 +101,14 @@ namespace DiscordBot.Modules.Admin
             await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s Steam ID to " + username + " (Was: " + oldName + ")");
         }
 
+        [Command("snapchat"), Summary("")]
+        public async Task ForceSnapchatUsername(IUser user, [Remainder]string username)
+        {
+            string oldName = User.Load(user.Id).Snapchat;
+            User.UpdateJson(user.Id, "Snapchat", username);
+            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s Snapchat Username to " + username + " (Was: " + oldName + ")");
+        }
+
         [Command("prefix"), Summary("")]
         public async Task ForcePrefix(IUser user, [Remainder]string prefix)
         {
