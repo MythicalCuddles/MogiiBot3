@@ -45,6 +45,7 @@ namespace DiscordBot.Common
         public string Snapchat { get; set; } = null;
 
         public bool IsBotIgnoringUser { get; set; } = false;
+
         
         public static bool CreateUserFile(ulong uID)
         {

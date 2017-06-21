@@ -180,6 +180,12 @@ namespace DiscordBot.Modules.Public
         [Alias("pay")]
         public async Task GiveCoins(IUser user, int coins)
         {
+            if(coins <= 0)
+            {
+                await ReplyAsync("You need to pay a positive amount of coins.");
+                return;
+            }
+
             int issuerCoins = User.Load(Context.User.Id).Coins;
             int userCoins = User.Load(user.Id).Coins;
 
@@ -195,7 +201,7 @@ namespace DiscordBot.Modules.Public
             await ReplyAsync(Context.User.Mention + " has given " + user.Mention + " " + coins + " coin(s)");
         }
 
-        int lastQuote;
+        //int lastQuote;
         [Command("quote"), Summary("Get a random quote from the list.")]
         public async Task GenerateQuote()
         {
@@ -203,10 +209,12 @@ namespace DiscordBot.Modules.Public
             {
                 int generatedNumber = _r.Next(0, QuoteHandler.quoteList.Count());
 
-                while (generatedNumber == lastQuote)
-                    generatedNumber = _r.Next(0, QuoteHandler.quoteList.Count());
+               // while (generatedNumber == lastQuote)
+                    //generatedNumber = _r.Next(0, QuoteHandler.quoteList.Count());
 
                 await ReplyAsync(QuoteHandler.quoteList[generatedNumber]); // Context.User.Mention + ", here's your generated quote: \n" + 
+
+                //lastQuote = generatedNumber;
             }
             else
             {
