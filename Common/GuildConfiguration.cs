@@ -17,6 +17,8 @@ namespace DiscordBot.Common
     {
         public string Prefix { get; set; } = "$";
         public string WelcomeMessage { get; set; } = null;
+        public ulong WelcomeChannel { get; set; }
+        public ulong LogChannel { get; set; }
 
         public static void EnsureExists(ulong GuildID)
         {

@@ -96,9 +96,6 @@ namespace DiscordBot.Modules.Public
                 "$setaboutrgb [R value] [G value] [B value] - Set the colour for your about embed. You can find RGB values for colours here: <http://www.colorhexa.com/> - If you need any help setting this up, don't be afraid to ask.\n" +
                 "$setpronouns [Pronouns] - Set your pronouns so others can know what they are.\n" +
                 "$setmcusername [Minecraft Username] - Set your Minecraft Username so others can see who you are.\n" +
-                "$setxbox [Xbox Gamertag] - Set your Xbox Gamertag if you have one so others can follow you.\n" +
-                "$setpsn [PSN Username] - Set your PSN Username if you have one so others can follow you.\n" +
-                "$setnintendoid [Nintendo ID] - Set your Nintendo ID if you have one so others can follow you.\n" +
                 "$setsteam [Steam ID] - Set your Steam ID so others can add you.\n" +
                 "$setsnapchat [Snapchat Username] - Set your Snapchat Username so others can add you.\n" +
                 "$setname [Name] - Set your name so others know what to call you.\n" +

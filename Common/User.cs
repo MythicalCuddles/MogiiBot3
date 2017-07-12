@@ -1,14 +1,15 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using Newtonsoft.Json;
+
 using MelissasCode;
 using Discord;
-
-using DiscordBot.Modules.Public;
+using Discord.WebSocket;
 
 namespace DiscordBot.Common
 {
@@ -16,10 +17,12 @@ namespace DiscordBot.Common
     {
         [JsonIgnore]
         private static string DirectoryPath { get; set; } = "users/";
+        [JsonIgnore]
         private static string Extension { get; set; } = ".json";
 
         public int Coins { get; set; } = 0;
-
+        public int Cookies { get; set; } = 0;
+        
         public string Name { get; set; } = null;
         public string Gender { get; set; } = null;
         public string Pronouns { get; set; } = null;
@@ -34,18 +37,13 @@ namespace DiscordBot.Common
         public string EmbedAuthorBuilderIconUrl { get; set; } = "http://i.imgur.com/Ny5Qcto.png";
         public string EmbedFooterBuilderIconUrl { get; set; } = "http://i.imgur.com/Ny5Qcto.png";
         public string FooterText { get; set; } = null;
-        
-        public string GitHub { get; set; } = null;
+
         // Socials
         public string MinecraftUsername { get; set; } = null;
-        public string XboxGamertag { get; set; } = null;
-        public string PSN { get; set; } = null;
-        public string NintendoID { get; set; } = null;
         public string SteamID { get; set; } = null;
         public string Snapchat { get; set; } = null;
 
         public bool IsBotIgnoringUser { get; set; } = false;
-
         
         public static bool CreateUserFile(ulong uID)
         {
@@ -60,11 +58,20 @@ namespace DiscordBot.Common
                 var user = new User();
                 user.SaveJson(uID);
 
-                Console.WriteLine(FileName + " Created.");
+                Console.Write("status: [");
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                Console.Write("alert");
+                Console.ResetColor();
+                Console.WriteLine("]    " + FileName + ": created.");
                 return true;
             }
             else
             {
+                Console.Write("status: [");
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.Write("ok");
+                Console.ResetColor();
+                Console.WriteLine("]    " + FileName + ": already exists.");
                 return false;
             }
         }

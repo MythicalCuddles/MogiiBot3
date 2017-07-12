@@ -13,6 +13,7 @@ using DiscordBot.Common;
 using DiscordBot.Extensions;
 
 using MelissasCode;
+using System.IO;
 
 namespace DiscordBot.Modules.Owner
 {

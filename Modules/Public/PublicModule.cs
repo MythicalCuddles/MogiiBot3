@@ -96,24 +96,12 @@ namespace DiscordBot.Modules.Public
             
             eb.AddInlineField("Coin(s)", User.Load(userSpecified.Id).Coins);
 
+            eb.AddInlineField("Account Created", userSpecified.CreatedDate());
+            eb.AddInlineField("Joined Guild", userSpecified.GuildJoinDate());
+
             if (User.Load(userSpecified.Id).MinecraftUsername != null)
             {
                 eb.AddInlineField("Minecraft Username", User.Load(userSpecified.Id).MinecraftUsername);
-            }
-            
-            if(User.Load(userSpecified.Id).XboxGamertag != null)
-            {
-                eb.AddInlineField("Xbox", User.Load(userSpecified.Id).XboxGamertag);
-            }
-
-            if (User.Load(userSpecified.Id).PSN != null)
-            {
-                eb.AddInlineField("Playstation", User.Load(userSpecified.Id).PSN);
-            }
-
-            if (User.Load(userSpecified.Id).NintendoID != null)
-            {
-                eb.AddInlineField("Nintendo ID", User.Load(userSpecified.Id).NintendoID);
             }
 
             if (User.Load(userSpecified.Id).SteamID != null)
@@ -128,11 +116,11 @@ namespace DiscordBot.Modules.Public
                 eb.AddInlineField("Snapchat", "[" + snapchat + "](https://www.snapchat.com/add/" + snapchat + "/)");
             }
 
-            if(User.Load(userSpecified.Id).GitHub != null)
-            {
-                string githubUsername = User.Load(userSpecified.Id).GitHub;
-                eb.AddInlineField("GitHub", "[" + githubUsername + "](https://github.com/" + githubUsername + "/)");
-            }
+            //if(User.Load(userSpecified.Id).GitHub != null)
+            //{
+            //    string githubUsername = User.Load(userSpecified.Id).GitHub;
+            //    eb.AddInlineField("GitHub", "[" + githubUsername + "](https://github.com/" + githubUsername + "/)");
+            //}
 
             if (User.Load(userSpecified.Id).CustomPrefix != null)
                 eb.AddInlineField("Custom Prefix", User.Load(userSpecified.Id).CustomPrefix);
@@ -177,28 +165,7 @@ namespace DiscordBot.Modules.Public
             User.UpdateJson(Context.User.Id, "MinecraftUsername", username);
             await ReplyAsync("Updated successfully, " + Context.User.Mention);
         }
-
-        [Command("setxbox"), Summary("")]
-        public async Task SetXboxGamertag([Remainder]string username)
-        {
-            User.UpdateJson(Context.User.Id, "XboxGamertag", username);
-            await ReplyAsync("Updated successfully, " + Context.User.Mention);
-        }
-
-        [Command("setpsn"), Summary("")]
-        public async Task SetPSN([Remainder]string username)
-        {
-            User.UpdateJson(Context.User.Id, "PSN", username);
-            await ReplyAsync("Updated successfully, " + Context.User.Mention);
-        }
-
-        [Command("setnintendoid"), Summary("")]
-        public async Task SetNintendoID([Remainder]string username)
-        {
-            User.UpdateJson(Context.User.Id, "NintendoID", username);
-            await ReplyAsync("Updated successfully, " + Context.User.Mention);
-        }
-
+        
         [Command("setsteam"), Summary("")]
         public async Task SetSteamID([Remainder]string username)
         {

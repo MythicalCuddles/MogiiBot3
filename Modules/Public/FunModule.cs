@@ -36,21 +36,22 @@ namespace DiscordBot.Modules.Public
                 await ReplyAsync("You can need to roll at least 1 dice, " + Context.User.Mention);
                 return;
             }
-            
-            StringBuilder sb = new StringBuilder()
-                .Append(Context.User.Mention + " has rolled " + numberOfDice + " 6-sided dice.\n\n");
+
+            EmbedBuilder eb = new EmbedBuilder()
+                .WithDescription(Context.User.Mention + " rolled " + numberOfDice + " 6-sided dice.");
             
             int totalOfRoll = 0, roll = 0;
             for(int i = 0; i < numberOfDice; i++)
             {
                 roll = _r.RandomNumber(1, 6);
                 totalOfRoll += roll;
-                sb.Append("Dice " + (i + 1) + " landed on: **" + roll + "** [" + roll.GetDiceFace() + "]\n");
+
+                eb.AddInlineField("Dice " + (i + 1), roll.ToString());
             }
 
-            sb.Append("**-----------------------**\nSum of roll: **" + totalOfRoll + "**\n");
+            eb.AddField("Sum of roll", totalOfRoll);
 
-            await ReplyAsync(sb.ToString());
+            await ReplyAsync("", false, eb);
         }
 
         [Command("dice20"), Summary("Rolls a 20 sided dice.")]
@@ -106,7 +107,7 @@ namespace DiscordBot.Modules.Public
         }
 
         [Command("gitgud"), Summary("git gud")]
-        public async Task github()
+        public async Task gitgud()
         {
             await ReplyAsync("https://cdn.discordapp.com/attachments/235124701964271618/310169979083423744/received_10206534636842919.jpeg");
         }

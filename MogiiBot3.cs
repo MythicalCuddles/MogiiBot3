@@ -5,6 +5,8 @@ using System.Text;
 using System.Reflection;
 using System.Threading.Tasks;
 
+using System.IO;
+
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -99,7 +101,7 @@ namespace DiscordBot
             await _bot.SetGameAsync(Configuration.Load().Playing);
             await _bot.SetStatusAsync(Configuration.Load().Status);
 
-            Modules.Public.InfoModule._dt = DateTime.Now;
+            Modules.Mod.ModeratorModule._dt = DateTime.Now;
 
             Console.WriteLine("-----------------------------------------------------------------");
             foreach (SocketGuild g in _bot.Guilds)
@@ -111,8 +113,15 @@ namespace DiscordBot
                 Console.WriteLine("]  " + g.Name + ": attempting to load.");
 
                 GuildConfiguration.EnsureExists(g.Id);
+
+                Console.WriteLine("-----------------------------------------------------------------");
+                foreach (SocketGuildUser u in g.Users)
+                {
+                    User.CreateUserFile(u.Id);
+                }
+                Console.WriteLine("-----------------------------------------------------------------");
+
             }
-            Console.WriteLine("-----------------------------------------------------------------");
         }
 
         private async Task ChannelCreated(SocketChannel channel)
@@ -388,9 +397,20 @@ namespace DiscordBot
         {
             if (e.Guild.Id == Configuration.Load().ServerID)
             {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("**Username:** @" + e.Username + "\n");
+                if (e.Nickname != null)
+                {
+                    sb.Append("**Nickname:** " + e.Nickname + "\n");
+                }
+                sb.Append("**Id: **" + e.Id + "\n");
+                sb.Append("**Joined: **" + e.GuildJoinDate() + "\n");
+                sb.Append("\n");
+                sb.Append("**Coins: **" + User.Load(e.Id).Coins + "\n");
+
                 EmbedBuilder eb = new EmbedBuilder()
                     .WithTitle("User Left")
-                    .WithDescription("@" + e.Username + "\n" + e.Nickname + "\n" + e.Id)
+                    .WithDescription(sb.ToString())
                     .WithColor(new Color(255, 28, 28))
                     .WithThumbnailUrl(e.GetAvatarUrl())
                     .WithCurrentTimestamp();
@@ -399,9 +419,20 @@ namespace DiscordBot
             }
             else if (e.Guild.Id == Configuration.Load().NSFWServerID)
             {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("**Username:** @" + e.Username + "\n");
+                if (e.Nickname != null)
+                {
+                    sb.Append("**Nickname:** " + e.Nickname + "\n");
+                }
+                sb.Append("**Id: **" + e.Id + "\n");
+                sb.Append("**Joined: **" + e.GuildJoinDate() + "\n");
+                sb.Append("\n");
+                sb.Append("**Coins: **" + User.Load(e.Id).Coins + "\n");
+
                 EmbedBuilder eb = new EmbedBuilder()
                     .WithTitle("NSFW Server - User Left")
-                    .WithDescription("@" + e.Username + "\n" + e.Nickname + "\n" + e.Id)
+                    .WithDescription(sb.ToString())
                     .WithColor(new Color(255, 28, 28))
                     .WithThumbnailUrl(e.GetAvatarUrl())
                     .WithCurrentTimestamp();
@@ -534,7 +565,7 @@ namespace DiscordBot
         {
             try
             {
-                User.UpdateJson(UserId, "Coins", (User.Load(UserId).Coins + CoinsToAward));
+                User.UpdateJson(UserId, "Coins", (User.Load(UserId).Coins + (CoinsToAward * Configuration.Load().CoinModifier)));
             }
             catch (Exception e) { Console.WriteLine(e); }
 
