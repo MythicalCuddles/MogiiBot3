@@ -91,8 +91,8 @@ namespace DiscordBot.Modules.Owner
             User.UpdateJson(user.Id, "FooterText", footer);
             var message = await ReplyAsync("Updated.");
 
-            Context.Message.DeleteAfter(10);
-            message.DeleteAfter(10);
+            Context.Message.deleteAfter(10);
+            message.deleteAfter(10);
         }
 
         [Command("botignore"), Summary("Make the bot ignore a user.")]

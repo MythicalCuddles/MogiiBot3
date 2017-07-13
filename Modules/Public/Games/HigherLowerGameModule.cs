@@ -34,8 +34,8 @@ namespace DiscordBot.Modules.Public.Games
                 return;
             }
 
-            int botOne = _r.RandomNumber(1, 6), botTwo = _r.RandomNumber(1, 6), botTotal = botOne + botTwo;
-            int userOne = _r.RandomNumber(1, 6), userTwo = _r.RandomNumber(1, 6), userTotal = userOne + userTwo;
+            int botOne = _r.randomNumber(1, 6), botTwo = _r.randomNumber(1, 6), botTotal = botOne + botTwo;
+            int userOne = _r.randomNumber(1, 6), userTwo = _r.randomNumber(1, 6), userTotal = userOne + userTwo;
 
             StringBuilder sb = new StringBuilder()
                 .Append(MogiiBot3._bot.CurrentUser.Mention + " has rolled **" + botOne + "** and **" + botTwo + "** giving a total of **" + botTotal + "**\n")
@@ -75,8 +75,8 @@ namespace DiscordBot.Modules.Public.Games
                 return;
             }
 
-            int botOne = _r.RandomNumber(1, 6), botTwo = _r.RandomNumber(1, 6), botTotal = botOne + botTwo;
-            int userOne = _r.RandomNumber(1, 6), userTwo = _r.RandomNumber(1, 6), userTotal = userOne + userTwo;
+            int botOne = _r.randomNumber(1, 6), botTwo = _r.randomNumber(1, 6), botTotal = botOne + botTwo;
+            int userOne = _r.randomNumber(1, 6), userTwo = _r.randomNumber(1, 6), userTotal = userOne + userTwo;
 
             StringBuilder sb = new StringBuilder()
                 .Append(MogiiBot3._bot.CurrentUser.Mention + " has rolled **" + botOne + "** and **" + botTwo + "** giving a total of **" + botTotal + "**\n")

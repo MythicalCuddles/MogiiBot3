@@ -96,8 +96,8 @@ namespace DiscordBot.Modules.Public
             
             eb.AddInlineField("Coin(s)", User.Load(userSpecified.Id).Coins);
 
-            eb.AddInlineField("Account Created", userSpecified.CreatedDate());
-            eb.AddInlineField("Joined Guild", userSpecified.GuildJoinDate());
+            eb.AddInlineField("Account Created", userSpecified.userCreateDate());
+            eb.AddInlineField("Joined Guild", userSpecified.guildJoinDate());
 
             if (User.Load(userSpecified.Id).MinecraftUsername != null)
             {
@@ -115,12 +115,6 @@ namespace DiscordBot.Modules.Public
                 string snapchat = User.Load(userSpecified.Id).Snapchat;
                 eb.AddInlineField("Snapchat", "[" + snapchat + "](https://www.snapchat.com/add/" + snapchat + "/)");
             }
-
-            //if(User.Load(userSpecified.Id).GitHub != null)
-            //{
-            //    string githubUsername = User.Load(userSpecified.Id).GitHub;
-            //    eb.AddInlineField("GitHub", "[" + githubUsername + "](https://github.com/" + githubUsername + "/)");
-            //}
 
             if (User.Load(userSpecified.Id).CustomPrefix != null)
                 eb.AddInlineField("Custom Prefix", User.Load(userSpecified.Id).CustomPrefix);
@@ -197,10 +191,15 @@ namespace DiscordBot.Modules.Public
         [Command("suggest"), Summary("Send your suggestion for the bot!")]
         public async Task SendSuggestion([Remainder]string message)
         {
-            await GetHandler.getTextChannel(Configuration.Load().SuggestChannelID).SendMessageAsync("**Suggestion**" + "\n" +
+            await Configuration.Load().SuggestChannelID.getTextChannel().SendMessageAsync("**Suggestion**" + "\n" +
                     Context.User.Mention + "\n" +
                     "*User Suggestion: *" + "\n" +
                     message);
+
+            //await GetHandler.getTextChannel(Configuration.Load().SuggestChannelID).SendMessageAsync("**Suggestion**" + "\n" +
+            //        Context.User.Mention + "\n" +
+            //        "*User Suggestion: *" + "\n" +
+            //        message);
         }
 
         [Command("support"), Summary("Sends a message out for support.")]
@@ -208,16 +207,25 @@ namespace DiscordBot.Modules.Public
         {
             if (message == null)
             {
-                await GetHandler.getTextChannel(Configuration.Load().SupportChannelID).SendMessageAsync("**Support Needed**" + "\n" +
+                await Configuration.Load().SupportChannelID.getTextChannel().SendMessageAsync("**Support Needed**" + "\n" +
                     Context.User.Mention + " has issued the support command in <#" + Context.Channel.Id + ">\n" +
                     "*User Added Notes*" + "\n" +
                     "User has not provided any notes.");
+
+                //await GetHandler.getTextChannel(Configuration.Load().SupportChannelID).SendMessageAsync("**Support Needed**" + "\n" +
+                //    Context.User.Mention + " has issued the support command in <#" + Context.Channel.Id + ">\n" +
+                //    "*User Added Notes*" + "\n" +
+                //    "User has not provided any notes.");
             }
             else
             {
-                await GetHandler.getTextChannel(Configuration.Load().SupportChannelID).SendMessageAsync("**Support Needed**" + "\n" +
+                await Configuration.Load().SupportChannelID.getTextChannel().SendMessageAsync("**Support Needed**" + "\n" +
                      Context.User.Mention + " has issued the support command in <#" + Context.Channel.Id + ">\n" +
                      "*User Added Notes*" + "\n" + message);
+
+                //await GetHandler.getTextChannel(Configuration.Load().SupportChannelID).SendMessageAsync("**Support Needed**" + "\n" +
+                //     Context.User.Mention + " has issued the support command in <#" + Context.Channel.Id + ">\n" +
+                //     "*User Added Notes*" + "\n" + message);
             }
         }
     }

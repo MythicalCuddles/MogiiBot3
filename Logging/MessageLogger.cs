@@ -55,7 +55,7 @@ namespace DiscordBot.Logging
                 
                 using (StreamWriter sWriter = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + logFile, true))
                 {
-                    String timeStamp = DateTime.Now.GetTimestamp();
+                    String timeStamp = DateTime.Now.getTimestamp();
                     
                     sWriter.WriteLine("[NEW] [" + timeStamp + "] MID: " + message.Id + " | UID: " + message.Author.Id + " | @" + message.Author.Username + " : " + message.Content);
 
@@ -116,7 +116,7 @@ namespace DiscordBot.Logging
 
                 using (StreamWriter sWriter = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + logFile, true))
                 {
-                    String timeStamp = DateTime.Now.GetTimestamp();
+                    String timeStamp = DateTime.Now.getTimestamp();
 
                     if (message.Attachments != null)
                     {
@@ -187,7 +187,7 @@ namespace DiscordBot.Logging
 
                 using (StreamWriter sWriter = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + logFile, true))
                 {
-                    String timeStamp = DateTime.Now.GetTimestamp();
+                    String timeStamp = DateTime.Now.getTimestamp();
 
                     sWriter.WriteLine("[EDIT] [" + timeStamp + "] MID: " + message.Id + " | UID: " + message.Author.Id + " | @" + message.Author.Username + " : " + message.Content);
                     sWriter.Close();

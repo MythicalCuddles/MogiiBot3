@@ -43,7 +43,7 @@ namespace DiscordBot.Modules.Public
             int totalOfRoll = 0, roll = 0;
             for(int i = 0; i < numberOfDice; i++)
             {
-                roll = _r.RandomNumber(1, 6);
+                roll = _r.randomNumber(1, 6);
                 totalOfRoll += roll;
 
                 eb.AddInlineField("Dice " + (i + 1), roll.ToString());
@@ -58,7 +58,7 @@ namespace DiscordBot.Modules.Public
         [Alias("d20")]
         public async Task Roll20Dice()
         {
-            int value = _r.RandomNumber(1, 20);
+            int value = _r.randomNumber(1, 20);
             await ReplyAsync("A 20-sided dice was rolled, and landed on: " + value);
         }
 
@@ -66,7 +66,7 @@ namespace DiscordBot.Modules.Public
         [Alias("flip", "tosscoin", "coinflip")]
         public async Task FlipCoin()
         {
-            int value = _r.RandomNumber(1, 2);
+            int value = _r.randomNumber(1, 2);
 
             if(value == 1)
             {
@@ -248,8 +248,11 @@ namespace DiscordBot.Modules.Public
             User.UpdateJson(Context.User.Id, "Coins", (userCoins - quoteCost));
             TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") paid " + quoteCost + " for a custom quote.");
             await ReplyAsync(Context.User.Mention + ", thank you for your quote. This costed you " + quoteCost + " coins. Your quote has been added to a wait list, and should be verified by a staff member shortly.");
-            await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**New Quote**\nQuote requested by: **" + Context.User.Mention + "**\nQuote: " + quote);
-            await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("**New Quote**\n" + quote + "\n\n*Do " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "listrequestquotes to view the ID and other quotes.*");
+
+            await Configuration.Load().LogChannelID.getTextChannel().SendMessageAsync("**New Quote**\nQuote requested by: **" + Context.User.Mention + "**\nQuote: " + quote);
+            await Configuration.Load().MCLogChannelID.getTextChannel().SendMessageAsync("**New Quote**\n" + quote + "\n\n*Do " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "listrequestquotes to view the ID and other quotes.*");
+            //await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**New Quote**\nQuote requested by: **" + Context.User.Mention + "**\nQuote: " + quote);
+            //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("**New Quote**\n" + quote + "\n\n*Do " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "listrequestquotes to view the ID and other quotes.*");
         }
 
         [Command("music"), Summary("Replies posting a music link which has been set by staff.")]

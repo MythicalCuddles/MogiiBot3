@@ -10,6 +10,7 @@ using Discord.WebSocket;
 
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
+using DiscordBot.Extensions;
 
 using MelissasCode;
 
@@ -29,7 +30,8 @@ namespace DiscordBot.Modules.Mod
                 .Append("**Bot Name:** " + MogiiBot3._bot.CurrentUser.Username + "\n")
                 .Append("**Bot ID:** " + MogiiBot3._bot.CurrentUser.Id + "\n")
                 .Append("**---------------------------------------------**\n")
-                .Append("**Developer Name:** " + GetHandler.getUser(DiscordWorker.getMelissaID).Username + "\n")
+                .Append("**Developer Name:** " + DiscordWorker.getMelissaID.getUser().Username + "\n")
+                //.Append("**Developer Name:** " + GetHandler.getUser(DiscordWorker.getMelissaID).Username + "\n")
                 .Append("**Developer ID:** " + DiscordWorker.getMelissaID + "\n")
                 .Append("**---------------------------------------------**\n")
                 .Append("**Development:** " + developmentSince() + "\n")

@@ -129,16 +129,24 @@ namespace DiscordBot
             if (channel is ITextChannel)
             {
                 var channelParam = channel as ITextChannel;
-                await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**New Text Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
+                await Configuration.Load().LogChannelID.getTextChannel().SendMessageAsync("**New Text Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
                     + "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
                     + "\nTopic: " + channelParam.Topic + "```");
+
+                //await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**New Text Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
+                //    + "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
+                //    + "\nTopic: " + channelParam.Topic + "```");
             }
             else if (channel is IVoiceChannel)
             {
                 var channelParam = channel as IVoiceChannel;
-                await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**New Voice Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
+                await Configuration.Load().LogChannelID.getTextChannel().SendMessageAsync("**New Voice Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
                     + "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
                     + "\nUser Limit: " + channelParam.UserLimit + "```");
+
+                //await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**New Voice Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
+                //    + "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
+                //    + "\nUser Limit: " + channelParam.UserLimit + "```");
             }
             else
             {
@@ -189,16 +197,24 @@ namespace DiscordBot
             if (channel is ITextChannel)
             {
                 var channelParam = channel as ITextChannel;
-                await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**Removed Text Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
+                await Configuration.Load().LogChannelID.getTextChannel().SendMessageAsync("**Removed Text Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
                     + "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
                     + "\nTopic: " + channelParam.Topic + "```");
+
+                //await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**Removed Text Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
+                //    + "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
+                //    + "\nTopic: " + channelParam.Topic + "```");
             }
             else if (channel is IVoiceChannel)
             {
                 var channelParam = channel as IVoiceChannel;
-                await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**Removed Voice Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
+                await Configuration.Load().LogChannelID.getTextChannel().SendMessageAsync("**Removed Voice Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
                     + "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
                     + "\nUser Limit: " + channelParam.UserLimit + "```");
+
+                //await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**Removed Voice Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
+                //    + "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
+                //    + "\nUser Limit: " + channelParam.UserLimit + "```");
             }
             else
             {
@@ -404,7 +420,7 @@ namespace DiscordBot
                     sb.Append("**Nickname:** " + e.Nickname + "\n");
                 }
                 sb.Append("**Id: **" + e.Id + "\n");
-                sb.Append("**Joined: **" + e.GuildJoinDate() + "\n");
+                sb.Append("**Joined: **" + e.guildJoinDate() + "\n");
                 sb.Append("\n");
                 sb.Append("**Coins: **" + User.Load(e.Id).Coins + "\n");
 
@@ -415,7 +431,8 @@ namespace DiscordBot
                     .WithThumbnailUrl(e.GetAvatarUrl())
                     .WithCurrentTimestamp();
 
-                await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
+                await Configuration.Load().MCLogChannelID.getTextChannel().SendMessageAsync("", false, eb);
+                //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
             }
             else if (e.Guild.Id == Configuration.Load().NSFWServerID)
             {
@@ -426,7 +443,7 @@ namespace DiscordBot
                     sb.Append("**Nickname:** " + e.Nickname + "\n");
                 }
                 sb.Append("**Id: **" + e.Id + "\n");
-                sb.Append("**Joined: **" + e.GuildJoinDate() + "\n");
+                sb.Append("**Joined: **" + e.guildJoinDate() + "\n");
                 sb.Append("\n");
                 sb.Append("**Coins: **" + User.Load(e.Id).Coins + "\n");
 
@@ -437,7 +454,8 @@ namespace DiscordBot
                     .WithThumbnailUrl(e.GetAvatarUrl())
                     .WithCurrentTimestamp();
 
-                await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
+                await Configuration.Load().MCLogChannelID.getTextChannel().SendMessageAsync("", false, eb);
+                //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
             }
         }
         private async Task UserJoined(SocketGuildUser e)
@@ -451,10 +469,12 @@ namespace DiscordBot
                     .WithThumbnailUrl(e.GetAvatarUrl())
                     .WithCurrentTimestamp();
 
-                await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
+                await Configuration.Load().MCLogChannelID.getTextChannel().SendMessageAsync("", false, eb);
+                //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
 
                 string wMsg1 = GuildConfiguration.Load(e.Guild.Id).WelcomeMessage.Replace("{USERJOINED}", e.Mention).Replace("{GUILDNAME}", e.Guild.Name);
-                await GetHandler.getTextChannel(Configuration.Load().MCWelcomeChannelID).SendMessageAsync(wMsg1);
+                await Configuration.Load().MCLogChannelID.getTextChannel().SendMessageAsync(wMsg1);
+                //await GetHandler.getTextChannel(Configuration.Load().MCWelcomeChannelID).SendMessageAsync(wMsg1);
             }
             else if (e.Guild.Id == Configuration.Load().NSFWServerID)
             {
@@ -465,12 +485,14 @@ namespace DiscordBot
                     .WithThumbnailUrl(e.GetAvatarUrl())
                     .WithCurrentTimestamp();
 
-                await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
+                await Configuration.Load().MCLogChannelID.getTextChannel().SendMessageAsync("", false, eb);
+                //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
             }
 
             if (User.CreateUserFile(e.Id))
             {
-                await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync(e.Username + " was successfully added to the database. [" + e.Id + "]");
+                await Configuration.Load().LogChannelID.getTextChannel().SendMessageAsync(e.Username + " was successfully added to the database. [" + e.Id + "]");
+                //await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync(e.Username + " was successfully added to the database. [" + e.Id + "]");
             }
         }
 
@@ -493,7 +515,7 @@ namespace DiscordBot
             if (User.Load(message.Author.Id).IsBotIgnoringUser && message.Author.Id != DiscordWorker.getMelissaID) return;
             
             // Only respond on the NSFW Server if the channel id matches the rule34gamble channel id
-            if (message.IsMessageOnNSFWChannel() && message.Channel.Id != Configuration.Load().RuleGambleChannelID && message.Author.Id != Configuration.Load().Developer) return;
+            if (message.isMessageOnNSFWChannel() && message.Channel.Id != Configuration.Load().RuleGambleChannelID && message.Author.Id != Configuration.Load().Developer) return;
 
             // If the message came from somewhere that is not a text channel -> Private Message
             if (!(messageParam.Channel is ITextChannel))
@@ -511,7 +533,8 @@ namespace DiscordBot
                     .WithFooter(efb)
                     .WithCurrentTimestamp();
 
-                await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
+                await Configuration.Load().MCLogChannelID.getTextChannel().SendMessageAsync("", false, eb);
+                //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
             }
 
             // If the message is just "F", pay respects.
@@ -541,7 +564,7 @@ namespace DiscordBot
                 IUserMessage errorMessage;
                 if (result.ErrorReason.ToUpper().Contains(MelissaCode.GetOldFullNameUpper))
                 {
-                    errorMessage = await context.Channel.SendMessageAsync(messageParam.Author.Mention + ", an error containing classified information has occured. Please contact Melissa.\n`Error Code/Log File: #Ex00f" + _r.RandomNumber(0, 1000000) + "`");
+                    errorMessage = await context.Channel.SendMessageAsync(messageParam.Author.Mention + ", an error containing classified information has occured. Please contact Melissa.\n`Error Code/Log File: #Ex00f" + _r.randomNumber(0, 1000000) + "`");
                 }
                 else if(result.ErrorReason.ToUpper().Contains("END ON AN INCOMPLETE ESCAPE") && context.Message.Content.ToUpper().Contains("$SETPREFIX"))
                 {
@@ -554,8 +577,8 @@ namespace DiscordBot
 
                 Console.WriteLine(messageParam.Author.Mention + ", " + result.ErrorReason);
 
-                message.DeleteAfter(20);
-                errorMessage.DeleteAfter(20);
+                message.deleteAfter(20);
+                errorMessage.deleteAfter(20);
 
                 return;
             }

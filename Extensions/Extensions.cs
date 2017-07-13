@@ -13,8 +13,11 @@ namespace DiscordBot.Extensions
 {
     public static class Extensions
     {
-        public const string arrow_left = "⬅";
-        public const string arrow_right = "➡";
+        #region Variables
+        public const String arrow_left = "⬅", arrow_right = "➡";
+        #endregion
+
+        #region Dictionaries
         public static List<string> SlotEmotes = new List<string>()
         {           
             ":green_apple:",
@@ -49,8 +52,7 @@ namespace DiscordBot.Extensions
             //":pizza:",
             //":rice_ball:"
         };
-
-        private static Dictionary<int, string> reactions = new Dictionary<int, string>
+        private static Dictionary<int, string> Reactions = new Dictionary<int, string>
         {
             { 1, "1⃣" },
             { 2, "2⃣" },
@@ -73,47 +75,14 @@ namespace DiscordBot.Extensions
             { 19, "🇮" },
             { 20, "🇯" }
         };
+        #endregion
 
-        public static String GetTimestamp(this DateTime value)
+        #region General Extensions
+        public static String getTimestamp(this DateTime value)
         {
             return value.ToString("dd/MM/yyyy] [HH:mm:ss");
         }
-
-        public static IMessage DeleteAfter(this IUserMessage msg, int seconds)
-        {
-            Task.Run(async () =>
-            {
-                await Task.Delay(seconds * 1000);
-                try { await msg.DeleteAsync().ConfigureAwait(false); }
-                catch { }
-            });
-            return msg;
-        }
-
-        public static IMessage ModifyAfter(this IUserMessage msg, string message, int seconds)
-        {
-            Task.Run(async () =>
-            {
-                await Task.Delay(seconds * 1000);
-                try { await msg.ModifyAsync(x => x.Content = message).ConfigureAwait(false); }
-                catch { }
-            });
-            return msg;
-        }
-
-        public static string CreatedDate(this IUser user)
-        {
-            return user.CreatedAt.Day + " " + getMonthText(user.CreatedAt.Month) + " " + user.CreatedAt.Year;
-        }
-
-        public static string GuildJoinDate(this IUser user)
-        {
-            SocketGuildUser u = user as SocketGuildUser;
-
-            return u.JoinedAt.Value.Day + " " + getMonthText(u.JoinedAt.Value.Month) + " " + u.JoinedAt.Value.Year;
-        }
-
-        public static string getMonthText(int monthValue)
+        public static String getMonthText(this int monthValue)
         {
             string month = "";
             switch (monthValue)
@@ -134,69 +103,58 @@ namespace DiscordBot.Extensions
             }
             return month;
         }
-        
-        public static SocketGuild GetGuild(this SocketChannel channel)
+        public static String getDiceFace(this int value)
         {
-            foreach(SocketGuild g in MogiiBot3._bot.Guilds)
+            switch (value)
             {
-                foreach(SocketTextChannel t in g.TextChannels)
-                {
-                    if(channel.Id == t.Id)
-                    {
-                        return g;
-                    }
-                }
+                case 1: return "http://i.imgur.com/IMdC6hG.png";
+                case 2: return "http://i.imgur.com/3F0qYkC.png";
+                case 3: return "http://i.imgur.com/vje4R3X.png";
+                case 4: return "http://i.imgur.com/o5UiOW6.png";
+                case 5: return "http://i.imgur.com/iM3HSaU.png";
+                case 6: return "http://i.imgur.com/2KTFim8.png";
+                default: return "";
+            }
+        }
+        public static List<List<string>> splitList(this List<string> source, int nSize = 10)
+        {
+            var list = new List<List<string>>();
 
-                foreach(SocketVoiceChannel v in g.VoiceChannels)
-                {
-                    if(channel.Id == v.Id)
-                    {
-                        return g;
-                    }
-                }
+            for (int i = 0; i < source.Count; i += nSize)
+            {
+                list.Add(source.GetRange(i, Math.Min(nSize, source.Count - i)));
             }
 
-            return null;
+            return list;
         }
-
-        public static IGuild getGuild(this ISocketMessageChannel textChannel)
+        public static Int32 randomNumber(this Random source, int minValue, int maxValue)
         {
-            foreach (SocketGuild g in MogiiBot3._bot.Guilds)
-            {
-                foreach (SocketTextChannel tc in g.TextChannels)
-                {
-                    if (tc.Id == textChannel.Id)
-                    {
-                        return g;
-                    }
-                }
-            }
-
-            return null;
+            return source.Next(minValue, maxValue + 1);
         }
+        #endregion
 
-        public static bool NSFWMember(this IUser iUser)
+        #region Message Extensions
+        public static IMessage deleteAfter(this IUserMessage msg, int seconds)
         {
-            var cUser = iUser as SocketGuildUser;
-
-            foreach(SocketGuild g in MogiiBot3._bot.Guilds)
+            Task.Run(async () =>
             {
-                if(g.Id == Configuration.Load().NSFWServerID)
-                {
-                    foreach(SocketGuildUser u in g.Users)
-                    {
-                        if(u == cUser)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            return false;
+                await Task.Delay(seconds * 1000);
+                try { await msg.DeleteAsync().ConfigureAwait(false); }
+                catch { }
+            });
+            return msg;
         }
-
-        public static bool IsMessageOnNSFWChannel(this IUserMessage message)
+        public static IMessage modifyAfter(this IUserMessage msg, string message, int seconds)
+        {
+            Task.Run(async () =>
+            {
+                await Task.Delay(seconds * 1000);
+                try { await msg.ModifyAsync(x => x.Content = message).ConfigureAwait(false); }
+                catch { }
+            });
+            return msg;
+        }
+        public static Boolean isMessageOnNSFWChannel(this IUserMessage message)
         {
             foreach (SocketGuild g in MogiiBot3._bot.Guilds)
             {
@@ -214,36 +172,111 @@ namespace DiscordBot.Extensions
 
             return false;
         }
+        #endregion
 
-        public static List<List<string>> splitList(this List<string> source, int nSize = 10)
+        #region User Extensions
+        public static String userCreateDate(this IUser user)
         {
-            var list = new List<List<string>>();
+            return user.CreatedAt.Day + " " + user.CreatedAt.Month.getMonthText() + " " + user.CreatedAt.Year;
+        }
+        public static String guildJoinDate(this IUser user)
+        {
+            SocketGuildUser u = user as SocketGuildUser;
 
-            for (int i = 0; i < source.Count; i += nSize)
+            return u.JoinedAt.Value.Day + " " + u.JoinedAt.Value.Month.getMonthText() + " " + u.JoinedAt.Value.Year;
+        }
+        public static Boolean NSFWMember(this IUser iUser)
+        {
+            var cUser = iUser as SocketGuildUser;
+
+            foreach (SocketGuild g in MogiiBot3._bot.Guilds)
             {
-                list.Add(source.GetRange(i, Math.Min(nSize, source.Count - i)));
+                if (g.Id == Configuration.Load().NSFWServerID)
+                {
+                    foreach (SocketGuildUser u in g.Users)
+                    {
+                        if (u == cUser)
+                        {
+                            return true;
+                        }
+                    }
+                }
             }
 
-            return list;
+            return false;
         }
-
-        public static int RandomNumber(this Random source, int minValue, int maxValue)
+        #endregion
+        
+        #region SocketUser Gets
+        public static SocketUser getUser(this ulong id)
         {
-            return source.Next(minValue, maxValue + 1);
+            var user = MogiiBot3._bot.GetUser(id) as SocketUser;
+            if (user == null) return null;
+            return user;
         }
+        #endregion
 
-        public static string GetDiceFace(this int value)
+        #region SocketChannel Gets
+        public static SocketTextChannel getTextChannel(this ulong id)
         {
-            switch(value)
+            var channel = MogiiBot3._bot.GetChannel(id) as SocketTextChannel;
+            if (channel == null) return null;
+            return channel;
+        }
+        public static SocketVoiceChannel getVoiceChannel(this ulong id)
+        {
+            var channel = MogiiBot3._bot.GetChannel(id) as SocketVoiceChannel;
+            if (channel == null) return null;
+            return channel;
+        }
+        #endregion
+
+        #region SocketGuild Gets
+        public static SocketGuild getGuild(this ulong id)
+        {
+            var guild = MogiiBot3._bot.GetGuild(id) as SocketGuild;
+            if (guild == null) return null;
+            return guild;
+        }
+        public static SocketGuild getGuild(this ISocketMessageChannel textChannel)
+        {
+            foreach (SocketGuild g in MogiiBot3._bot.Guilds)
             {
-                case 1: return "http://i.imgur.com/IMdC6hG.png";
-                case 2: return "http://i.imgur.com/3F0qYkC.png";
-                case 3: return "http://i.imgur.com/vje4R3X.png";
-                case 4: return "http://i.imgur.com/o5UiOW6.png";
-                case 5: return "http://i.imgur.com/iM3HSaU.png";
-                case 6: return "http://i.imgur.com/2KTFim8.png";
-                default: return "";
+                foreach (SocketTextChannel tc in g.TextChannels)
+                {
+                    if (tc.Id == textChannel.Id)
+                    {
+                        return g;
+                    }
+                }
             }
+
+            return null;
         }
+        public static SocketGuild getGuild(this SocketChannel channel)
+        {
+            foreach (SocketGuild g in MogiiBot3._bot.Guilds)
+            {
+                foreach (SocketTextChannel t in g.TextChannels)
+                {
+                    if (channel.Id == t.Id)
+                    {
+                        return g;
+                    }
+                }
+
+                foreach (SocketVoiceChannel v in g.VoiceChannels)
+                {
+                    if (channel.Id == v.Id)
+                    {
+                        return g;
+                    }
+                }
+            }
+
+            return null;
+        }
+        #endregion
+        
     }
 }

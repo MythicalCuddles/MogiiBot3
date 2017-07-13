@@ -10,6 +10,7 @@ using Discord.WebSocket;
 
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
+using DiscordBot.Extensions;
 using DiscordBot.Other;
 using DiscordBot.Logging;
 
@@ -32,21 +33,24 @@ namespace DiscordBot.Modules.Admin
         public async Task ToggleSenpai()
         {
             Configuration.UpdateJson("SenpaiEnabled", !Configuration.Load().SenpaiEnabled);
-            await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("Senpai has been toggled by " + Context.User.Mention + " (emabled: " + Configuration.Load().SenpaiEnabled + ")");
+            await Configuration.Load().MCLogChannelID.getTextChannel().SendMessageAsync("Senpai has been toggled by " + Context.User.Mention + " (emabled: " + Configuration.Load().SenpaiEnabled + ")");
+            //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("Senpai has been toggled by " + Context.User.Mention + " (emabled: " + Configuration.Load().SenpaiEnabled + ")");
         }
 
         [Command("togglequotes"), Summary("")]
         public async Task ToggleQuotes()
         {
             Configuration.UpdateJson("QuotesEnabled", !Configuration.Load().QuotesEnabled);
-            await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("Quotes have been toggled by " + Context.User.Mention + " (emabled: " + Configuration.Load().QuotesEnabled + ")");
+            await Configuration.Load().MCLogChannelID.getTextChannel().SendMessageAsync("Quotes have been toggled by " + Context.User.Mention + " (emabled: " + Configuration.Load().QuotesEnabled + ")");
+            //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("Quotes have been toggled by " + Context.User.Mention + " (emabled: " + Configuration.Load().QuotesEnabled + ")");
         }
 
         [Command("toggleunknowncommand"), Summary("Toggles the unknown command message.")]
         public async Task ToggleUC()
         {
             Configuration.UpdateJson("UnknownCommandEnabled", !Configuration.Load().UnknownCommandEnabled);
-            await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("UnknownCommand has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().UnknownCommandEnabled + ")");
+            await Configuration.Load().MCLogChannelID.getTextChannel().SendMessageAsync("UnknownCommand has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().UnknownCommandEnabled + ")");
+            //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("UnknownCommand has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().UnknownCommandEnabled + ")");
         }
 
         [Command("playing"), Summary("Changes the playing message of the bot.")]
@@ -77,8 +81,11 @@ namespace DiscordBot.Modules.Admin
         [Command("welcome"), Summary("Send the welcome messages to the user specified.")]
         public async Task SendWelcomeMessage(IUser user)
         {
-            await GetHandler.getTextChannel(Configuration.Load().MCWelcomeChannelID).SendMessageAsync(GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.Replace("{USERJOINED}", user.Mention).Replace("{GUILDNAME}", Context.Guild.Name));
-            await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync(user.Mention + " has joined the server.");
+            await Configuration.Load().MCWelcomeChannelID.getTextChannel().SendMessageAsync(GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.Replace("{USERJOINED}", user.Mention).Replace("{GUILDNAME}", Context.Guild.Name));
+            await Configuration.Load().MCLogChannelID.getTextChannel().SendMessageAsync(user.Mention + " has joined the server.");
+
+            //await GetHandler.getTextChannel(Configuration.Load().MCWelcomeChannelID).SendMessageAsync(GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.Replace("{USERJOINED}", user.Mention).Replace("{GUILDNAME}", Context.Guild.Name));
+            //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync(user.Mention + " has joined the server.");
         }
         
         [Command("awardcoins"), Summary("Award the specified user the specified amount of coins.")]
@@ -91,7 +98,8 @@ namespace DiscordBot.Modules.Admin
             }
 
             User.UpdateJson(mentionedUser.Id, "Coins", (User.Load(mentionedUser.Id).Coins + awardValue));
-            await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync(Context.User.Mention + " has awarded " + mentionedUser.Mention + " " + awardValue + " coins!");
+            await Configuration.Load().LogChannelID.getTextChannel().SendMessageAsync(Context.User.Mention + " has awarded " + mentionedUser.Mention + " " + awardValue + " coins!");
+            //await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync(Context.User.Mention + " has awarded " + mentionedUser.Mention + " " + awardValue + " coins!");
             await ReplyAsync(mentionedUser.Mention + " has been awarded " + awardValue + " coins from " + Context.User.Mention);
             TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") awarded " + mentionedUser.Username + "(" + mentionedUser.Id + ") " + awardValue + " coins.");
         }
@@ -112,7 +120,8 @@ namespace DiscordBot.Modules.Admin
             }
 
             User.UpdateJson(mentionedUser.Id, "Coins", (User.Load(mentionedUser.Id).Coins - fineValue));
-            await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync(Context.User.Mention + " has fined " + mentionedUser.Mention + " " + fineValue + " coins!");
+            await Configuration.Load().LogChannelID.getTextChannel().SendMessageAsync(Context.User.Mention + " has fined " + mentionedUser.Mention + " " + fineValue + " coins!");
+            //await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync(Context.User.Mention + " has fined " + mentionedUser.Mention + " " + fineValue + " coins!");
             await ReplyAsync(mentionedUser.Mention + " has been fined " + fineValue + " coins from " + Context.User.Mention);
             TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") fined " + mentionedUser.Username + "(" + mentionedUser.Id + ") " + fineValue + " coins.");
         }

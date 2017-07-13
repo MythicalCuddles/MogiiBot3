@@ -58,7 +58,7 @@ namespace DiscordBot.Logging
 
         public static void AddTransaction(string transaction)
         {
-            String timeStamp = DateTime.Now.GetTimestamp();
+            String timeStamp = DateTime.Now.getTimestamp();
 
             transactionsList.Add("[" + timeStamp + "] " + transaction);
             SaveTransactionsToFile();

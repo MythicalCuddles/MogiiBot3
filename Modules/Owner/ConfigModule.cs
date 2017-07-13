@@ -95,6 +95,13 @@ namespace DiscordBot.Modules.Owner
             Configuration.UpdateJson("LogChannelID", channelID);
             await ReplyAsync(Context.User.Mention + " has updated \"LogChannelID\" to: " + channelID);
         }
+
+        [Command("coinmodifier"), Summary("")]
+        public async Task SetCoinModifierValue(int coinModifierValue)
+        {
+            Configuration.UpdateJson("CoinModifier", coinModifierValue);
+            await ReplyAsync(Context.User.Mention + " has updated \"CoinModifier\" to: " + coinModifierValue);
+        }
         #endregion
     }
 }
