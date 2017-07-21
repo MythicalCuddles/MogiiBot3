@@ -17,6 +17,7 @@ using System.Diagnostics;
 
 namespace DiscordBot.Modules.Public
 {
+    [Name("Info Commands")]
     [MinPermissions(PermissionLevel.User)]
     public class InfoModule : ModuleBase
     {

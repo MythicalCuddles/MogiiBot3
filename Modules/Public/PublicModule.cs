@@ -19,6 +19,7 @@ namespace DiscordBot.Modules.Public
 {
     [MinPermissions(PermissionLevel.User)]
     [RequireContext(ContextType.Guild)]
+    [Name("Public Commands")]
     public class PublicModule : ModuleBase
     {
         [Command("hug"), Summary("Give your friend a hug!")]
@@ -69,7 +70,6 @@ namespace DiscordBot.Modules.Public
             if (User.Load(userSpecified.Id).TeamMember)
             {
                 eab.WithIconUrl(User.Load(userSpecified.Id).EmbedAuthorBuilderIconUrl);
-
                 efb.WithIconUrl(User.Load(userSpecified.Id).EmbedFooterBuilderIconUrl);
             }
             
@@ -94,10 +94,10 @@ namespace DiscordBot.Modules.Public
             if (User.Load(userSpecified.Id).Pronouns != null)
                 eb.AddInlineField("Pronouns", User.Load(userSpecified.Id).Pronouns);
             
-            eb.AddInlineField("Coin(s)", User.Load(userSpecified.Id).Coins);
+            eb.AddInlineField("Coins", User.Load(userSpecified.Id).Coins);
 
-            eb.AddInlineField("Account Created", userSpecified.userCreateDate());
-            eb.AddInlineField("Joined Guild", userSpecified.guildJoinDate());
+            eb.AddInlineField("Account Created", userSpecified.UserCreateDate());
+            eb.AddInlineField("Joined Guild", userSpecified.GuildJoinDate());
 
             if (User.Load(userSpecified.Id).MinecraftUsername != null)
             {
@@ -191,7 +191,7 @@ namespace DiscordBot.Modules.Public
         [Command("suggest"), Summary("Send your suggestion for the bot!")]
         public async Task SendSuggestion([Remainder]string message)
         {
-            await Configuration.Load().SuggestChannelID.getTextChannel().SendMessageAsync("**Suggestion**" + "\n" +
+            await Configuration.Load().SuggestChannelID.GetTextChannel().SendMessageAsync("**Suggestion**" + "\n" +
                     Context.User.Mention + "\n" +
                     "*User Suggestion: *" + "\n" +
                     message);
@@ -207,7 +207,7 @@ namespace DiscordBot.Modules.Public
         {
             if (message == null)
             {
-                await Configuration.Load().SupportChannelID.getTextChannel().SendMessageAsync("**Support Needed**" + "\n" +
+                await Configuration.Load().SupportChannelID.GetTextChannel().SendMessageAsync("**Support Needed**" + "\n" +
                     Context.User.Mention + " has issued the support command in <#" + Context.Channel.Id + ">\n" +
                     "*User Added Notes*" + "\n" +
                     "User has not provided any notes.");
@@ -219,7 +219,7 @@ namespace DiscordBot.Modules.Public
             }
             else
             {
-                await Configuration.Load().SupportChannelID.getTextChannel().SendMessageAsync("**Support Needed**" + "\n" +
+                await Configuration.Load().SupportChannelID.GetTextChannel().SendMessageAsync("**Support Needed**" + "\n" +
                      Context.User.Mention + " has issued the support command in <#" + Context.Channel.Id + ">\n" +
                      "*User Added Notes*" + "\n" + message);
 

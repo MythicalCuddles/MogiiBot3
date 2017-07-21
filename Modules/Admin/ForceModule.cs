@@ -16,6 +16,7 @@ using MelissasCode;
 
 namespace DiscordBot.Modules.Admin
 {
+    [Name("Force Commands")]
     [Group("force")]
     [RequireContext(ContextType.Guild)]
     [MinPermissions(PermissionLevel.ServerAdmin)]

@@ -48,7 +48,7 @@ namespace DiscordBot
             Console.WriteLine("]    ");
 
             Console.WriteLine("Web: www.mythicalcuddles.xyz");
-            Console.WriteLine("Contact: melissa@mythicalcuddles.xyz \n");
+            Console.WriteLine("Contact: melissa@mythicalcuddles.xyz" + "\n");
             Console.WriteLine("Copyright 2017 Melissa B. | Licensed under the MIT License.");
             Console.WriteLine("-----------------------------------------------------------------");
 

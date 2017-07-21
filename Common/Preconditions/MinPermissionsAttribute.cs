@@ -20,7 +20,7 @@ namespace DiscordBot.Common.Preconditions
             _level = level;
         }
 
-        public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IDependencyMap map)
+        public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider service)
         {
             var permission = GetPermission(context);
 
@@ -42,7 +42,7 @@ namespace DiscordBot.Common.Preconditions
             if (Configuration.Load().Developer == context.User.Id)
                 return PermissionLevel.BotOwner;
 
-            var user = context.User as SocketGuildUser;
+            var user = (context.User as SocketGuildUser);
 
             if (user != null)
             {

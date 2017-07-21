@@ -17,40 +17,10 @@ using System.IO;
 
 namespace DiscordBot.Modules.Owner
 {
+    [Name("Owner Commands")]
     [MinPermissions(PermissionLevel.BotOwner)]
     public class OwnerModule : ModuleBase
     {
-        [Command("setupdatabase"), Summary("Adds all the users to the database.")]
-        public async Task SetUpDatabase()
-        {
-            StringBuilder sb = new StringBuilder();
-
-            sb.Append("**Database Report**\n```");
-
-            foreach (SocketGuild g in MogiiBot3._bot.Guilds)
-            {
-                if (g.Id == Configuration.Load().ServerID)
-                {
-                    foreach (SocketGuildUser u in g.Users)
-                    {
-                        if(User.CreateUserFile(u.Id))
-                        {
-                            sb.Append(u.Username + " - Added. [" + u.Id + "]\n");
-                        }
-                        else
-                        {
-                            sb.Append(u.Username + " - Already Added. [" + u.Id + "]\n");
-                        }
-                    }
-                }
-            }
-
-            sb.Append("```");
-
-            await ReplyAsync(sb.ToString());
-            sb.Clear();
-        }
-
         [Command("addteammember"), Summary("Add a member to the team. Gives them a star on $about")]
         public async Task AddTeamMember(IUser user)
         {
@@ -91,8 +61,8 @@ namespace DiscordBot.Modules.Owner
             User.UpdateJson(user.Id, "FooterText", footer);
             var message = await ReplyAsync("Updated.");
 
-            Context.Message.deleteAfter(10);
-            message.deleteAfter(10);
+            Context.Message.DeleteAfter(10);
+            message.DeleteAfter(10);
         }
 
         [Command("botignore"), Summary("Make the bot ignore a user.")]

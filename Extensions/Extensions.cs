@@ -8,13 +8,17 @@ using Discord.Net;
 using Discord.WebSocket;
 using DiscordBot.Common;
 using Discord.Commands;
+using Discord.Addons.EmojiTools;
 
 namespace DiscordBot.Extensions
 {
     public static class Extensions
     {
         #region Variables
-        public const String arrow_left = "⬅", arrow_right = "➡";
+        //public const String arrow_left = "⬅", arrow_right = "➡";
+        public static Emoji 
+            arrow_left = EmojiExtensions.FromText(":arrow_left:"), 
+            arrow_right = EmojiExtensions.FromText(":arrow_right:");
         #endregion
 
         #region Dictionaries
@@ -78,11 +82,11 @@ namespace DiscordBot.Extensions
         #endregion
 
         #region General Extensions
-        public static String getTimestamp(this DateTime value)
+        public static String GetTimestamp(this DateTime value)
         {
             return value.ToString("dd/MM/yyyy] [HH:mm:ss");
         }
-        public static String getMonthText(this int monthValue)
+        public static String GetMonthText(this int monthValue)
         {
             string month = "";
             switch (monthValue)
@@ -103,7 +107,7 @@ namespace DiscordBot.Extensions
             }
             return month;
         }
-        public static String getDiceFace(this int value)
+        public static String GetDiceFace(this int value)
         {
             switch (value)
             {
@@ -116,7 +120,7 @@ namespace DiscordBot.Extensions
                 default: return "";
             }
         }
-        public static List<List<string>> splitList(this List<string> source, int nSize = 10)
+        public static List<List<string>> SplitList(this List<string> source, int nSize = 10)
         {
             var list = new List<List<string>>();
 
@@ -127,14 +131,14 @@ namespace DiscordBot.Extensions
 
             return list;
         }
-        public static Int32 randomNumber(this Random source, int minValue, int maxValue)
+        public static Int32 RandomNumber(this Random source, int minValue, int maxValue)
         {
             return source.Next(minValue, maxValue + 1);
         }
         #endregion
 
         #region Message Extensions
-        public static IMessage deleteAfter(this IUserMessage msg, int seconds)
+        public static IMessage DeleteAfter(this IUserMessage msg, int seconds)
         {
             Task.Run(async () =>
             {
@@ -144,7 +148,7 @@ namespace DiscordBot.Extensions
             });
             return msg;
         }
-        public static IMessage modifyAfter(this IUserMessage msg, string message, int seconds)
+        public static IMessage ModifyAfter(this IUserMessage msg, string message, int seconds)
         {
             Task.Run(async () =>
             {
@@ -154,7 +158,7 @@ namespace DiscordBot.Extensions
             });
             return msg;
         }
-        public static Boolean isMessageOnNSFWChannel(this IUserMessage message)
+        public static Boolean IsMessageOnNSFWChannel(this IUserMessage message)
         {
             foreach (SocketGuild g in MogiiBot3._bot.Guilds)
             {
@@ -175,40 +179,40 @@ namespace DiscordBot.Extensions
         #endregion
 
         #region User Extensions
-        public static String userCreateDate(this IUser user)
+        public static String UserCreateDate(this IUser user)
         {
-            return user.CreatedAt.Day + " " + user.CreatedAt.Month.getMonthText() + " " + user.CreatedAt.Year;
+            return user.CreatedAt.Day + " " + user.CreatedAt.Month.GetMonthText() + " " + user.CreatedAt.Year;
         }
-        public static String guildJoinDate(this IUser user)
+        public static String GuildJoinDate(this IUser user)
         {
             SocketGuildUser u = user as SocketGuildUser;
 
-            return u.JoinedAt.Value.Day + " " + u.JoinedAt.Value.Month.getMonthText() + " " + u.JoinedAt.Value.Year;
+            return u.JoinedAt.Value.Day + " " + u.JoinedAt.Value.Month.GetMonthText() + " " + u.JoinedAt.Value.Year;
         }
-        public static Boolean NSFWMember(this IUser iUser)
-        {
-            var cUser = iUser as SocketGuildUser;
+        //public static Boolean NSFWMember(this IUser user)
+        //{
+        //    var cUser = user as SocketGuildUser;
 
-            foreach (SocketGuild g in MogiiBot3._bot.Guilds)
-            {
-                if (g.Id == Configuration.Load().NSFWServerID)
-                {
-                    foreach (SocketGuildUser u in g.Users)
-                    {
-                        if (u == cUser)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
+        //    foreach (SocketGuild g in MogiiBot3._bot.Guilds)
+        //    {
+        //        if (g.Id == Configuration.Load().NSFWServerID)
+        //        {
+        //            foreach (SocketGuildUser u in g.Users)
+        //            {
+        //                if (u == cUser)
+        //                {
+        //                    return true;
+        //                }
+        //            }
+        //        }
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
         #endregion
         
         #region SocketUser Gets
-        public static SocketUser getUser(this ulong id)
+        public static SocketUser GetUser(this ulong id)
         {
             var user = MogiiBot3._bot.GetUser(id) as SocketUser;
             if (user == null) return null;
@@ -217,13 +221,13 @@ namespace DiscordBot.Extensions
         #endregion
 
         #region SocketChannel Gets
-        public static SocketTextChannel getTextChannel(this ulong id)
+        public static SocketTextChannel GetTextChannel(this ulong id)
         {
             var channel = MogiiBot3._bot.GetChannel(id) as SocketTextChannel;
             if (channel == null) return null;
             return channel;
         }
-        public static SocketVoiceChannel getVoiceChannel(this ulong id)
+        public static SocketVoiceChannel GetVoiceChannel(this ulong id)
         {
             var channel = MogiiBot3._bot.GetChannel(id) as SocketVoiceChannel;
             if (channel == null) return null;
@@ -232,13 +236,13 @@ namespace DiscordBot.Extensions
         #endregion
 
         #region SocketGuild Gets
-        public static SocketGuild getGuild(this ulong id)
+        public static SocketGuild GetGuild(this ulong id)
         {
             var guild = MogiiBot3._bot.GetGuild(id) as SocketGuild;
             if (guild == null) return null;
             return guild;
         }
-        public static SocketGuild getGuild(this ISocketMessageChannel textChannel)
+        public static SocketGuild GetGuild(this ISocketMessageChannel textChannel)
         {
             foreach (SocketGuild g in MogiiBot3._bot.Guilds)
             {
@@ -253,7 +257,7 @@ namespace DiscordBot.Extensions
 
             return null;
         }
-        public static SocketGuild getGuild(this SocketChannel channel)
+        public static SocketGuild GetGuild(this SocketChannel channel)
         {
             foreach (SocketGuild g in MogiiBot3._bot.Guilds)
             {

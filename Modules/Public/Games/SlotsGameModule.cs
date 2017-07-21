@@ -17,6 +17,7 @@ using MelissasCode;
 
 namespace DiscordBot.Modules.Public.Games
 {
+    [Name("Slot Game Commands")]
     [MinPermissions(PermissionLevel.User)]
     [RequireContext(ContextType.Guild)]
     public class SlotsGameModule : ModuleBase

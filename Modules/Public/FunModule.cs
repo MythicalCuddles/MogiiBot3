@@ -17,6 +17,7 @@ using MelissasCode;
 
 namespace DiscordBot.Modules.Public
 {
+    [Name("Fun Commands")]
     [MinPermissions(PermissionLevel.User)]
     [RequireContext(ContextType.Guild)]
     public class FunModule : ModuleBase
@@ -43,7 +44,7 @@ namespace DiscordBot.Modules.Public
             int totalOfRoll = 0, roll = 0;
             for(int i = 0; i < numberOfDice; i++)
             {
-                roll = _r.randomNumber(1, 6);
+                roll = _r.RandomNumber(1, 6);
                 totalOfRoll += roll;
 
                 eb.AddInlineField("Dice " + (i + 1), roll.ToString());
@@ -58,7 +59,7 @@ namespace DiscordBot.Modules.Public
         [Alias("d20")]
         public async Task Roll20Dice()
         {
-            int value = _r.randomNumber(1, 20);
+            int value = _r.RandomNumber(1, 20);
             await ReplyAsync("A 20-sided dice was rolled, and landed on: " + value);
         }
 
@@ -66,7 +67,7 @@ namespace DiscordBot.Modules.Public
         [Alias("flip", "tosscoin", "coinflip")]
         public async Task FlipCoin()
         {
-            int value = _r.randomNumber(1, 2);
+            int value = _r.RandomNumber(1, 2);
 
             if(value == 1)
             {
@@ -107,7 +108,7 @@ namespace DiscordBot.Modules.Public
         }
 
         [Command("gitgud"), Summary("git gud")]
-        public async Task gitgud()
+        public async Task Gitgud()
         {
             await ReplyAsync("https://cdn.discordapp.com/attachments/235124701964271618/310169979083423744/received_10206534636842919.jpeg");
         }
@@ -249,8 +250,8 @@ namespace DiscordBot.Modules.Public
             TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") paid " + quoteCost + " for a custom quote.");
             await ReplyAsync(Context.User.Mention + ", thank you for your quote. This costed you " + quoteCost + " coins. Your quote has been added to a wait list, and should be verified by a staff member shortly.");
 
-            await Configuration.Load().LogChannelID.getTextChannel().SendMessageAsync("**New Quote**\nQuote requested by: **" + Context.User.Mention + "**\nQuote: " + quote);
-            await Configuration.Load().MCLogChannelID.getTextChannel().SendMessageAsync("**New Quote**\n" + quote + "\n\n*Do " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "listrequestquotes to view the ID and other quotes.*");
+            await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync("**New Quote**\nQuote requested by: **" + Context.User.Mention + "**\nQuote: " + quote);
+            await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync("**New Quote**\n" + quote + "\n\n*Do " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "listrequestquotes to view the ID and other quotes.*");
             //await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**New Quote**\nQuote requested by: **" + Context.User.Mention + "**\nQuote: " + quote);
             //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("**New Quote**\n" + quote + "\n\n*Do " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "listrequestquotes to view the ID and other quotes.*");
         }

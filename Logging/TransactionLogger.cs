@@ -11,7 +11,7 @@ namespace DiscordBot.Logging
 {
     class TransactionLogger
     {
-        public static string fileName { get; private set; } = "common/transactions.txt";
+        public static string FileName { get; private set; } = "common/transactions.txt";
         public static List<string> transactionsList = new List<string>();
         public static List<List<string>> splicedTransactionsList = new List<List<string>>();
 
@@ -20,19 +20,19 @@ namespace DiscordBot.Logging
 
         private static void LoadTransactions()
         {
-            string file = Path.Combine(AppContext.BaseDirectory, fileName);
+            string file = Path.Combine(AppContext.BaseDirectory, FileName);
             transactionsList = File.ReadAllLines(file).ToList();
 
             Console.Write("status: [");
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.Write("ok");
             Console.ResetColor();
-            Console.WriteLine("]    " + fileName + ": loaded.");
+            Console.WriteLine("]    " + FileName + ": loaded.");
         }
 
         public static void EnsureExists()
         {
-            string file = Path.Combine(AppContext.BaseDirectory, fileName);
+            string file = Path.Combine(AppContext.BaseDirectory, FileName);
             if (!File.Exists(file))
             {
                 string path = Path.GetDirectoryName(file);
@@ -45,20 +45,20 @@ namespace DiscordBot.Logging
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Console.Write("ok");
                 Console.ResetColor();
-                Console.WriteLine("]    " + fileName + ": created.");
+                Console.WriteLine("]    " + FileName + ": created.");
             }
             LoadTransactions();
         }
 
         private static void SaveTransactionsToFile()
         {
-            string file = Path.Combine(AppContext.BaseDirectory, fileName);
+            string file = Path.Combine(AppContext.BaseDirectory, FileName);
             File.WriteAllLines(file, transactionsList);
         }
 
         public static void AddTransaction(string transaction)
         {
-            String timeStamp = DateTime.Now.getTimestamp();
+            String timeStamp = DateTime.Now.GetTimestamp();
 
             transactionsList.Add("[" + timeStamp + "] " + transaction);
             SaveTransactionsToFile();
@@ -66,7 +66,7 @@ namespace DiscordBot.Logging
 
         public static void SpliceTransactionsIntoList()
         {
-            splicedTransactionsList = transactionsList.splitList();
+            splicedTransactionsList = transactionsList.SplitList();
         }
         public static List<string> GetSplicedTransactions(int pageNumber)
         {

@@ -16,6 +16,7 @@ using MelissasCode;
 
 namespace DiscordBot.Modules.Owner
 {
+    [Name("Configuration Commands")]
     [Group("setconfig")]
     [MinPermissions(PermissionLevel.BotOwner)]
     public class ConfigModule : ModuleBase

@@ -18,6 +18,7 @@ using MelissasCode;
 
 namespace DiscordBot.Modules.Admin
 {
+    [Name("Admin Commands")]
     [RequireContext(ContextType.Guild)]
     [MinPermissions(PermissionLevel.ServerAdmin)]
     public class AdminModule : ModuleBase
@@ -33,7 +34,7 @@ namespace DiscordBot.Modules.Admin
         public async Task ToggleSenpai()
         {
             Configuration.UpdateJson("SenpaiEnabled", !Configuration.Load().SenpaiEnabled);
-            await Configuration.Load().MCLogChannelID.getTextChannel().SendMessageAsync("Senpai has been toggled by " + Context.User.Mention + " (emabled: " + Configuration.Load().SenpaiEnabled + ")");
+            await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync("Senpai has been toggled by " + Context.User.Mention + " (emabled: " + Configuration.Load().SenpaiEnabled + ")");
             //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("Senpai has been toggled by " + Context.User.Mention + " (emabled: " + Configuration.Load().SenpaiEnabled + ")");
         }
 
@@ -41,7 +42,7 @@ namespace DiscordBot.Modules.Admin
         public async Task ToggleQuotes()
         {
             Configuration.UpdateJson("QuotesEnabled", !Configuration.Load().QuotesEnabled);
-            await Configuration.Load().MCLogChannelID.getTextChannel().SendMessageAsync("Quotes have been toggled by " + Context.User.Mention + " (emabled: " + Configuration.Load().QuotesEnabled + ")");
+            await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync("Quotes have been toggled by " + Context.User.Mention + " (emabled: " + Configuration.Load().QuotesEnabled + ")");
             //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("Quotes have been toggled by " + Context.User.Mention + " (emabled: " + Configuration.Load().QuotesEnabled + ")");
         }
 
@@ -49,7 +50,7 @@ namespace DiscordBot.Modules.Admin
         public async Task ToggleUC()
         {
             Configuration.UpdateJson("UnknownCommandEnabled", !Configuration.Load().UnknownCommandEnabled);
-            await Configuration.Load().MCLogChannelID.getTextChannel().SendMessageAsync("UnknownCommand has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().UnknownCommandEnabled + ")");
+            await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync("UnknownCommand has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().UnknownCommandEnabled + ")");
             //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("UnknownCommand has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().UnknownCommandEnabled + ")");
         }
 
@@ -81,8 +82,8 @@ namespace DiscordBot.Modules.Admin
         [Command("welcome"), Summary("Send the welcome messages to the user specified.")]
         public async Task SendWelcomeMessage(IUser user)
         {
-            await Configuration.Load().MCWelcomeChannelID.getTextChannel().SendMessageAsync(GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.Replace("{USERJOINED}", user.Mention).Replace("{GUILDNAME}", Context.Guild.Name));
-            await Configuration.Load().MCLogChannelID.getTextChannel().SendMessageAsync(user.Mention + " has joined the server.");
+            await Configuration.Load().MCWelcomeChannelID.GetTextChannel().SendMessageAsync(GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.Replace("{USERJOINED}", user.Mention).Replace("{GUILDNAME}", Context.Guild.Name));
+            await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync(user.Mention + " has joined the server.");
 
             //await GetHandler.getTextChannel(Configuration.Load().MCWelcomeChannelID).SendMessageAsync(GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.Replace("{USERJOINED}", user.Mention).Replace("{GUILDNAME}", Context.Guild.Name));
             //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync(user.Mention + " has joined the server.");
@@ -98,7 +99,7 @@ namespace DiscordBot.Modules.Admin
             }
 
             User.UpdateJson(mentionedUser.Id, "Coins", (User.Load(mentionedUser.Id).Coins + awardValue));
-            await Configuration.Load().LogChannelID.getTextChannel().SendMessageAsync(Context.User.Mention + " has awarded " + mentionedUser.Mention + " " + awardValue + " coins!");
+            await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync(Context.User.Mention + " has awarded " + mentionedUser.Mention + " " + awardValue + " coins!");
             //await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync(Context.User.Mention + " has awarded " + mentionedUser.Mention + " " + awardValue + " coins!");
             await ReplyAsync(mentionedUser.Mention + " has been awarded " + awardValue + " coins from " + Context.User.Mention);
             TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") awarded " + mentionedUser.Username + "(" + mentionedUser.Id + ") " + awardValue + " coins.");
@@ -120,7 +121,7 @@ namespace DiscordBot.Modules.Admin
             }
 
             User.UpdateJson(mentionedUser.Id, "Coins", (User.Load(mentionedUser.Id).Coins - fineValue));
-            await Configuration.Load().LogChannelID.getTextChannel().SendMessageAsync(Context.User.Mention + " has fined " + mentionedUser.Mention + " " + fineValue + " coins!");
+            await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync(Context.User.Mention + " has fined " + mentionedUser.Mention + " " + fineValue + " coins!");
             //await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync(Context.User.Mention + " has fined " + mentionedUser.Mention + " " + fineValue + " coins!");
             await ReplyAsync(mentionedUser.Mention + " has been fined " + fineValue + " coins from " + Context.User.Mention);
             TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") fined " + mentionedUser.Username + "(" + mentionedUser.Id + ") " + fineValue + " coins.");
@@ -194,7 +195,7 @@ namespace DiscordBot.Modules.Admin
                 .Append("**Quote List** : *Page 1*\n```");
 
             QuoteHandler.SpliceQuotes();
-            List<string> quotes = QuoteHandler.getQuotes(1);
+            List<string> quotes = QuoteHandler.GetQuotes(1);
 
             for (int i = 0; i < quotes.Count; i++)
             {
@@ -207,7 +208,7 @@ namespace DiscordBot.Modules.Admin
             QuoteHandler.quoteMessages.Add(msg.Id);
             QuoteHandler.pageNumber.Add(1);
 
-            if(QuoteHandler.quoteList.Count() > 10)
+            if (QuoteHandler.quoteList.Count() > 10)
                 await msg.AddReactionAsync(Extensions.Extensions.arrow_right);
         }
 
@@ -238,7 +239,7 @@ namespace DiscordBot.Modules.Admin
                 .Append("**Request Quote List** : *Page 1*\nTo accept a quote, type **" + GuildConfiguration.Load(Context.Guild.Id).Prefix + "acceptquote [id]**.\nTo reject a quote, type **" + GuildConfiguration.Load(Context.Guild.Id).Prefix + "denyquote [id]**.\n```");
 
                 QuoteHandler.SpliceRequestQuotes();
-                List<string> requestQuotes = QuoteHandler.getRequestQuotes(1);
+                List<string> requestQuotes = QuoteHandler.GetRequestQuotes(1);
 
                 for (int i = 0; i < requestQuotes.Count; i++)
                 {
@@ -323,7 +324,7 @@ namespace DiscordBot.Modules.Admin
         public async Task EditVotingLink(int linkID, [Remainder]string link)
         {
             string oldLink = VoteLinkHandler.voteLinkList[linkID];
-            VoteLinkHandler.updateLink(linkID, link);
+            VoteLinkHandler.UpdateLink(linkID, link);
             await ReplyAsync(Context.User.Mention + " updated vote link id: " + linkID + "\nOld link: `" + oldLink + "`\nUpdated: `" + link + "`");
         }
 
@@ -371,7 +372,7 @@ namespace DiscordBot.Modules.Admin
         public async Task EditMusicLink(int linkID, [Remainder]string link)
         {
             string oldLink = MusicHandler.musicLinkList[linkID];
-            MusicHandler.updateLink(linkID, link);
+            MusicHandler.UpdateLink(linkID, link);
             await ReplyAsync(Context.User.Mention + " updated music link id: " + linkID + "\nOld link: `" + oldLink + "`\nUpdated: `" + link + "`");
         }
 

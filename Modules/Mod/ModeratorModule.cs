@@ -16,6 +16,7 @@ using MelissasCode;
 
 namespace DiscordBot.Modules.Mod
 {
+    [Name("Moderator Commands")]
     [RequireContext(ContextType.Guild)]
     [MinPermissions(PermissionLevel.ServerMod)]
     public class ModeratorModule : ModuleBase
@@ -23,21 +24,8 @@ namespace DiscordBot.Modules.Mod
         private Version _v = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
         [Command("stats"), Summary("Sends information about the bot.")]
-        public async Task About()
+        public async Task ShowStatistics()
         {
-            StringBuilder sb = new StringBuilder()
-                .Append("**---------------------------------------------**\n")
-                .Append("**Bot Name:** " + MogiiBot3._bot.CurrentUser.Username + "\n")
-                .Append("**Bot ID:** " + MogiiBot3._bot.CurrentUser.Id + "\n")
-                .Append("**---------------------------------------------**\n")
-                .Append("**Developer Name:** " + DiscordWorker.getMelissaID.getUser().Username + "\n")
-                //.Append("**Developer Name:** " + GetHandler.getUser(DiscordWorker.getMelissaID).Username + "\n")
-                .Append("**Developer ID:** " + DiscordWorker.getMelissaID + "\n")
-                .Append("**---------------------------------------------**\n")
-                .Append("**Development:** " + developmentSince() + "\n")
-                .Append("**Uptime:** " + calculateUptime() + "\n")
-                .Append("**---------------------------------------------**\n");
-
             int totalUserCount = 0, totalChannelCount = 0, totalTextChannelCount = 0, totalCoins = 0;
             int totalGuildUserCount = 0, totalGuildChannelCount = 0, totalGuildTextChannelCount = 0, totalGuildCoins = 0;
 
@@ -74,39 +62,44 @@ namespace DiscordBot.Modules.Mod
                 }
             }
 
-            sb.Append("**Guild Information - " + Context.Guild.Name + "**\n")
-                .Append("**Total Channels:** " + totalGuildChannelCount + " (" + totalGuildTextChannelCount + "/" + (totalGuildChannelCount - totalGuildTextChannelCount) + ")" + "\n")
-                .Append("**Total Users:** " + totalGuildUserCount + "\n")
-                .Append("**Total Coins:** " + totalGuildCoins + "\n")
-                .Append("**---------------------------------------------**\n");
-
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
                 .WithName(MogiiBot3._bot.CurrentUser.Username + " Version " + _v.Major + "." + _v.Minor + "." + _v.Build + "." + _v.Revision);
             EmbedFooterBuilder efb = new EmbedFooterBuilder()
-                .WithText("Total Guilds: " + MogiiBot3._bot.Guilds.Count() + " | Total Users: " + totalUserCount + " | Total Channels: " + totalChannelCount + " (" + totalTextChannelCount + "/" + (totalChannelCount - totalTextChannelCount) + ")" + " | Total Coins: " + totalCoins);
+                .WithText("MelissasCode Version " + MelissaCode.Version);
             EmbedBuilder eb = new EmbedBuilder()
                 .WithAuthor(eab)
-                .WithDescription(sb.ToString())
-                .WithColor(new Color(255, 116, 140))
-                .WithTitle("MelissasCode Version " + MelissaCode.Version)
+
+                .AddField("Bot Information", "**Name:** " + MogiiBot3._bot.CurrentUser.Username + "\n**Discriminator:** #" + MogiiBot3._bot.CurrentUser.Discriminator + "\n**Id:** " + MogiiBot3._bot.CurrentUser.Id)
+                .AddField("Developer Information", "**Name:** " + DiscordWorker.getMelissaID.GetUser().Username + "\n**Discriminator:** #" + DiscordWorker.getMelissaID.GetUser().Discriminator + "\n**Id:** " + DiscordWorker.getMelissaID)
+                .AddField("Bot Statistics", "**Active for:** " + DevelopmentSince() + "\n" + 
+                "**Latency:** " + MogiiBot3._bot.Latency + "ms" + "\n" +
+                "**Guild Count:** " + MogiiBot3._bot.Guilds.Count() + "\n" +
+                "**User Count:** " + totalUserCount + "\n" +
+                "**Channel Count:** " + totalChannelCount + " (" + totalTextChannelCount + "/" + (totalChannelCount - totalTextChannelCount) + ")" + "\n" +
+                "**Overall Coins:** " + totalCoins + "\n")
+                .AddField("Guild Statistics - " + Context.Guild.Name,
+                "**Owner:** " + (Context.Guild.GetOwnerAsync().GetAwaiter().GetResult() as SocketGuildUser).Username + "\n" +
+                "**Owner Discriminator:** #" + (Context.Guild.GetOwnerAsync().GetAwaiter().GetResult() as SocketGuildUser).Discriminator + "\n" +
+                "**Owner Id:** " + (Context.Guild.GetOwnerAsync().GetAwaiter().GetResult() as SocketGuildUser).Id + "\n" +
+                "**Channel Count:** " + totalGuildChannelCount + " (" + totalGuildTextChannelCount + "/" + (totalGuildChannelCount - totalGuildTextChannelCount) + ")" + "\n" +
+                "**User Count:** " + totalGuildUserCount + "\n" +
+                "**Coins:** " + totalGuildCoins)
+
+                .WithFooter(efb)
                 .WithThumbnailUrl(MogiiBot3._bot.CurrentUser.GetAvatarUrl())
-                .WithFooter(efb);
+                .WithColor(new Color(255, 116, 140));
 
             await ReplyAsync("", false, eb);
         }
-
-
-
         private static TimeSpan _uptime;
         public static DateTime _dt = new DateTime();
-        private string calculateUptime()
+        private string CalculateUptime()
         {
             _uptime = DateTime.Now - _dt;
             return (_uptime.Days.ToString() + " day(s), " + _uptime.Hours.ToString() + " hour(s), " + _uptime.Minutes.ToString() + " minute(s), " + _uptime.Seconds.ToString() + " second(s)");
         }
-
         private static DateTime startDevelopment = DiscordWorker.developmentTime(MogiiBot3._bot.CurrentUser.Id);
-        private string developmentSince()
+        private string DevelopmentSince()
         {
             TimeSpan DevelopmentCounter = DateTime.Now - startDevelopment;
             return (DevelopmentCounter.Days.ToString() + " day(s), " + DevelopmentCounter.Hours.ToString() + " hour(s), " + DevelopmentCounter.Minutes.ToString() + " minute(s), " + DevelopmentCounter.Seconds.ToString() + " second(s)");

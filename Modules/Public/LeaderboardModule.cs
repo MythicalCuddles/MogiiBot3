@@ -16,6 +16,7 @@ using MelissasCode;
 
 namespace DiscordBot.Modules.Public
 {
+    [Name("Leaderboard Commands")]
     [Group("leaderboard")]
     [MinPermissions(PermissionLevel.User)]
     [RequireContext(ContextType.Guild)]

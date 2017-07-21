@@ -16,6 +16,7 @@ using MelissasCode;
 
 namespace DiscordBot.Modules.Admin
 {
+    [Name("Send Commands")]
     [Group("send")]
     [RequireContext(ContextType.Guild | ContextType.DM)]
     [MinPermissions(PermissionLevel.ServerAdmin)]
@@ -37,13 +38,13 @@ namespace DiscordBot.Modules.Admin
                 return;
             }
 
-            await channel.getTextChannel().SendMessageAsync(message);
+            await channel.GetTextChannel().SendMessageAsync(message);
             //await GetHandler.getTextChannel(channel).SendMessageAsync(message);
 
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
                 .WithName("author: @" + Context.User.Username);
             EmbedFooterBuilder efb = new EmbedFooterBuilder()
-                .WithText("Message Sent to #" + channel.getTextChannel().Name + " | Sent by @" + Context.User.Username);
+                .WithText("Message Sent to #" + channel.GetTextChannel().Name + " | Sent by @" + Context.User.Username);
                 //.WithText("Message Sent to #" + GetHandler.getTextChannel(channel).Name + " | Sent by @" + Context.User.Username);
 
             EmbedBuilder eb = new EmbedBuilder()
@@ -66,7 +67,7 @@ namespace DiscordBot.Modules.Admin
                 return;
             }
 
-            await user.CreateDMChannelAsync().Result.SendMessageAsync(message);
+            await user.GetOrCreateDMChannelAsync().Result.SendMessageAsync(message);
 
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
                 .WithName("to: @" + user.Username);

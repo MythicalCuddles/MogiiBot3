@@ -20,7 +20,7 @@ namespace DiscordBot.Logging
         private static string serverDirectory;
         private static string logFile;
 
-        public static void logNewMessage(SocketUserMessage message)
+        public static void LogNewMessage(SocketUserMessage message)
         {
             if(!(message.Channel is ITextChannel))
             {
@@ -28,7 +28,7 @@ namespace DiscordBot.Logging
             }
             else
             {
-                IGuild g = message.Channel.getGuild();
+                IGuild g = message.Channel.GetGuild();
                 serverDirectory = g.Id + "#" + g.Name + "/";
                 logFile = directory + serverDirectory + message.Channel.Id + "#" + message.Channel.Name + extension;
             }
@@ -55,7 +55,7 @@ namespace DiscordBot.Logging
                 
                 using (StreamWriter sWriter = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + logFile, true))
                 {
-                    String timeStamp = DateTime.Now.getTimestamp();
+                    String timeStamp = DateTime.Now.GetTimestamp();
                     
                     sWriter.WriteLine("[NEW] [" + timeStamp + "] MID: " + message.Id + " | UID: " + message.Author.Id + " | @" + message.Author.Username + " : " + message.Content);
 
@@ -81,7 +81,7 @@ namespace DiscordBot.Logging
             }
         }
 
-        public static void logDeleteMessage(SocketUserMessage message)
+        public static void LogDeleteMessage(SocketUserMessage message)
         {
             if (!(message.Channel is ITextChannel))
             {
@@ -89,7 +89,7 @@ namespace DiscordBot.Logging
             }
             else
             {
-                IGuild g = message.Channel.getGuild();
+                IGuild g = message.Channel.GetGuild();
                 serverDirectory = g.Id + "#" + g.Name + "/";
                 logFile = directory + serverDirectory + message.Channel.Id + "#" + message.Channel.Name + extension;
             }
@@ -116,7 +116,7 @@ namespace DiscordBot.Logging
 
                 using (StreamWriter sWriter = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + logFile, true))
                 {
-                    String timeStamp = DateTime.Now.getTimestamp();
+                    String timeStamp = DateTime.Now.GetTimestamp();
 
                     if (message.Attachments != null)
                     {
@@ -152,7 +152,7 @@ namespace DiscordBot.Logging
             }
         }
 
-        public static void logEditMessage(SocketUserMessage message)
+        public static void LogEditMessage(SocketUserMessage message)
         {
             if (!(message.Channel is ITextChannel))
             {
@@ -160,7 +160,7 @@ namespace DiscordBot.Logging
             }
             else
             {
-                IGuild g = message.Channel.getGuild();
+                IGuild g = message.Channel.GetGuild();
                 serverDirectory = g.Id + "#" + g.Name + "/";
                 logFile = directory + serverDirectory + message.Channel.Id + "#" + message.Channel.Name + extension;
             }
@@ -187,7 +187,7 @@ namespace DiscordBot.Logging
 
                 using (StreamWriter sWriter = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + logFile, true))
                 {
-                    String timeStamp = DateTime.Now.getTimestamp();
+                    String timeStamp = DateTime.Now.GetTimestamp();
 
                     sWriter.WriteLine("[EDIT] [" + timeStamp + "] MID: " + message.Id + " | UID: " + message.Author.Id + " | @" + message.Author.Username + " : " + message.Content);
                     sWriter.Close();

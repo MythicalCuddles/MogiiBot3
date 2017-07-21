@@ -16,6 +16,7 @@ using MelissasCode;
 namespace DiscordBot.Modules.SOwner
 {
     [MinPermissions(PermissionLevel.ServerOwner)]
+    [Name("Server Owner Commands")]
     public class ServerOwnerModule : ModuleBase
     {
         [Command("guildprefix"), Summary("Set the prefix for the bot for the server.")]

@@ -15,6 +15,7 @@ using MelissasCode;
 
 namespace DiscordBot.Modules.Admin
 {
+    [Name("Set Commands")]
     [Group("set")]
     [RequireContext(ContextType.Guild | ContextType.DM)]
     [MinPermissions(PermissionLevel.ServerAdmin)]

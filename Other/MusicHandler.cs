@@ -9,7 +9,7 @@ namespace DiscordBot.Other
 {
     class MusicHandler
     {
-        public static string fileName { get; private set; } = "common/musicLinks.txt";
+        public static string FileName { get; private set; } = "common/musicLinks.txt";
         public static List<string> musicLinkList = new List<string>();
         public static List<List<string>> splicedMusicList = new List<List<string>>();
 
@@ -18,19 +18,19 @@ namespace DiscordBot.Other
 
         private static void LoadMusic()
         {
-            string file = Path.Combine(AppContext.BaseDirectory, fileName);
+            string file = Path.Combine(AppContext.BaseDirectory, FileName);
             musicLinkList = File.ReadAllLines(file).ToList();
             
             Console.Write("status: [");
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.Write("ok");
             Console.ResetColor();
-            Console.WriteLine("]    " + fileName + ": loaded.");
+            Console.WriteLine("]    " + FileName + ": loaded.");
         }
 
         public static void EnsureExists()
         {
-            string file = Path.Combine(AppContext.BaseDirectory, fileName);
+            string file = Path.Combine(AppContext.BaseDirectory, FileName);
             if (!File.Exists(file))
             {
                 string path = Path.GetDirectoryName(file);
@@ -43,14 +43,14 @@ namespace DiscordBot.Other
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Console.Write("ok");
                 Console.ResetColor();
-                Console.WriteLine("]    " + fileName + ": created.");
+                Console.WriteLine("]    " + FileName + ": created.");
             }
             LoadMusic();
         }
 
         private static void SaveLinks()
         {
-            string file = Path.Combine(AppContext.BaseDirectory, fileName);
+            string file = Path.Combine(AppContext.BaseDirectory, FileName);
             File.WriteAllLines(file, musicLinkList);
         }
 
@@ -66,7 +66,7 @@ namespace DiscordBot.Other
             SaveLinks();
         }
 
-        public static void updateLink(int index, string link)
+        public static void UpdateLink(int index, string link)
         {
             musicLinkList[index] = link;
             SaveLinks();
