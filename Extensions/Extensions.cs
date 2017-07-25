@@ -56,8 +56,9 @@ namespace DiscordBot.Extensions
             //":pizza:",
             //":rice_ball:"
         };
-        private static Dictionary<int, string> Reactions = new Dictionary<int, string>
+        public static Dictionary<int, string> ReactionUnicodes = new Dictionary<int, string>
         {
+            { 0, "0⃣" },
             { 1, "1⃣" },
             { 2, "2⃣" },
             { 3, "3⃣" },
@@ -67,7 +68,6 @@ namespace DiscordBot.Extensions
             { 7, "7⃣" },
             { 8, "8⃣" },
             { 9, "9⃣" },
-            { 10, "0⃣" },
             { 11, "🇦" },
             { 12, "🇧" },
             { 13, "🇨" },
@@ -78,6 +78,29 @@ namespace DiscordBot.Extensions
             { 18, "🇭" },
             { 19, "🇮" },
             { 20, "🇯" }
+        };
+        public static Dictionary<int, string> ReactionStrings = new Dictionary<int, string>
+        {
+            { 0, ":zero:" },
+            { 1, ":one:" },
+            { 2, ":two:" },
+            { 3, ":three:" },
+            { 4, ":four:" },
+            { 5, ":five:" },
+            { 6, ":six:" },
+            { 7, ":seven:" },
+            { 8, ":eight:" },
+            { 9, ":nine:" },
+            { 10, ":regional_indicator_a:" },
+            { 11, ":regional_indicator_b:" },
+            { 12, ":regional_indicator_c:" },
+            { 13, ":regional_indicator_d:" },
+            { 14, ":regional_indicator_e:" },
+            { 15, ":regional_indicator_f:" },
+            { 16, ":regional_indicator_g:" },
+            { 17, ":regional_indicator_h:" },
+            { 18, ":regional_indicator_i:" },
+            { 19, ":regional_indicator_j:" }
         };
         #endregion
 

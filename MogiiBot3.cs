@@ -72,20 +72,19 @@ namespace DiscordBot
             await Task.Delay(-1);
         }
 
-        private Task UserVoiceStateUpdated(SocketUser user, SocketVoiceState voiceStateBefore, SocketVoiceState voiceStateAfter)
+        private async Task UserVoiceStateUpdated(SocketUser user, SocketVoiceState voiceStateBefore, SocketVoiceState voiceStateAfter)
         {
-            //if(voiceStateAfter.VoiceChannel != null) // User has entered a voice channel.
-            //{
-            //    if (voiceStateBefore.VoiceChannel != voiceStateAfter.VoiceChannel)
-            //    {
-            //        await (user as SocketGuildUser).AddRoleAsync((user as SocketGuildUser).Guild.GetRole(337614600897822720));
-            //    }
-            //}
-            //else // User has left the voice channel.
-            //{
-            //    await (user as SocketGuildUser).RemoveRoleAsync((user as SocketGuildUser).Guild.GetRole(337614600897822720));
-            //}
-            return Task.CompletedTask;
+            if (voiceStateAfter.VoiceChannel != null) // User has entered a voice channel.
+            {
+                if (voiceStateBefore.VoiceChannel != voiceStateAfter.VoiceChannel)
+                {
+                    await(user as SocketGuildUser).AddRoleAsync((user as SocketGuildUser).Guild.GetRole(337614600897822720));
+                }
+            }
+            else // User has left the voice channel.
+            {
+                await(user as SocketGuildUser).RemoveRoleAsync((user as SocketGuildUser).Guild.GetRole(337614600897822720));
+            }
         }
 
         private async Task Disconnected(Exception exception)
@@ -103,8 +102,7 @@ namespace DiscordBot
 
             new MogiiBot3().RunBotAsync().GetAwaiter().GetResult();
         }
-
-        // Log messages to the console in different colors
+        
         private Task Log(LogMessage logMessage)
         {
             var cc = Console.ForegroundColor;
@@ -191,41 +189,6 @@ namespace DiscordBot
                 Console.WriteLine("]    " + ": " + channel.Id + " type is unknown.");
             }
         }
-        //private async Task ChannelUpdated(SocketChannel cachedChannel, SocketChannel channel)
-        //{
-        //    if(channel is ITextChannel && cachedChannel is ITextChannel)
-        //    {
-        //        var cachedChannelParam = cachedChannel as ITextChannel;
-        //        var channelParam = channel as ITextChannel;
-        //        await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**Text Channel Updated**\n```ID: " + cachedChannelParam.Id + " / " + channelParam.Id 
-        //            + "\nOld Name: " + cachedChannelParam.Name
-        //            + "\nNew Name: " + channelParam.Name
-        //            + "\nGuild ID: " + cachedChannelParam.GuildId + " / " + channelParam.GuildId
-        //            + "\nGuild: " + cachedChannelParam.Guild.Name + " / " + channelParam.Guild.Name
-        //            + "\nOld Topic: " + cachedChannelParam.Topic
-        //            + "\nNew Topic: " + channelParam.Topic + "```");
-        //    }
-        //    else if(channel is IVoiceChannel && cachedChannel is IVoiceChannel)
-        //    {
-        //        var cachedChannelParam = cachedChannel as IVoiceChannel;
-        //        var channelParam = channel as IVoiceChannel;
-        //        await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**Text Channel Updated**\n```ID: " + cachedChannelParam.Id + " / " + channelParam.Id
-        //            + "\nOld Name: " + cachedChannelParam.Name
-        //            + "\nNew Name: " + channelParam.Name
-        //            + "\nGuild ID: " + cachedChannelParam.GuildId + " / " + channelParam.GuildId
-        //            + "\nGuild: " + cachedChannelParam.Guild.Name + " / " + channelParam.Guild.Name
-        //            + "\nOld User Limit: " + cachedChannelParam.UserLimit
-        //            + "\nNew User Limit: " + channelParam.UserLimit + "```");
-        //    }
-        //    else
-        //    {
-        //        Console.Write("status: [");
-        //        Console.ForegroundColor = ConsoleColor.DarkRed;
-        //        Console.Write("error");
-        //        Console.ResetColor();
-        //        Console.WriteLine("]    " + ": " + cachedChannel.Id + " does not match types with " + channel.Id);
-        //    }
-        //}
         private async Task ChannelDestroyed(SocketChannel channel)
         {
             if (channel is ITextChannel)
@@ -508,7 +471,7 @@ namespace DiscordBot
                 //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
 
                 string wMsg1 = GuildConfiguration.Load(e.Guild.Id).WelcomeMessage.Replace("{USERJOINED}", e.Mention).Replace("{GUILDNAME}", e.Guild.Name);
-                await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync(wMsg1);
+                await Configuration.Load().MCWelcomeChannelID.GetTextChannel().SendMessageAsync(wMsg1);
                 //await GetHandler.getTextChannel(Configuration.Load().MCWelcomeChannelID).SendMessageAsync(wMsg1);
             }
             else if (e.Guild.Id == Configuration.Load().NSFWServerID)
@@ -611,8 +574,7 @@ namespace DiscordBot
                 }
 
                 Console.WriteLine(messageParam.Author.Mention + ", " + result.ErrorReason);
-
-                message.DeleteAfter(20);
+                
                 errorMessage.DeleteAfter(20);
 
                 return;

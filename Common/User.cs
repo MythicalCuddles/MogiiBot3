@@ -21,7 +21,6 @@ namespace DiscordBot.Common
         private static string Extension { get; set; } = ".json";
 
         public int Coins { get; set; } = 0;
-        public int Cookies { get; set; } = 0;
         
         public string Name { get; set; } = null;
         public string Gender { get; set; } = null;
@@ -40,7 +39,6 @@ namespace DiscordBot.Common
 
         // Socials
         public string MinecraftUsername { get; set; } = null;
-        public string SteamID { get; set; } = null;
         public string Snapchat { get; set; } = null;
 
         public bool IsBotIgnoringUser { get; set; } = false;

@@ -30,10 +30,12 @@ namespace DiscordBot.Common
         public bool CoinsForReactions { get; set; } = false;
 
         /// NSFW Server Variables
-        // Rule 34 Gamble Game Variables
         public int MaxRuleXGamble { get; set; } = 2353312;
+        public int MaxE621Id { get; set; } = 1284573;
+
         public ulong NSFWServerID { get; set; } = 225737373307109377;
-        public ulong RuleGambleChannelID { get; set; } = 268911937977450498;
+        public ulong RuleGambleChannelID { get; set; } = 337565641651257344;
+        public ulong E621ChannelId { get; set; } = 337565641651257344;
 
         /// MogiiCraft Variables
         // Server Variables

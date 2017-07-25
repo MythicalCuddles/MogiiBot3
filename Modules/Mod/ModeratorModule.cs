@@ -13,6 +13,7 @@ using DiscordBot.Common;
 using DiscordBot.Extensions;
 
 using MelissasCode;
+using System.Runtime.InteropServices;
 
 namespace DiscordBot.Modules.Mod
 {
@@ -65,7 +66,7 @@ namespace DiscordBot.Modules.Mod
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
                 .WithName(MogiiBot3._bot.CurrentUser.Username + " Version " + _v.Major + "." + _v.Minor + "." + _v.Build + "." + _v.Revision);
             EmbedFooterBuilder efb = new EmbedFooterBuilder()
-                .WithText("MelissasCode Version " + MelissaCode.Version);
+                .WithText("MelissasCode Version " + MelissaCode.Version + " | " + ((GuidAttribute)(typeof(Program).Assembly).GetCustomAttributes(typeof(GuidAttribute), true)[0]).Value);
             EmbedBuilder eb = new EmbedBuilder()
                 .WithAuthor(eab)
 

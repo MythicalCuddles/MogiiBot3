@@ -104,12 +104,6 @@ namespace DiscordBot.Modules.Public
                 eb.AddInlineField("Minecraft Username", User.Load(userSpecified.Id).MinecraftUsername);
             }
 
-            if (User.Load(userSpecified.Id).SteamID != null)
-            {
-                string steamId = User.Load(userSpecified.Id).SteamID;
-                eb.AddInlineField("Steam", "[" + steamId + "](http://steamcommunity.com/id/" + steamId + "/)");
-            }
-
             if(User.Load(userSpecified.Id).Snapchat != null)
             {
                 string snapchat = User.Load(userSpecified.Id).Snapchat;
@@ -157,13 +151,6 @@ namespace DiscordBot.Modules.Public
         public async Task SetMinecraftUsername([Remainder]string username)
         {
             User.UpdateJson(Context.User.Id, "MinecraftUsername", username);
-            await ReplyAsync("Updated successfully, " + Context.User.Mention);
-        }
-        
-        [Command("setsteam"), Summary("")]
-        public async Task SetSteamID([Remainder]string username)
-        {
-            User.UpdateJson(Context.User.Id, "SteamID", username);
             await ReplyAsync("Updated successfully, " + Context.User.Mention);
         }
 

@@ -19,8 +19,11 @@ namespace DiscordBot.Modules.Public
     [Name("Help Commands")]
     public class HelpModule : ModuleBase<CommandContext>
     {
-        private CommandService _service;
+        public CommandService _service;
 
+        public List<IUserMessage> helpMessages = new List<IUserMessage>();
+        public List<List<string>> helpList = new List<List<string>>();
+        
         public HelpModule(CommandService service)
         {
             _service = service;
@@ -46,7 +49,7 @@ namespace DiscordBot.Modules.Public
                         var result = await cmd.CheckPreconditionsAsync(Context);
                         if (result.IsSuccess)
                         {
-                            if(cmd.Summary == "" || cmd.Summary == null)
+                            if (cmd.Summary == "" || cmd.Summary == null)
                             {
                                 description += $"{prefix}{cmd.Aliases.First()}\n";
                             }
