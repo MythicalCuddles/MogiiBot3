@@ -56,8 +56,6 @@ namespace DiscordBot
 
             _bot.ReactionAdded += ReactionAdded;
 
-            _bot.UserVoiceStateUpdated += UserVoiceStateUpdated;
-
             await InstallCommands();
             _bot.MessageDeleted += MessageDeleted;
             _bot.MessageUpdated += MessageUpdated;
@@ -71,22 +69,7 @@ namespace DiscordBot
             // Keep the program running.
             await Task.Delay(-1);
         }
-
-        private async Task UserVoiceStateUpdated(SocketUser user, SocketVoiceState voiceStateBefore, SocketVoiceState voiceStateAfter)
-        {
-            if (voiceStateAfter.VoiceChannel != null) // User has entered a voice channel.
-            {
-                if (voiceStateBefore.VoiceChannel != voiceStateAfter.VoiceChannel)
-                {
-                    await(user as SocketGuildUser).AddRoleAsync((user as SocketGuildUser).Guild.GetRole(337614600897822720));
-                }
-            }
-            else // User has left the voice channel.
-            {
-                await(user as SocketGuildUser).RemoveRoleAsync((user as SocketGuildUser).Guild.GetRole(337614600897822720));
-            }
-        }
-
+        
         private async Task Disconnected(Exception exception)
         {
             Console.WriteLine(exception.ToString());
