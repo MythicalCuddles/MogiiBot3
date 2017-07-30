@@ -1,7 +1,7 @@
 [![mogiibot0](http://i.imgur.com/ghsLKmU.png)](https://github.com/MythicalCuddles/MogiiBot3/wiki)
 [![mogiibot1](http://i.imgur.com/phY9CYP.png)](https://github.com/MythicalCuddles/MogiiBot3/wiki/Commands)
 [![mogiibot2](http://i.imgur.com/R3UmIw8.png)](https://github.com/MythicalCuddles/MogiiBot3/wiki/MogiiBot-Rules-&-Terms-of-Use)
-[![mogiibot3](http://i.imgur.com/4yDAZaQ.png)](https://github.com/MythicalCuddles/MogiiBot3/wiki/)
+[![mogiibot3](http://i.imgur.com/4yDAZaQ.png)](https://github.com/MythicalCuddles/MogiiBot3/wiki/Latest-Changelog)
 
 
 # MogiiBot3
