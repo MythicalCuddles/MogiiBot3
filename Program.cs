@@ -60,6 +60,7 @@ namespace DiscordBot
             QuoteHandler.EnsureExists();
             VoteLinkHandler.EnsureExists();
             MusicHandler.EnsureExists();
+            ImageHandler.EnsureExists();
             TransactionLogger.EnsureExists();
             Console.WriteLine("-----------------------------------------------------------------");
 

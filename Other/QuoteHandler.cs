@@ -80,7 +80,7 @@ namespace DiscordBot.Other
                 Console.WriteLine("]    " + RequestQuotesFileName + ": created.");
             }
 
-            LoadAllQuotes( );
+            LoadAllQuotes();
         }
 
         private static void SaveQuotes()

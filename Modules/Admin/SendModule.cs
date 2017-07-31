@@ -25,30 +25,43 @@ namespace DiscordBot.Modules.Admin
         [Command("")]
         public async Task Send()
         {
-            await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "send channelmessage [cmessage/channelmsg] / privatemessage [pm/dm/directmessage]");
+            await ReplyAsync("**Syntax:** " +
+                GuildConfiguration.Load(Context.Guild.Id).Prefix + "send [type] [mention/id] [message]\n```" +
+                "Available Commands\n" +
+                "-----------------------------\n" +
+                "Channel Message\n" +
+                "-> send channelmessage [mention/id] [message]\n" +
+                "-> send cmessage [mention/id] [message]\n" +
+                "-> send channelmsg [mention/id] [message]\n" +
+                "-----------------------------\n" +
+                "Private Message\n" +
+                "-> send privatemessage [mention/id] [message]\n" +
+                "-> send pm [mention/id] [message]\n" +
+                "-> send directmessage [mention/id] [message]\n" +
+                "-> send dm [mention/id] [message]\n" +
+                "```");
         }
 
         [Command("channelmessage"), Summary("Sends a message to the channel specified.")]
         [Alias("cmessage", "channelmsg")]
-        public async Task SendChannelMessage([Summary("The channel id to send the message to.")] ulong channel = 0, [Remainder]string message = null)
+        public async Task SendChannelMessage([Summary("The channel id to send the message to.")] SocketTextChannel channel, [Remainder]string message = null)
         {
-            if(channel == 0 || message == null)
+            if(channel == null || message == null)
             {
                 await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "send channelmessage [Channel ID] [Message]");
                 return;
             }
-
-            await channel.GetTextChannel().SendMessageAsync(message);
-            //await GetHandler.getTextChannel(channel).SendMessageAsync(message);
+            
+            await channel.SendMessageAsync(message);
 
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
-                .WithName("author: @" + Context.User.Username);
+                .WithName("Log Message");
             EmbedFooterBuilder efb = new EmbedFooterBuilder()
-                .WithText("Message Sent to #" + channel.GetTextChannel().Name + " | Sent by @" + Context.User.Username);
-                //.WithText("Message Sent to #" + GetHandler.getTextChannel(channel).Name + " | Sent by @" + Context.User.Username);
+                .WithText("Message sent to " + channel.Mention + " | Sent by @" + Context.User.Username);
 
             EmbedBuilder eb = new EmbedBuilder()
                 .WithAuthor(eab)
+                .WithTitle("Author: @" + Context.User.Username)
                 .WithColor(new Color(181, 81, 215))
                 .WithDescription(message)
                 .WithFooter(efb)

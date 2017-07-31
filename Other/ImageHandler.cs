@@ -9,20 +9,20 @@ using DiscordBot.Extensions;
 
 namespace DiscordBot.Other
 {
-    class MusicHandler
+    class ImageHandler
     {
-        public static string FileName { get; private set; } = "common/musicLinks.txt";
-        public static List<string> musicLinkList = new List<string>();
-        public static List<List<string>> splicedMusicList = new List<List<string>>();
+        public static string FileName { get; private set; } = "common/ImageLinks.txt";
+        public static List<string> imageLinkList = new List<string>();
+        public static List<List<string>> splicedImageList = new List<List<string>>();
 
-        public static List<ulong> musicMessages = new List<ulong>();
+        public static List<ulong> imageMessages = new List<ulong>();
         public static List<int> pageNumber = new List<int>();
 
-        private static void LoadMusic()
+        private static void LoadImages()
         {
             string file = Path.Combine(AppContext.BaseDirectory, FileName);
-            musicLinkList = File.ReadAllLines(file).ToList();
-            
+            imageLinkList = File.ReadAllLines(file).ToList();
+
             Console.Write("status: [");
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.Write("ok");
@@ -40,52 +40,52 @@ namespace DiscordBot.Other
                     Directory.CreateDirectory(path);
 
                 SaveLinks();
-                
+
                 Console.Write("status: [");
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Console.Write("ok");
                 Console.ResetColor();
                 Console.WriteLine("]    " + FileName + ": created.");
             }
-            LoadMusic();
+            LoadImages();
         }
 
         private static void SaveLinks()
         {
             string file = Path.Combine(AppContext.BaseDirectory, FileName);
-            File.WriteAllLines(file, musicLinkList);
+            File.WriteAllLines(file, imageLinkList);
         }
 
         public static void AddAndUpdateLinks(string link)
         {
-            musicLinkList.Add(link);
+            imageLinkList.Add(link);
             SaveLinks();
         }
 
         public static void RemoveAndUpdateLinks(int index)
         {
-            musicLinkList.RemoveAt(index);
+            imageLinkList.RemoveAt(index);
             SaveLinks();
         }
 
         public static void UpdateLink(int index, string link)
         {
-            musicLinkList[index] = link;
+            imageLinkList[index] = link;
             SaveLinks();
         }
 
-        public static void SpliceMusicIntoList()
+        public static void SpliceIntoList()
         {
-            splicedMusicList = musicLinkList.SplitList();
+            splicedImageList = imageLinkList.SplitList();
         }
-        public static List<string> GetSplicedMusic(int pageNumber)
+        public static List<string> GetSplicedList(int pageNumber)
         {
             pageNumber = pageNumber - 1;
-            return splicedMusicList[pageNumber];
+            return splicedImageList[pageNumber];
         }
-        public static int GetSplicedMusicListCount
+        public static int GetSplicedListCount
         {
-            get { return splicedMusicList.Count(); }
+            get { return splicedImageList.Count(); }
         }
     }
 }

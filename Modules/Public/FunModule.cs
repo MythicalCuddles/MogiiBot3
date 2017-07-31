@@ -153,29 +153,13 @@ namespace DiscordBot.Modules.Public
         }
 
         [Command("wallet"), Summary("")]
-        [Alias("purse", "balance", "bal")]
+        [Alias("purse", "balance", "bal", "coins", "mogiicoins")]
         public async Task LoadUserBalance()
         {
-            int userCoins = User.Load(Context.User.Id).Coins;
+            int userCoins = Context.User.GetUserCoins();
             await ReplyAsync(":moneybag: **" + Context.User.Username + "'s Balance** :moneybag:\n" + 
                 "\n" +
                 "**" + userCoins + "** coins\n");
-        }
-
-        [Command("coins"), Summary("Returns the amount of coins you have earned")]
-        [Alias("mogiicoins")]
-        public async Task Coins(IUser user = null)
-        {
-            var mentionedUser = user ?? Context.User;
-
-            if(mentionedUser == Context.User)
-            {
-                await ReplyAsync(mentionedUser.Mention + ", you have " + User.Load(mentionedUser.Id).Coins + " coins!");
-            }
-            else
-            {
-                await ReplyAsync(mentionedUser.Mention + ", currently has " + User.Load(mentionedUser.Id).Coins + " coins!");
-            }
         }
 
         [Command("givecoins"), Summary("Give some of coins to another user.")]
@@ -262,6 +246,14 @@ namespace DiscordBot.Modules.Public
             int generatedNumber = _r.Next(0, MusicHandler.musicLinkList.Count());
 
             await ReplyAsync("Here's the music!\n" + MusicHandler.musicLinkList[generatedNumber]);
+        }
+
+        [Command("image"), Summary("Replies posting a image link which has been set by staff.")]
+        public async Task PostImageLink()
+        {
+            int generatedNumber = _r.Next(0, ImageHandler.imageLinkList.Count());
+
+            await ReplyAsync("Here's the image!\n" + ImageHandler.imageLinkList[generatedNumber]);
         }
     }
 }

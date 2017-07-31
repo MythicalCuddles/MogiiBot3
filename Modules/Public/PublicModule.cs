@@ -62,19 +62,19 @@ namespace DiscordBot.Modules.Public
         [Command("about"), Summary("Returns the about description about the user specified.")]
         public async Task UserAbout(IUser user = null)
         {
-            var userSpecified = user ?? Context.User;
+            var userSpecified = user as SocketGuildUser ?? Context.User as SocketGuildUser;
 
-            EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
-                .WithName("About " + userSpecified.Username);
+            EmbedAuthorBuilder eab = new EmbedAuthorBuilder();
+            if(userSpecified.Nickname != null) eab.WithName("About " + userSpecified.Nickname);
+            else eab.WithName("About " + userSpecified.Username);
+
             EmbedFooterBuilder efb = new EmbedFooterBuilder();
-            if (User.Load(userSpecified.Id).TeamMember)
+            if (User.Load(userSpecified.Id).TeamMember) eab.WithIconUrl(User.Load(userSpecified.Id).EmbedAuthorBuilderIconUrl);
+            if (User.Load(userSpecified.Id).FooterText != null)
             {
-                eab.WithIconUrl(User.Load(userSpecified.Id).EmbedAuthorBuilderIconUrl);
+                efb.WithText(User.Load(userSpecified.Id).FooterText);
                 efb.WithIconUrl(User.Load(userSpecified.Id).EmbedFooterBuilderIconUrl);
             }
-            
-            if (User.Load(userSpecified.Id).FooterText != null)
-                efb.WithText(User.Load(userSpecified.Id).FooterText);
 
             Color aboutColor = new Color(User.Load(userSpecified.Id).AboutR, User.Load(userSpecified.Id).AboutG, User.Load(userSpecified.Id).AboutB);
 
@@ -94,15 +94,12 @@ namespace DiscordBot.Modules.Public
             if (User.Load(userSpecified.Id).Pronouns != null)
                 eb.AddInlineField("Pronouns", User.Load(userSpecified.Id).Pronouns);
             
-            eb.AddInlineField("Coins", User.Load(userSpecified.Id).Coins);
-
+            eb.AddInlineField("Coins", userSpecified.GetUserCoins());
             eb.AddInlineField("Account Created", userSpecified.UserCreateDate());
             eb.AddInlineField("Joined Guild", userSpecified.GuildJoinDate());
 
             if (User.Load(userSpecified.Id).MinecraftUsername != null)
-            {
                 eb.AddInlineField("Minecraft Username", User.Load(userSpecified.Id).MinecraftUsername);
-            }
 
             if(User.Load(userSpecified.Id).Snapchat != null)
             {
@@ -182,11 +179,6 @@ namespace DiscordBot.Modules.Public
                     Context.User.Mention + "\n" +
                     "*User Suggestion: *" + "\n" +
                     message);
-
-            //await GetHandler.getTextChannel(Configuration.Load().SuggestChannelID).SendMessageAsync("**Suggestion**" + "\n" +
-            //        Context.User.Mention + "\n" +
-            //        "*User Suggestion: *" + "\n" +
-            //        message);
         }
 
         [Command("support"), Summary("Sends a message out for support.")]
@@ -198,21 +190,12 @@ namespace DiscordBot.Modules.Public
                     Context.User.Mention + " has issued the support command in <#" + Context.Channel.Id + ">\n" +
                     "*User Added Notes*" + "\n" +
                     "User has not provided any notes.");
-
-                //await GetHandler.getTextChannel(Configuration.Load().SupportChannelID).SendMessageAsync("**Support Needed**" + "\n" +
-                //    Context.User.Mention + " has issued the support command in <#" + Context.Channel.Id + ">\n" +
-                //    "*User Added Notes*" + "\n" +
-                //    "User has not provided any notes.");
             }
             else
             {
                 await Configuration.Load().SupportChannelID.GetTextChannel().SendMessageAsync("**Support Needed**" + "\n" +
                      Context.User.Mention + " has issued the support command in <#" + Context.Channel.Id + ">\n" +
                      "*User Added Notes*" + "\n" + message);
-
-                //await GetHandler.getTextChannel(Configuration.Load().SupportChannelID).SendMessageAsync("**Support Needed**" + "\n" +
-                //     Context.User.Mention + " has issued the support command in <#" + Context.Channel.Id + ">\n" +
-                //     "*User Added Notes*" + "\n" + message);
             }
         }
     }

@@ -22,6 +22,24 @@ namespace DiscordBot.Modules.Admin
     [MinPermissions(PermissionLevel.ServerAdmin)]
     public class ForceModule : ModuleBase
     {
+        [Command(""), Summary("Get the available options for the force command.")]
+        public async Task Force()
+        {
+            await ReplyAsync("**Syntax:** " +
+                GuildConfiguration.Load(Context.Guild.Id).Prefix + "force [variable] [user mention / id] [value]\n```" +
+                "Available Commands\n" +
+                "------------------\n" +
+                "-> force about [mention/id] [value]\n" +
+                "-> force name [mention/id] [value]\n" +
+                "-> force gender [mention/id] [value]\n" +
+                "-> force pronouns [mention/id] [value]\n" +
+                "-> force coins [mention/id] [value]\n" +
+                "-> force minecraftusername [mention/id] [value]\n" +
+                "-> force snapchat [mention/id] [value]\n" +
+                "-> force prefix [mention/id] [value]\n" +
+                "```");
+        }
+
         [Command("about"), Summary("Force set the about message for the specified user.")]
         public async Task ForceAbout(IUser user, [Remainder]string about)
         {

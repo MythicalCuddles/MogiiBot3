@@ -19,8 +19,24 @@ namespace DiscordBot.Modules.Admin
     [Group("set")]
     [RequireContext(ContextType.Guild | ContextType.DM)]
     [MinPermissions(PermissionLevel.ServerAdmin)]
-    public class SetModule : ModuleBase//<SocketCommandContext>
+    public class SetModule : ModuleBase
     {
+        [Command(""), Summary("Get the available options for the set command.")]
+        public async Task Set()
+        {
+            await ReplyAsync("**Syntax:** " + 
+                GuildConfiguration.Load(Context.Guild.Id).Prefix + "set [variable] [value]\n```" +
+                "Available Commands\n" +
+                "------------------\n" +
+                "-> set status online\n" +
+                "-> set status donotdisturb\n" +
+                "-> set status idle\n" +
+                "-> set status invisible\n" +
+                "-> set rule34 [Number]\n" +
+                "-> set leaderboardamount [Number]\n" +
+                "```");
+        }
+
         [Group("status")]
         public class StatusModule : ModuleBase
         {

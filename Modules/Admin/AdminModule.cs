@@ -51,7 +51,6 @@ namespace DiscordBot.Modules.Admin
         {
             Configuration.UpdateJson("UnknownCommandEnabled", !Configuration.Load().UnknownCommandEnabled);
             await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync("UnknownCommand has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().UnknownCommandEnabled + ")");
-            //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("UnknownCommand has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().UnknownCommandEnabled + ")");
         }
 
         [Command("playing"), Summary("Changes the playing message of the bot.")]
@@ -84,9 +83,6 @@ namespace DiscordBot.Modules.Admin
         {
             await Configuration.Load().MCWelcomeChannelID.GetTextChannel().SendMessageAsync(GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.Replace("{USERJOINED}", user.Mention).Replace("{GUILDNAME}", Context.Guild.Name));
             await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync(user.Mention + " has joined the server.");
-
-            //await GetHandler.getTextChannel(Configuration.Load().MCWelcomeChannelID).SendMessageAsync(GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.Replace("{USERJOINED}", user.Mention).Replace("{GUILDNAME}", Context.Guild.Name));
-            //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync(user.Mention + " has joined the server.");
         }
         
         [Command("awardcoins"), Summary("Award the specified user the specified amount of coins.")]
@@ -126,28 +122,6 @@ namespace DiscordBot.Modules.Admin
             await ReplyAsync(mentionedUser.Mention + " has been fined " + fineValue + " coins from " + Context.User.Mention);
             TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") fined " + mentionedUser.Username + "(" + mentionedUser.Id + ") " + fineValue + " coins.");
         }
-
-        [Command("setwelcome"),Summary("Set the welcome message to the specified string. (Use `{USERJOINED}` to mention the user and `{GUILDNAME}` to name the guild.")]
-        [Alias("setwelcomemessage", "sw")]
-        public async Task SetWelcomeMessage([Remainder]string message = null)
-        {
-            if(message == null)
-            {
-                StringBuilder sb = new StringBuilder()
-                    .Append("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "setwelcome [Welcome Message]\n\n")
-                    .Append("```Available Flags\n")
-                    .Append("{USERJOINED} - @" + Context.User.Username + "\n")
-                    .Append("{GUILDNAME} - " + Context.Guild.Name + "\n")
-                    .Append("\nFlags need to be in CAPITAL LETTERS!```");
-
-                await ReplyAsync(sb.ToString());
-                return;
-            }
-
-            GuildConfiguration.UpdateJson(Context.Guild.Id, "WelcomeMessage", message);
-            await ReplyAsync("Welcome message has been changed successfully by " + Context.User.Mention);
-            await ReplyAsync("**SAMPLE WELCOME MESSAGE**\n" + GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.Replace("{USERJOINED}", Context.User.Mention).Replace("{GUILDNAME}", Context.Guild.Name));
-        }
         
         [Command("testwelcome"), Summary("Test the welcome message with mentioning a user.")]
         public async Task TestWelcomeMessage(IUser testWithUser = null)
@@ -155,30 +129,36 @@ namespace DiscordBot.Modules.Admin
             var user = testWithUser ?? Context.User;
             await ReplyAsync(GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.Replace("{USERJOINED}", user.Mention).Replace("{GUILDNAME}", Context.Guild.Name));
         }
-
-
+        
         [Command("listtransactions"), Summary("Sends a list of all the transactions.")]
         public async Task ListTransactions()
         {
-            StringBuilder sb = new StringBuilder()
+            if(TransactionLogger.transactionsList.Count > 0)
+            {
+                StringBuilder sb = new StringBuilder()
                 .Append("**Transactions**\n**----------------**\n`Total Transactions: " + TransactionLogger.transactionsList.Count + "`\n```");
 
-            TransactionLogger.SpliceTransactionsIntoList();
-            List<string> transactions = TransactionLogger.GetSplicedTransactions(1);
+                TransactionLogger.SpliceTransactionsIntoList();
+                List<string> transactions = TransactionLogger.GetSplicedTransactions(1);
 
-            for (int i = 0; i < transactions.Count; i++)
-            {
-                sb.Append((i + 1) + ": " + transactions[i] + "\n");
+                for (int i = 0; i < transactions.Count; i++)
+                {
+                    sb.Append((i + 1) + ": " + transactions[i] + "\n");
+                }
+
+                sb.Append("``` `Page 1`");
+
+                IUserMessage msg = await ReplyAsync(sb.ToString());
+                TransactionLogger.transactionMessages.Add(msg.Id);
+                TransactionLogger.pageNumber.Add(1);
+
+                if (TransactionLogger.transactionsList.Count() > 10)
+                    await msg.AddReactionAsync(Extensions.Extensions.arrow_right);
             }
-
-            sb.Append("``` `Page 1`");
-
-            IUserMessage msg = await ReplyAsync(sb.ToString());
-            TransactionLogger.transactionMessages.Add(msg.Id);
-            TransactionLogger.pageNumber.Add(1);
-
-            if (TransactionLogger.transactionsList.Count() > 10)
-                await msg.AddReactionAsync(Extensions.Extensions.arrow_right);
+            else
+            {
+                await ReplyAsync("No transactions were found in the database.");
+            }
         }
 
         [Command("addquote"), Summary("Add a quote to the list.")]
@@ -191,25 +171,32 @@ namespace DiscordBot.Modules.Admin
         [Command("listquotes"), Summary("Sends a list of all the quotes.")]
         public async Task ListQuotes()
         {
-            StringBuilder sb = new StringBuilder()
+            if(QuoteHandler.quoteList.Count > 0)
+            {
+                StringBuilder sb = new StringBuilder()
                 .Append("**Quote List** : *Page 1*\n```");
 
-            QuoteHandler.SpliceQuotes();
-            List<string> quotes = QuoteHandler.GetQuotes(1);
+                QuoteHandler.SpliceQuotes();
+                List<string> quotes = QuoteHandler.GetQuotes(1);
 
-            for (int i = 0; i < quotes.Count; i++)
-            {
-                sb.Append((i + 1) + ": " + quotes[i] + "\n");
+                for (int i = 0; i < quotes.Count; i++)
+                {
+                    sb.Append((i + 1) + ": " + quotes[i] + "\n");
+                }
+
+                sb.Append("```");
+
+                IUserMessage msg = await ReplyAsync(sb.ToString());
+                QuoteHandler.quoteMessages.Add(msg.Id);
+                QuoteHandler.pageNumber.Add(1);
+
+                if (QuoteHandler.quoteList.Count() > 10)
+                    await msg.AddReactionAsync(Extensions.Extensions.arrow_right);
             }
-
-            sb.Append("```");
-
-            IUserMessage msg = await ReplyAsync(sb.ToString());
-            QuoteHandler.quoteMessages.Add(msg.Id);
-            QuoteHandler.pageNumber.Add(1);
-
-            if (QuoteHandler.quoteList.Count() > 10)
-                await msg.AddReactionAsync(Extensions.Extensions.arrow_right);
+            else
+            {
+                await ReplyAsync("There are no quotes in the database.");
+            }
         }
 
         [Command("editquote"), Summary("Edit a quote from the list.")]
@@ -355,19 +342,34 @@ namespace DiscordBot.Modules.Admin
         [Command("listmusic"), Summary("Sends a list of all the music links.")]
         public async Task ListMusicLinks()
         {
-            StringBuilder sb = new StringBuilder()
-                .Append("**Music Link List**\n```");
-
-            for (int i = 0; i < MusicHandler.musicLinkList.Count; i++)
+            if(MusicHandler.musicLinkList.Count > 0)
             {
-                sb.Append(i + ": " + MusicHandler.musicLinkList[i] + "\n");
+                StringBuilder sb = new StringBuilder()
+                .Append("**Music Links**\n```");
+
+                MusicHandler.SpliceMusicIntoList();
+                List<string> music = MusicHandler.GetSplicedMusic(1);
+
+                for (int i = 0; i < music.Count; i++)
+                {
+                    sb.Append((i + 1) + ": " + music[i] + "\n");
+                }
+
+                sb.Append("``` `Page 1`");
+
+                IUserMessage msg = await ReplyAsync(sb.ToString());
+                MusicHandler.musicMessages.Add(msg.Id);
+                MusicHandler.pageNumber.Add(1);
+
+                if (MusicHandler.musicLinkList.Count() > 10)
+                    await msg.AddReactionAsync(Extensions.Extensions.arrow_right);
             }
-
-            sb.Append("```");
-
-            await ReplyAsync(sb.ToString());
+            else
+            {
+                await ReplyAsync("There are no music links in the database.");
+            }
         }
-
+        
         [Command("editmusic"), Summary("Edit a music link from the list.")]
         public async Task EditMusicLink(int linkID, [Remainder]string link)
         {
@@ -376,7 +378,7 @@ namespace DiscordBot.Modules.Admin
             await ReplyAsync(Context.User.Mention + " updated music link id: " + linkID + "\nOld link: `" + oldLink + "`\nUpdated: `" + link + "`");
         }
 
-        [Command("deletemusic"), Summary("Delete a music link from the list. Make sure to `listmusiclinks` to get the ID for the link being removed!")]
+        [Command("deletemusic"), Summary("Delete a music link from the list. Make sure to `listmusic` to get the ID for the link being removed!")]
         public async Task RemoveMusicLink(int linkID)
         {
             string link = MusicHandler.musicLinkList[linkID];
@@ -386,24 +388,87 @@ namespace DiscordBot.Modules.Admin
             await ListMusicLinks();
         }
 
-        [Command("mclist"), Summary("")]
-        public async Task GetMinecraftUsernames()
+        //[Command("mclist"), Summary("")]
+        //public async Task GetMinecraftUsernames()
+        //{
+        //    var guild = Context.Guild as SocketGuild;
+        //    StringBuilder sb = new StringBuilder()
+        //        .Append("**Minecraft Username List**\n*Key (Discord Username : Minecraft Username)*\n```");
+
+        //    foreach(SocketUser u in guild.Users)
+        //    {
+        //        string minecraftUsername = User.Load(u.Id).MinecraftUsername;
+        //        if (minecraftUsername != null)
+        //        {
+        //            sb.Append("@" + u.Username + " : " + minecraftUsername + "\n");
+        //        }
+        //    }
+
+        //    sb.Append("```");
+        //    await ReplyAsync(sb.ToString());
+        //}
+
+        [Command("addimage"), Summary("Add a image link to the list.")]
+        public async Task AddImageLink([Remainder]string link)
         {
-            var guild = Context.Guild as SocketGuild;
-            StringBuilder sb = new StringBuilder()
-                .Append("**Minecraft Username List**\n*Key (Discord Username : Minecraft Username)*\n```");
-
-            foreach(SocketUser u in guild.Users)
+            if (ImageHandler.imageLinkList.Contains(link))
             {
-                string minecraftUsername = User.Load(u.Id).MinecraftUsername;
-                if (minecraftUsername != null)
-                {
-                    sb.Append("@" + u.Username + " : " + minecraftUsername + "\n");
-                }
+                await ReplyAsync("\"Bitch no, it's already in the list\" - Flamesies.\nBut seriously... that link already is in the list, so you don't need to add it again.");
             }
+            else
+            {
+                ImageHandler.AddAndUpdateLinks(link);
+                await ReplyAsync("Link successfully added to the list, " + Context.User.Mention);
+            }
+        }
 
-            sb.Append("```");
-            await ReplyAsync(sb.ToString());
+        [Command("listimages"), Summary("Sends a list of all the image links.")]
+        public async Task ListImageLinks()
+        {
+            if (ImageHandler.imageLinkList.Count > 0)
+            {
+                StringBuilder sb = new StringBuilder()
+                .Append("**Image Links**\n```");
+
+                ImageHandler.SpliceIntoList();
+                List<string> images = ImageHandler.GetSplicedList(1);
+
+                for (int i = 0; i < images.Count; i++)
+                {
+                    sb.Append((i + 1) + ": " + images[i] + "\n");
+                }
+
+                sb.Append("``` `Page 1`");
+
+                IUserMessage msg = await ReplyAsync(sb.ToString());
+                ImageHandler.imageMessages.Add(msg.Id);
+                ImageHandler.pageNumber.Add(1);
+
+                if (ImageHandler.imageLinkList.Count() > 10)
+                    await msg.AddReactionAsync(Extensions.Extensions.arrow_right);
+            }
+            else
+            {
+                await ReplyAsync("There are no music links in the database.");
+            }
+        }
+
+        [Command("editimage"), Summary("Edit a image link from the list.")]
+        public async Task EditImageLink(int linkID, [Remainder]string link)
+        {
+            string oldLink = ImageHandler.imageLinkList[linkID];
+            ImageHandler.UpdateLink(linkID, link);
+            await ReplyAsync(Context.User.Mention + " updated image link id: " + linkID + "\nOld link: `" + oldLink + "`\nUpdated: `" + link + "`");
+        }
+
+        [Command("deleteimage"), Summary("Delete a image link from the list. Make sure to `listimages` to get the ID for the link being removed!")]
+        public async Task RemoveImageLink(int linkID)
+        {
+            string link = ImageHandler.imageLinkList[linkID];
+            ImageHandler.RemoveAndUpdateLinks(linkID);
+            await ReplyAsync("Link " + linkID + " removed successfully, " + Context.User.Mention + "\n**Link:** " + link);
+
+            await ListImageLinks();
         }
     }
 }
