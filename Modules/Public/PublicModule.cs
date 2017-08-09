@@ -171,32 +171,5 @@ namespace DiscordBot.Modules.Public
             User.UpdateJson(Context.User.Id, "Gender", gender);
             await ReplyAsync("Updated successfully, " + Context.User.Mention);
         }
-
-        [Command("suggest"), Summary("Send your suggestion for the bot!")]
-        public async Task SendSuggestion([Remainder]string message)
-        {
-            await Configuration.Load().SuggestChannelID.GetTextChannel().SendMessageAsync("**Suggestion**" + "\n" +
-                    Context.User.Mention + "\n" +
-                    "*User Suggestion: *" + "\n" +
-                    message);
-        }
-
-        [Command("support"), Summary("Sends a message out for support.")]
-        public async Task SendSupportRequest([Remainder]string message = null)
-        {
-            if (message == null)
-            {
-                await Configuration.Load().SupportChannelID.GetTextChannel().SendMessageAsync("**Support Needed**" + "\n" +
-                    Context.User.Mention + " has issued the support command in <#" + Context.Channel.Id + ">\n" +
-                    "*User Added Notes*" + "\n" +
-                    "User has not provided any notes.");
-            }
-            else
-            {
-                await Configuration.Load().SupportChannelID.GetTextChannel().SendMessageAsync("**Support Needed**" + "\n" +
-                     Context.User.Mention + " has issued the support command in <#" + Context.Channel.Id + ">\n" +
-                     "*User Added Notes*" + "\n" + message);
-            }
-        }
     }
 }

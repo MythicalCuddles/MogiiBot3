@@ -135,7 +135,7 @@ namespace DiscordBot.Modules.Public
         [Command("noticeme"), Summary("Will Senpai notice you?")]
         public async Task Senpai()
         {
-            if (Configuration.Load().SenpaiEnabled)
+            if (GuildConfiguration.Load(Context.Guild.Id).SenpaiEnabled)
             {
                 if (_r.Next(0, 20) == _r.Next(0, 20))
                 {
@@ -200,7 +200,7 @@ namespace DiscordBot.Modules.Public
         [Command("quote"), Summary("Get a random quote from the list.")]
         public async Task GenerateQuote()
         {
-            if (Configuration.Load().QuotesEnabled)
+            if (GuildConfiguration.Load(Context.Guild.Id).QuotesEnabled)
             {
                 int generatedNumber = _r.Next(0, QuoteHandler.quoteList.Count());
 
@@ -235,9 +235,7 @@ namespace DiscordBot.Modules.Public
             await ReplyAsync(Context.User.Mention + ", thank you for your quote. This costed you " + quoteCost + " coins. Your quote has been added to a wait list, and should be verified by a staff member shortly.");
 
             await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync("**New Quote**\nQuote requested by: **" + Context.User.Mention + "**\nQuote: " + quote);
-            await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync("**New Quote**\n" + quote + "\n\n*Do " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "listrequestquotes to view the ID and other quotes.*");
-            //await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**New Quote**\nQuote requested by: **" + Context.User.Mention + "**\nQuote: " + quote);
-            //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("**New Quote**\n" + quote + "\n\n*Do " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "listrequestquotes to view the ID and other quotes.*");
+            await GuildConfiguration.Load(Context.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("**New Quote**\n" + quote + "\n\n*Do " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "listrequestquotes to view the ID and other quotes.*");
         }
 
         [Command("music"), Summary("Replies posting a music link which has been set by staff.")]

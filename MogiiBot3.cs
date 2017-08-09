@@ -14,6 +14,7 @@ using Discord.Net.Providers.WS4Net;
 using Discord.Net.Providers.UDPClient;
 
 using DiscordBot.Common;
+using DiscordBot.Handlers;
 using DiscordBot.Other;
 using DiscordBot.Extensions;
 using DiscordBot.Logging;
@@ -45,15 +46,15 @@ namespace DiscordBot
             // Create Tasks for Bot Events
             _bot.Log += Log;
             
-            _bot.UserJoined += UserJoined;
-            _bot.UserLeft += UserLeft;
+            _bot.UserJoined += UserHandler.UserJoined;
+            _bot.UserLeft += UserHandler.UserLeft;
 
             _bot.ChannelCreated += ChannelCreated;
             _bot.ChannelDestroyed += ChannelDestroyed;
 
             _bot.Ready += Ready;
 
-            _bot.ReactionAdded += Handlers.ReactionHandler.ReactionAdded;
+            _bot.ReactionAdded += ReactionHandler.ReactionAdded;
 
             await InstallCommands();
             _bot.MessageDeleted += MessageDeleted;
@@ -68,7 +69,7 @@ namespace DiscordBot
             // Keep the program running.
             await Task.Delay(-1);
         }
-        
+
         private async Task Disconnected(Exception exception)
         {
             Console.WriteLine(exception.ToString());
@@ -134,7 +135,6 @@ namespace DiscordBot
                     User.CreateUserFile(u.Id);
                 }
                 Console.WriteLine("-----------------------------------------------------------------");
-
             }
 
             Console.WriteLine(_bot.CurrentUser.Id + " | " + _bot.CurrentUser.Username);
@@ -219,95 +219,97 @@ namespace DiscordBot
             MessageLogger.LogDeleteMessage(message);
             return Task.CompletedTask;
         }
-                
-        private async Task UserLeft(SocketGuildUser e)
-        {
-            if (e.Guild.Id == Configuration.Load().ServerID)
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.Append("**Username:** @" + e.Username + "\n");
-                if (e.Nickname != null)
-                {
-                    sb.Append("**Nickname:** " + e.Nickname + "\n");
-                }
-                sb.Append("**Id: **" + e.Id + "\n");
-                sb.Append("**Joined: **" + e.GuildJoinDate() + "\n");
-                sb.Append("\n");
-                sb.Append("**Coins: **" + User.Load(e.Id).Coins + "\n");
+               
+        // User Events
+        //private async Task UserLeft(SocketGuildUser e)
+        //{
+        //    if (e.Guild.Id == Configuration.Load().ServerID)
+        //    {
+        //        StringBuilder sb = new StringBuilder();
+        //        sb.Append("**Username:** @" + e.Username + "\n");
+        //        if (e.Nickname != null)
+        //        {
+        //            sb.Append("**Nickname:** " + e.Nickname + "\n");
+        //        }
+        //        sb.Append("**Id: **" + e.Id + "\n");
+        //        sb.Append("**Joined: **" + e.GuildJoinDate() + "\n");
+        //        sb.Append("\n");
+        //        sb.Append("**Coins: **" + User.Load(e.Id).Coins + "\n");
 
-                EmbedBuilder eb = new EmbedBuilder()
-                    .WithTitle("User Left")
-                    .WithDescription(sb.ToString())
-                    .WithColor(new Color(255, 28, 28))
-                    .WithThumbnailUrl(e.GetAvatarUrl())
-                    .WithCurrentTimestamp();
+        //        EmbedBuilder eb = new EmbedBuilder()
+        //            .WithTitle("User Left")
+        //            .WithDescription(sb.ToString())
+        //            .WithColor(new Color(255, 28, 28))
+        //            .WithThumbnailUrl(e.GetAvatarUrl())
+        //            .WithCurrentTimestamp();
 
-                await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync("", false, eb);
-                //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
-            }
-            else if (e.Guild.Id == Configuration.Load().NSFWServerID)
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.Append("**Username:** @" + e.Username + "\n");
-                if (e.Nickname != null)
-                {
-                    sb.Append("**Nickname:** " + e.Nickname + "\n");
-                }
-                sb.Append("**Id: **" + e.Id + "\n");
-                sb.Append("**Joined: **" + e.GuildJoinDate() + "\n");
-                sb.Append("\n");
-                sb.Append("**Coins: **" + User.Load(e.Id).Coins + "\n");
+        //        await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync("", false, eb);
+        //        //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
+        //    }
+        //    else if (e.Guild.Id == Configuration.Load().NSFWServerID)
+        //    {
+        //        StringBuilder sb = new StringBuilder();
+        //        sb.Append("**Username:** @" + e.Username + "\n");
+        //        if (e.Nickname != null)
+        //        {
+        //            sb.Append("**Nickname:** " + e.Nickname + "\n");
+        //        }
+        //        sb.Append("**Id: **" + e.Id + "\n");
+        //        sb.Append("**Joined: **" + e.GuildJoinDate() + "\n");
+        //        sb.Append("\n");
+        //        sb.Append("**Coins: **" + User.Load(e.Id).Coins + "\n");
 
-                EmbedBuilder eb = new EmbedBuilder()
-                    .WithTitle("NSFW Server - User Left")
-                    .WithDescription(sb.ToString())
-                    .WithColor(new Color(255, 28, 28))
-                    .WithThumbnailUrl(e.GetAvatarUrl())
-                    .WithCurrentTimestamp();
+        //        EmbedBuilder eb = new EmbedBuilder()
+        //            .WithTitle("NSFW Server - User Left")
+        //            .WithDescription(sb.ToString())
+        //            .WithColor(new Color(255, 28, 28))
+        //            .WithThumbnailUrl(e.GetAvatarUrl())
+        //            .WithCurrentTimestamp();
 
-                await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync("", false, eb);
-                //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
-            }
-        }
-        private async Task UserJoined(SocketGuildUser e)
-        {
-            if (e.Guild.Id == Configuration.Load().ServerID)
-            {
-                EmbedBuilder eb = new EmbedBuilder()
-                    .WithTitle("User Joined")
-                    .WithDescription("@" + e.Username + "\n" + e.Id)
-                    .WithColor(new Color(28, 255, 28))
-                    .WithThumbnailUrl(e.GetAvatarUrl())
-                    .WithCurrentTimestamp();
+        //        await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync("", false, eb);
+        //        //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
+        //    }
+        //}
 
-                await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync("", false, eb);
-                //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
+        //private async Task UserJoined(SocketGuildUser e)
+        //{
+        //    if (e.Guild.Id == Configuration.Load().ServerID)
+        //    {
+        //        EmbedBuilder eb = new EmbedBuilder()
+        //            .WithTitle("User Joined")
+        //            .WithDescription("@" + e.Username + "\n" + e.Id)
+        //            .WithColor(new Color(28, 255, 28))
+        //            .WithThumbnailUrl(e.GetAvatarUrl())
+        //            .WithCurrentTimestamp();
 
-                string wMsg1 = GuildConfiguration.Load(e.Guild.Id).WelcomeMessage.Replace("{USERJOINED}", e.Mention).Replace("{GUILDNAME}", e.Guild.Name);
-                await Configuration.Load().MCWelcomeChannelID.GetTextChannel().SendMessageAsync(wMsg1);
-                //await GetHandler.getTextChannel(Configuration.Load().MCWelcomeChannelID).SendMessageAsync(wMsg1);
-            }
-            else if (e.Guild.Id == Configuration.Load().NSFWServerID)
-            {
-                EmbedBuilder eb = new EmbedBuilder()
-                    .WithTitle("NSFW Server - User Joined")
-                    .WithDescription("@" + e.Username + "\n" + e.Id)
-                    .WithColor(new Color(28, 255, 28))
-                    .WithThumbnailUrl(e.GetAvatarUrl())
-                    .WithCurrentTimestamp();
+        //        await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync("", false, eb);
+        //        //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
 
-                await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync("", false, eb);
-                //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
-            }
+        //        string wMsg1 = GuildConfiguration.Load(e.Guild.Id).WelcomeMessage.Replace("{USERJOINED}", e.Mention).Replace("{GUILDNAME}", e.Guild.Name);
+        //        await Configuration.Load().MCWelcomeChannelID.GetTextChannel().SendMessageAsync(wMsg1);
+        //        //await GetHandler.getTextChannel(Configuration.Load().MCWelcomeChannelID).SendMessageAsync(wMsg1);
+        //    }
+        //    else if (e.Guild.Id == Configuration.Load().NSFWServerID)
+        //    {
+        //        EmbedBuilder eb = new EmbedBuilder()
+        //            .WithTitle("NSFW Server - User Joined")
+        //            .WithDescription("@" + e.Username + "\n" + e.Id)
+        //            .WithColor(new Color(28, 255, 28))
+        //            .WithThumbnailUrl(e.GetAvatarUrl())
+        //            .WithCurrentTimestamp();
 
-            if (User.CreateUserFile(e.Id))
-            {
-                await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync(e.Username + " was successfully added to the database. [" + e.Id + "]");
-                //await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync(e.Username + " was successfully added to the database. [" + e.Id + "]");
-            }
-        }
+        //        await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync("", false, eb);
+        //        //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
+        //    }
 
-        public async Task InstallCommands()
+        //    if (User.CreateUserFile(e.Id))
+        //    {
+        //        await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync(e.Username + " was successfully added to the database. [" + e.Id + "]");
+        //        //await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync(e.Username + " was successfully added to the database. [" + e.Id + "]");
+        //    }
+        //}
+
+        private async Task InstallCommands()
         {
             _bot.MessageReceived += MessageReceived;
 
@@ -326,7 +328,7 @@ namespace DiscordBot
             if (User.Load(message.Author.Id).IsBotIgnoringUser && message.Author.Id != DiscordWorker.getMelissaID) return;
             
             // Only respond on the NSFW Server if the channel id matches the rule34gamble channel id
-            if (message.IsMessageOnNSFWChannel() && message.Channel.Id != Configuration.Load().RuleGambleChannelID && message.Author.Id != Configuration.Load().Developer) return;
+            // if (message.IsMessageOnNSFWChannel() && message.Channel.Id != Configuration.Load().RuleGambleChannelID && message.Author.Id != Configuration.Load().Developer) return;
 
             // If the message came from somewhere that is not a text channel -> Private Message
             if (!(messageParam.Channel is ITextChannel))
@@ -344,8 +346,7 @@ namespace DiscordBot
                     .WithFooter(efb)
                     .WithCurrentTimestamp();
 
-                await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync("", false, eb);
-                //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
+                await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync("", false, eb);
             }
 
             // If the message is just "F", pay respects.
@@ -359,17 +360,13 @@ namespace DiscordBot
             int argPos = 0;
             if (!(message.HasStringPrefix(GuildConfiguration.Load(message.Channel.GetGuild().Id).Prefix, ref argPos) || message.HasMentionPrefix(_bot.CurrentUser, ref argPos) || message.HasStringPrefix(User.Load(message.Author.Id).CustomPrefix, ref argPos))) // Configuration.Load().Prefix
             {
-                // Coin System to add a coin for each message the user sends.
-                AwardCoinsToPlayer(message.Author.Id);
-
+                await AwardCoinsToPlayer(message.Author.Id);
                 return;
             }
 
             var context = new CommandContext(_bot, message);
-            // Execute Commands in dir \Modules
             var result = await commandService.ExecuteAsync(context, argPos);
-
-            // If the command modules doesn't contain a task for the message, return an error iff UnknownCommand is enabled
+            
             if (!result.IsSuccess && Configuration.Load().UnknownCommandEnabled)
             {
                 IUserMessage errorMessage;
@@ -394,15 +391,15 @@ namespace DiscordBot
             }
         }
 
-        public static void AwardCoinsToPlayer(ulong UserId, int CoinsToAward = 1)
+        public static Task AwardCoinsToPlayer(ulong UserId, int CoinsToAward = 1)
         {
             try
             {
-                User.UpdateJson(UserId, "Coins", (User.Load(UserId).Coins + (CoinsToAward * Configuration.Load().CoinModifier)));
+                User.UpdateJson(UserId, "Coins", (User.Load(UserId).Coins + CoinsToAward));
             }
             catch (Exception e) { Console.WriteLine(e); }
 
-            return;
+            return Task.CompletedTask;
         }
     }
 }

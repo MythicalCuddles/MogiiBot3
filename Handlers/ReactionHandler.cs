@@ -59,7 +59,7 @@ namespace DiscordBot.Handlers
             // Coin System to add a coin for each reaction that is added to a message.
             if (Configuration.Load().CoinsForReactions)
             {
-                MogiiBot3.AwardCoinsToPlayer(reaction.UserId);
+                await MogiiBot3.AwardCoinsToPlayer(reaction.UserId);
             }
         }
 

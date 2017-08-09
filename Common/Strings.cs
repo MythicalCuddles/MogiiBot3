@@ -15,5 +15,6 @@ namespace DiscordBot.Common
 {
     public class Strings
     {
+
     }
 }

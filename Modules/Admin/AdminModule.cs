@@ -30,59 +30,11 @@ namespace DiscordBot.Modules.Admin
             await Context.Message.DeleteAsync();
         }
 
-        [Command("togglesenpai"), Summary("Toggles the senpai command.")]
-        public async Task ToggleSenpai()
-        {
-            Configuration.UpdateJson("SenpaiEnabled", !Configuration.Load().SenpaiEnabled);
-            await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync("Senpai has been toggled by " + Context.User.Mention + " (emabled: " + Configuration.Load().SenpaiEnabled + ")");
-            //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("Senpai has been toggled by " + Context.User.Mention + " (emabled: " + Configuration.Load().SenpaiEnabled + ")");
-        }
-
-        [Command("togglequotes"), Summary("")]
-        public async Task ToggleQuotes()
-        {
-            Configuration.UpdateJson("QuotesEnabled", !Configuration.Load().QuotesEnabled);
-            await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync("Quotes have been toggled by " + Context.User.Mention + " (emabled: " + Configuration.Load().QuotesEnabled + ")");
-            //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("Quotes have been toggled by " + Context.User.Mention + " (emabled: " + Configuration.Load().QuotesEnabled + ")");
-        }
-
-        [Command("toggleunknowncommand"), Summary("Toggles the unknown command message.")]
-        public async Task ToggleUC()
-        {
-            Configuration.UpdateJson("UnknownCommandEnabled", !Configuration.Load().UnknownCommandEnabled);
-            await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync("UnknownCommand has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().UnknownCommandEnabled + ")");
-        }
-
-        [Command("playing"), Summary("Changes the playing message of the bot.")]
-        public async Task PlayingMessage([Remainder] string playingMessage)
-        {
-            Configuration.UpdateJson("Playing", playingMessage);
-            await MogiiBot3._bot.SetGameAsync(playingMessage);
-            await Context.Message.DeleteAsync();
-        }
-
-        [Command("twitch"), Summary("Sets the twitch streaming link. Type \"none\" to disable.")]
-        [Alias("streaming", "twitchstreaming")]
-        public async Task SetTwitchStreamingStatus(string linkOrValue, [Remainder]string playing)
-        {
-            if (linkOrValue.Contains("https://www.twitch.tv/"))
-            {
-                await MogiiBot3._bot.SetGameAsync(playing, linkOrValue, StreamType.Twitch);
-                await ReplyAsync(Context.User.Mention + ", my status has been updated to streaming with the Twitch.TV link of <" + linkOrValue + ">");
-            }
-            else
-            {
-                await MogiiBot3._bot.SetGameAsync(playing, null, StreamType.NotStreaming);
-            }
-
-            await Context.Message.DeleteAsync();
-        }
-
         [Command("welcome"), Summary("Send the welcome messages to the user specified.")]
-        public async Task SendWelcomeMessage(IUser user)
+        public async Task SendWelcomeMessage(SocketGuildUser user)
         {
-            await Configuration.Load().MCWelcomeChannelID.GetTextChannel().SendMessageAsync(GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.Replace("{USERJOINED}", user.Mention).Replace("{GUILDNAME}", Context.Guild.Name));
-            await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync(user.Mention + " has joined the server.");
+            await GuildConfiguration.Load(Context.Guild.Id).WelcomeChannelId.GetTextChannel().SendMessageAsync(GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.FormatWelcomeMessage(user));
+            await GuildConfiguration.Load(Context.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("A welcome message for " + user.Mention + " has been posted. (Forced by: " + Context.User.Mention + ")");
         }
         
         [Command("awardcoins"), Summary("Award the specified user the specified amount of coins.")]
@@ -122,14 +74,7 @@ namespace DiscordBot.Modules.Admin
             await ReplyAsync(mentionedUser.Mention + " has been fined " + fineValue + " coins from " + Context.User.Mention);
             TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") fined " + mentionedUser.Username + "(" + mentionedUser.Id + ") " + fineValue + " coins.");
         }
-        
-        [Command("testwelcome"), Summary("Test the welcome message with mentioning a user.")]
-        public async Task TestWelcomeMessage(IUser testWithUser = null)
-        {
-            var user = testWithUser ?? Context.User;
-            await ReplyAsync(GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.Replace("{USERJOINED}", user.Mention).Replace("{GUILDNAME}", Context.Guild.Name));
-        }
-        
+                
         [Command("listtransactions"), Summary("Sends a list of all the transactions.")]
         public async Task ListTransactions()
         {
@@ -266,24 +211,6 @@ namespace DiscordBot.Modules.Admin
             await ReplyAsync(Context.User.Mention + " has denied Quote " + quoteID + " from the request quote list.\nQuote: " + quote);
         }
 
-        [Command("quoteprice"), Summary("")]
-        [Alias("changequoteprice", "updatequoteprice")]
-        public async Task ChangeQuotePrice(int price)
-        {
-            int oldPrice = Configuration.Load().QuoteCost;
-            Configuration.UpdateJson("QuoteCost", price);
-            await ReplyAsync("**" + Context.User.Mention + "** has updated the quote cost to **" + price + "** coins. (Was: **" + oldPrice + "** coins)");
-        }
-
-        [Command("prefixprice"), Summary("")]
-        [Alias("changeprefixprice", "updateprefixprice")]
-        public async Task ChangePrefixPrice(int price)
-        {
-            int oldPrice = Configuration.Load().PrefixCost;
-            Configuration.UpdateJson("PrefixCost", price);
-            await ReplyAsync("**" + Context.User.Mention + "** has updated the prefix cost to **" + price + "** coins. (Was: **" + oldPrice + "** coins)");
-        }
-
         [Command("addvotelink"), Summary("Add a voting link to the list.")]
         public async Task AddVoteLink([Remainder]string link)
         {
@@ -387,27 +314,7 @@ namespace DiscordBot.Modules.Admin
 
             await ListMusicLinks();
         }
-
-        //[Command("mclist"), Summary("")]
-        //public async Task GetMinecraftUsernames()
-        //{
-        //    var guild = Context.Guild as SocketGuild;
-        //    StringBuilder sb = new StringBuilder()
-        //        .Append("**Minecraft Username List**\n*Key (Discord Username : Minecraft Username)*\n```");
-
-        //    foreach(SocketUser u in guild.Users)
-        //    {
-        //        string minecraftUsername = User.Load(u.Id).MinecraftUsername;
-        //        if (minecraftUsername != null)
-        //        {
-        //            sb.Append("@" + u.Username + " : " + minecraftUsername + "\n");
-        //        }
-        //    }
-
-        //    sb.Append("```");
-        //    await ReplyAsync(sb.ToString());
-        //}
-
+        
         [Command("addimage"), Summary("Add a image link to the list.")]
         public async Task AddImageLink([Remainder]string link)
         {

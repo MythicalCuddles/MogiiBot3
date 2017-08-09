@@ -181,24 +181,24 @@ namespace DiscordBot.Extensions
             });
             return msg;
         }
-        public static Boolean IsMessageOnNSFWChannel(this IUserMessage message)
-        {
-            foreach (SocketGuild g in MogiiBot3._bot.Guilds)
-            {
-                if (g.Id == Configuration.Load().NSFWServerID)
-                {
-                    foreach (SocketChannel c in g.Channels)
-                    {
-                        if (c.Id == message.Channel.Id)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
+        //public static Boolean IsMessageOnNSFWChannel(this IUserMessage message)
+        //{
+        //    foreach (SocketGuild g in MogiiBot3._bot.Guilds)
+        //    {
+        //        if (g.Id == Configuration.Load().NSFWServerID)
+        //        {
+        //            foreach (SocketChannel c in g.Channels)
+        //            {
+        //                if (c.Id == message.Channel.Id)
+        //                {
+        //                    return true;
+        //                }
+        //            }
+        //        }
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
         #endregion
 
         #region User Extensions

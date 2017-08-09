@@ -17,12 +17,11 @@ using MelissasCode;
 namespace DiscordBot.Modules.Public
 {
     [Name("Leaderboard Commands")]
-    [Group("leaderboard")]
     [MinPermissions(PermissionLevel.User)]
     [RequireContext(ContextType.Guild)]
     public class LeaderboardModule : ModuleBase
     {
-        [Command("coins"), Summary("Leaderboards for the coins system.")]
+        [Command("leaderboard"), Summary("Leaderboards for the coins system.")]
         public async Task GetCoinLeaderboard()
         {
             int topList = Configuration.Load().LeaderboardAmount;

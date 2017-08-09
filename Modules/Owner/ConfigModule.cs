@@ -17,92 +17,120 @@ using MelissasCode;
 namespace DiscordBot.Modules.Owner
 {
     [Name("Configuration Commands")]
-    [Group("setconfig")]
+    [Group("editconfig")]
     [MinPermissions(PermissionLevel.BotOwner)]
     public class ConfigModule : ModuleBase
     {
-        // SAMPLE
-        //[Command(""), Summary("")]
-        //public async Task abcdefgh()
-        //{
-        //    Configuration.UpdateJson("abcdefgh", value);
-        //    await ReplyAsync(Context.User.Mention + " has updated \"abcdefgh\" to: " + value);
-        //}
-
-        #region NSFW Server ID's
-        [Command("nsfwserverid"), Summary("")]
-        public async Task SetNSFWServerID(ulong serverID)
+        [Command("playing"), Summary("Changes the playing message of the bot.")]
+        public async Task PlayingMessage([Remainder] string playingMessage)
         {
-            Configuration.UpdateJson("NSFWServerID", serverID);
-            await ReplyAsync(Context.User.Mention + " has updated \"NSFWServerID\" to: " + serverID);
+            Configuration.UpdateJson("Playing", playingMessage);
+            await MogiiBot3._bot.SetGameAsync(playingMessage);
         }
 
-        [Command("rule34gamblechannelid"), Summary("")]
-        public async Task SetRuleGambleChannelID(ulong channelID)
+        [Command("twitch"), Summary("Sets the twitch streaming link. Type \"none\" to disable.")]
+        [Alias("streaming", "twitchstreaming")]
+        public async Task SetTwitchStreamingStatus(string linkOrValue, [Remainder]string playing)
         {
-            Configuration.UpdateJson("RuleGambleChannelID", channelID);
-            await ReplyAsync(Context.User.Mention + " has updated \"RuleGambleChannelID\" to: " + channelID);
-        }
-        #endregion
-
-        #region MogiiCraft ID's
-        [Command("mogiicraftserverid"), Summary("")]
-        public async Task SetMogiiCraftServerID(ulong serverID)
-        {
-            Configuration.UpdateJson("ServerID", serverID);
-            await ReplyAsync(Context.User.Mention + " has updated \"ServerID\" to: " + serverID);
-        }
-
-        [Command("welcomechannelid"), Summary("")]
-        public async Task SetWelcomeChannelID(ulong channelID)
-        {
-            Configuration.UpdateJson("MCWelcomeChannelID", channelID);
-            await ReplyAsync(Context.User.Mention + " has updated \"MCWelcomeChannelID\" to: " + channelID);
+            if (linkOrValue.Contains("https://www.twitch.tv/"))
+            {
+                await MogiiBot3._bot.SetGameAsync(playing, linkOrValue, StreamType.Twitch);
+                await ReplyAsync(Context.User.Mention + ", my status has been updated to streaming with the Twitch.TV link of <" + linkOrValue + ">");
+            }
+            else
+            {
+                await MogiiBot3._bot.SetGameAsync(playing, null, StreamType.NotStreaming);
+            }
         }
 
-        [Command("logchannelid"), Summary("")]
-        public async Task SetLogChannelID(ulong channelID)
+        [Group("status")]
+        public class StatusModule : ModuleBase
         {
-            Configuration.UpdateJson("MCLogChannelID", channelID);
-            await ReplyAsync(Context.User.Mention + " has updated \"MCLogChannelID\" to: " + channelID);
+            [Command("online"), Summary("Sets the bot's status to online.")]
+            [Alias("active", "green")]
+            public async Task SetOnline()
+            {
+                Configuration.UpdateJson("Status", (int)UserStatus.Online);
+                await MogiiBot3._bot.SetStatusAsync(UserStatus.Online);
+                await ReplyAsync("Status updated to Online, " + Context.User.Mention);
+            }
+
+            [Command("donotdisturb"), Summary("Sets the bot's status to do not disturb.")]
+            [Alias("dnd", "disturb", "red")]
+            public async Task SetBusy()
+            {
+                Configuration.UpdateJson("Status", (int)UserStatus.DoNotDisturb);
+                await MogiiBot3._bot.SetStatusAsync(UserStatus.DoNotDisturb);
+                await ReplyAsync("Status updated to Do Not Disturb, " + Context.User.Mention);
+            }
+
+            [Command("idle"), Summary("Sets the bot's status to idle.")]
+            [Alias("afk", "yellow")]
+            public async Task SetIdle()
+            {
+                Configuration.UpdateJson("Status", (int)UserStatus.AFK);
+                await MogiiBot3._bot.SetStatusAsync(UserStatus.AFK);
+                await ReplyAsync("Status updated to Idle, " + Context.User.Mention);
+            }
+
+            [Command("invisible"), Summary("Sets the bot's status to invisible.")]
+            [Alias("hidden", "offline", "grey")]
+            public async Task SetInvisible()
+            {
+                Configuration.UpdateJson("Status", (int)UserStatus.Invisible);
+                await MogiiBot3._bot.SetStatusAsync(UserStatus.Invisible);
+                await ReplyAsync("Status updated to Invisible, " + Context.User.Mention);
+            }
         }
 
-        [Command("minecraftchannelid"), Summary("")]
-        public async Task SetMinecraftChannelID(ulong channelID)
+        [Command("toggleunknowncommand"), Summary("Toggles the unknown command message.")]
+        public async Task ToggleUC()
         {
-            Configuration.UpdateJson("MCMinecraftChannelID", channelID);
-            await ReplyAsync(Context.User.Mention + " has updated \"MCMinecraftChannelID\" to: " + channelID);
-        }
-        #endregion
-
-        #region Melissa's ID's
-        [Command("supportchannelid"), Summary("")]
-        public async Task SetSupportChannelID(ulong channelID)
-        {
-            Configuration.UpdateJson("SupportChannelID", channelID);
-            await ReplyAsync(Context.User.Mention + " has updated \"SupportChannelID\" to: " + channelID);
+            Configuration.UpdateJson("UnknownCommandEnabled", !Configuration.Load().UnknownCommandEnabled);
+            await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync("UnknownCommand has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().UnknownCommandEnabled + ")");
         }
 
-        [Command("suggestchannelid"), Summary("")]
-        public async Task SetSuggestChannelID(ulong channelID)
+        [Command("leaderboardamount"), Summary("Set the amount of users who show up in the leaderboards.")]
+        public async Task SetLeaderboardAmount(int value)
         {
-            Configuration.UpdateJson("SuggestChannelID", channelID);
-            await ReplyAsync(Context.User.Mention + " has updated \"SuggestChannelID\" to: " + channelID);
+            int oldValue = Configuration.Load().LeaderboardAmount;
+            Configuration.UpdateJson("LeaderboardAmount", value);
+            await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the Leaderboard amount to: " + value + " (was: " + oldValue + ")");
         }
 
-        [Command("ownerlogchannelid"), Summary("")]
-        public async Task SetOwnerLogChannelID(ulong channelID)
+        [Command("quoteprice"), Summary("")]
+        [Alias("changequoteprice", "updatequoteprice")]
+        public async Task ChangeQuotePrice(int price)
         {
-            Configuration.UpdateJson("LogChannelID", channelID);
-            await ReplyAsync(Context.User.Mention + " has updated \"LogChannelID\" to: " + channelID);
+            int oldPrice = Configuration.Load().QuoteCost;
+            Configuration.UpdateJson("QuoteCost", price);
+            await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync("**" + Context.User.Mention + "** has updated the quote cost to **" + price + "** coins. (Was: **" + oldPrice + "** coins)");
         }
 
-        [Command("coinmodifier"), Summary("")]
-        public async Task SetCoinModifierValue(int coinModifierValue)
+        [Command("prefixprice"), Summary("")]
+        [Alias("changeprefixprice", "updateprefixprice")]
+        public async Task ChangePrefixPrice(int price)
         {
-            Configuration.UpdateJson("CoinModifier", coinModifierValue);
-            await ReplyAsync(Context.User.Mention + " has updated \"CoinModifier\" to: " + coinModifierValue);
+            int oldPrice = Configuration.Load().PrefixCost;
+            Configuration.UpdateJson("PrefixCost", price);
+            await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync("**" + Context.User.Mention + "** has updated the prefix cost to **" + price + "** coins. (Was: **" + oldPrice + "** coins)");
         }
-        #endregion
+
+        //CoinsForReactions
+
+        [Command("globallogchannel"), Summary("")]
+        public async Task SetGlobalLogChannel(SocketTextChannel channel)
+        {
+            Configuration.UpdateJson("LogChannelID", channel.Id);
+            await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated \"LogChannelID\" to: " + channel.Mention);
+        }
+
+        [Command("rule34"), Summary("Set the max random value for the Rule34 Gamble.")]
+        public async Task SetRule34Max(int value)
+        {
+            int oldValue = Configuration.Load().MaxRuleXGamble;
+            Configuration.UpdateJson("MaxRuleXGamble", value);
+            await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the Rule34 Max to: " + value + " (was: " + oldValue + ")");
+        }
     }
 }

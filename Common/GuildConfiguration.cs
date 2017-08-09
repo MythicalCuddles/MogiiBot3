@@ -16,10 +16,15 @@ namespace DiscordBot.Common
     public class GuildConfiguration
     {
         public string Prefix { get; set; } = "$";
-        public bool WelcomeEnabled { get; set; } = true;
         public string WelcomeMessage { get; set; } = null;
         public ulong WelcomeChannelId { get; set; } = 0;
         public ulong LogChannelId { get; set; } = 0;
+
+        public bool SenpaiEnabled { get; set; } = true;
+        public bool QuotesEnabled { get; set; } = true;
+
+        public bool EnableNSFWCommands { get; set; } = false;
+        public ulong RuleGambleChannelId { get; set; } = 0;
 
         public static void EnsureExists(ulong GuildID)
         {
@@ -84,6 +89,14 @@ namespace DiscordBot.Common
             File.WriteAllText(GetPath(GuildID), output);
         }
         public static void UpdateJson(ulong GuildID, string parameterName, bool newValue)
+        {
+            string json = File.ReadAllText(GetPath(GuildID));
+            dynamic jsonObj = JsonConvert.DeserializeObject(json);
+            jsonObj[parameterName] = newValue;
+            string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
+            File.WriteAllText(GetPath(GuildID), output);
+        }
+        public static void UpdateJson(ulong GuildID, string parameterName, ulong newValue)
         {
             string json = File.ReadAllText(GetPath(GuildID));
             dynamic jsonObj = JsonConvert.DeserializeObject(json);

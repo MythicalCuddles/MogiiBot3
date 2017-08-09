@@ -20,9 +20,26 @@ namespace DiscordBot.Extensions
 {
     public static class UserExtensions
     {
-        public static int GetUserCoins(this IUser user)
+        public static Int32 GetUserCoins(this IUser user)
         {
             return User.Load(user.Id).Coins;
+        }
+
+        public static String GetName(this IUser user)
+        {
+            return User.Load(user.Id).Name;
+        }
+        public static String GetGender(this IUser user)
+        {
+            return User.Load(user.Id).Gender;
+        }
+        public static String GetPronouns(this IUser user)
+        {
+            return User.Load(user.Id).Pronouns;
+        }
+        public static String GetSnapchatUsername(this IUser user)
+        {
+            return User.Load(user.Id).Snapchat;
         }
     }
 }

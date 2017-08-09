@@ -34,7 +34,7 @@ namespace DiscordBot.Modules.NSFW
         [Alias("34gamble")]
         public async Task Rule34Gamble()
         {
-            if (Context.Guild.Id == Configuration.Load().NSFWServerID && Context.Channel.Id == Configuration.Load().RuleGambleChannelID || Context.User.Id == Configuration.Load().Developer)
+            if (GuildConfiguration.Load(Context.Guild.Id).EnableNSFWCommands && Context.Channel.Id == GuildConfiguration.Load(Context.Guild.Id).RuleGambleChannelId || Context.User.Id == Configuration.Load().Developer)
             {
                 if (Context.Channel.IsNsfw)
                 {
