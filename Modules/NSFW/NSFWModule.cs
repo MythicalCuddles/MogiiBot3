@@ -9,6 +9,7 @@ using Discord;
 
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
+using DiscordBot.Extensions;
 
 using MelissasCode;
 
@@ -29,7 +30,7 @@ namespace DiscordBot.Modules.NSFW
         WebClient client = new WebClient();
         HtmlDocument doc = new HtmlDocument();
         string html, url;
-        int id;
+        int id, errorCount = 0;
         [Command("rule34gamble"), Summary("Head to #nsfw-rule34gamble and read the description for more information.")]
         [Alias("34gamble")]
         public async Task Rule34Gamble()
@@ -58,38 +59,57 @@ namespace DiscordBot.Modules.NSFW
                             images.Add(node.Attributes["src"].Value);
                         }
 
-                        var regex = new Regex(Regex.Escape("//"));
-                        var newText = regex.Replace(images[2], "https://", 1);
-                        var final = regex.Replace(newText, "/", 1, 10);
+						// -------------------------------------------------------
 
-                        await ReplyAsync(Context.User.Mention + ", congratulations, you won the following image: \n" + final.ToString());
+						Console.Write("[");
+						Console.ForegroundColor = ConsoleColor.Cyan;
+						Console.Write("RULE34 GAMBLE");
+						Console.ResetColor();
+						Console.WriteLine("]: " + Context.User.Username + " got the Gamble Id: " + id.ToString() + "\nThe following images were gathered using that Id:");
+						foreach (string s in images)
+						{
+							Console.WriteLine(s);
+						}
 
-                        Console.Write("[");
-                        Console.ForegroundColor = ConsoleColor.Cyan;
-                        Console.Write("Gamble Game - NSFW");
-                        Console.ResetColor();
-                        Console.WriteLine("]: " + Context.User.Username + " got the Gamble ID: " + id.ToString());
+						// -------------------------------------------------------
 
-                        regex = null;
-                        newText = null;
-                        final = null;
-                    }
+						//var regex = new Regex(Regex.Escape("//"));
+						//var newText = regex.Replace(images[2], "https://", 1);
+						//var final = regex.Replace(newText, "/", 1, 10);
+
+						//await ReplyAsync(Context.User.Mention + ", congratulations, you won the following image: \n" + final.ToString());
+						//await ReplyAsync(Context.User.Mention + ", congratulations, you won the following image: \n" + images[2].ToString());
+						message.ModifyAfter(Context.User.Mention + ", congratulations, you won the following image: \n" + images[2].ToString(), 1);
+						errorCount = 0;
+
+						//regex = null;
+						//newText = null;
+						//final = null;
+					}
                     catch (Exception ex)
                     {
+						errorCount++;
                         Console.Write("[");
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.Write("Gamble Exception");
                         Console.ResetColor();
                         Console.WriteLine("]: " + ex.ToString());
 
-                        await ReplyAsync(Context.User.Mention + ", the random ID you got returned no image. Lucky you! Why not try again?");
+						if(errorCount >= 3)
+						{
+							await ReplyAsync(Context.User.Mention + ", the random Id you got returned no image. Lucky you! Why not try again?");
+						}
+						else
+						{
+							await Rule34Gamble();
+						}
                     }
 
-                    await message.DeleteAsync();
+                    //await message.DeleteAsync();
                 }
                 else
                 {
-                    await ReplyAsync("**Warning!** This command requires the channel to have its NSFW setting enabled!\nDue to current restrictions with Discord.Net, this means that the channel must start with *nsfw -*");
+                    await ReplyAsync("**Warning!** This command requires the channel to have its NSFW setting enabled!\nDue to current restrictions with Discord.Net, this means that the channel must start with *nsfw-*");
                 }
             }
         }

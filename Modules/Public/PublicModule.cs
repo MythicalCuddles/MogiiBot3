@@ -94,7 +94,7 @@ namespace DiscordBot.Modules.Public
             if (User.Load(userSpecified.Id).Pronouns != null)
                 eb.AddInlineField("Pronouns", User.Load(userSpecified.Id).Pronouns);
             
-            eb.AddInlineField("Coins", userSpecified.GetUserCoins());
+            eb.AddInlineField("Coins", userSpecified.GetCoins());
             eb.AddInlineField("Account Created", userSpecified.UserCreateDate());
             eb.AddInlineField("Joined Guild", userSpecified.GuildJoinDate());
 

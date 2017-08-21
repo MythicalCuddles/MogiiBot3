@@ -25,15 +25,19 @@ namespace DiscordBot.Extensions
         {
             string msg = WelcomeMessage;
 
-            msg = Regex.Replace(msg, "{USERMENTION}", e.Mention, RegexOptions.IgnoreCase);
-            msg = Regex.Replace(msg, "{USERNAME}", e.Username, RegexOptions.IgnoreCase);
-            msg = Regex.Replace(msg, "{GUILDNAME}", e.Guild.Name, RegexOptions.IgnoreCase);
-            msg = Regex.Replace(msg, "{DISCRIMINATOR}", e.Discriminator, RegexOptions.IgnoreCase);
-            msg = Regex.Replace(msg, "{AVATARURL}", e.GetAvatarUrl(), RegexOptions.IgnoreCase);
-            msg = Regex.Replace(msg, "{USERID}", e.Id.ToString(), RegexOptions.IgnoreCase);
-            msg = Regex.Replace(msg, "{USERCREATEDATE}", e.UserCreateDate(), RegexOptions.IgnoreCase);
-            msg = Regex.Replace(msg, "{USERJOINDATE}", e.GuildJoinDate(), RegexOptions.IgnoreCase);
+            msg = Regex.Replace(msg, "{USER.MENTION}", e.Mention, RegexOptions.IgnoreCase);
+            msg = Regex.Replace(msg, "{USER.USERNAME}", e.Username, RegexOptions.IgnoreCase);
+            msg = Regex.Replace(msg, "{USER.DISCRIMINATOR}", e.Discriminator, RegexOptions.IgnoreCase);
+            msg = Regex.Replace(msg, "{USER.AVATARURL}", e.GetAvatarUrl(), RegexOptions.IgnoreCase);
+            msg = Regex.Replace(msg, "{USER.ID}", e.Id.ToString(), RegexOptions.IgnoreCase);
+            msg = Regex.Replace(msg, "{USER.CREATEDATE}", e.UserCreateDate(), RegexOptions.IgnoreCase);
+            msg = Regex.Replace(msg, "{USER.JOINDATE}", e.GuildJoinDate(), RegexOptions.IgnoreCase);
 
+            msg = Regex.Replace(msg, "{GUILD.NAME}", e.Guild.Name, RegexOptions.IgnoreCase);
+            msg = Regex.Replace(msg, "{GUILD.OWNER.USERNAME}", e.Guild.Owner.Username, RegexOptions.IgnoreCase);
+            msg = Regex.Replace(msg, "{GUILD.OWNER.MENTION}", e.Guild.Owner.Mention, RegexOptions.IgnoreCase);
+            msg = Regex.Replace(msg, "{GUILD.OWNER.ID}", e.Guild.Owner.Id.ToString(), RegexOptions.IgnoreCase);
+            
             return msg;
         }
     }

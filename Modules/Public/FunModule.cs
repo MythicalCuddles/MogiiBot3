@@ -118,8 +118,14 @@ namespace DiscordBot.Modules.Public
         {
             await ReplyAsync("https://i.imgur.com/W2l8dvp.png");
         }
+		
+		[Command("lmao"), Summary("Sends the lmao image.")]
+		public async Task Lmao()
+		{
+			await ReplyAsync("https://i.imgur.com/zBoZFbJ.png");
+		}
 
-        [Command("groot"), Summary("Sends a picture of baby groot dancing.")]
+		[Command("groot"), Summary("Sends a picture of baby groot dancing.")]
         public async Task BabyGroot()
         {
             await ReplyAsync("https://media.giphy.com/media/14b13BDH3V81wc/giphy.gif");
@@ -156,7 +162,7 @@ namespace DiscordBot.Modules.Public
         [Alias("purse", "balance", "bal", "coins", "mogiicoins")]
         public async Task LoadUserBalance()
         {
-            int userCoins = Context.User.GetUserCoins();
+            int userCoins = Context.User.GetCoins();
             await ReplyAsync(":moneybag: **" + Context.User.Username + "'s Balance** :moneybag:\n" + 
                 "\n" +
                 "**" + userCoins + "** coins\n");

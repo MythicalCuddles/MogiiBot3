@@ -4,11 +4,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using Discord.Net;
 using Discord.WebSocket;
-using DiscordBot.Common;
 using Discord.Commands;
+
 using Discord.Addons.EmojiTools;
+
+using DiscordBot.Common;
+
+using MelissasCode;
 
 namespace DiscordBot.Extensions
 {
@@ -19,6 +24,7 @@ namespace DiscordBot.Extensions
         public static Emoji 
             arrow_left = EmojiExtensions.FromText(":arrow_left:"), 
             arrow_right = EmojiExtensions.FromText(":arrow_right:");
+			
         #endregion
 
         #region Dictionaries
@@ -159,7 +165,7 @@ namespace DiscordBot.Extensions
             return source.Next(minValue, maxValue + 1);
         }
         #endregion
-
+		
         #region Message Extensions
         public static IMessage DeleteAfter(this IUserMessage msg, int seconds)
         {

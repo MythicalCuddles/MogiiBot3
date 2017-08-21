@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 
 using System.IO;
+using System.Diagnostics;
 
 using Discord;
 using Discord.Commands;
@@ -20,7 +21,7 @@ using DiscordBot.Extensions;
 using DiscordBot.Logging;
 
 using MelissasCode;
-
+//
 namespace DiscordBot
 {
     public class MogiiBot3
@@ -49,272 +50,107 @@ namespace DiscordBot
             _bot.UserJoined += UserHandler.UserJoined;
             _bot.UserLeft += UserHandler.UserLeft;
 
-            _bot.ChannelCreated += ChannelCreated;
-            _bot.ChannelDestroyed += ChannelDestroyed;
+            _bot.ChannelCreated += ChannelHandler.ChannelCreated;
+            _bot.ChannelDestroyed += ChannelHandler.ChannelDestroyed;
 
             _bot.Ready += Ready;
+			_bot.Disconnected += Disconnected;
 
-            _bot.ReactionAdded += ReactionHandler.ReactionAdded;
+			_bot.ReactionAdded += ReactionHandler.ReactionAdded;
 
-            await InstallCommands();
-            _bot.MessageDeleted += MessageDeleted;
-            _bot.MessageUpdated += MessageUpdated;
-            
-            _bot.Disconnected += Disconnected;
-
-            // Connect to Discord with Bot Login Details
-            await _bot.LoginAsync(TokenType.Bot, BotToken);
-            await _bot.StartAsync();
+            //await InstallCommands();
+			_bot.MessageReceived += MessageReceived;
+			_bot.MessageDeleted += MessageHandler.MessageDeleted;
+            _bot.MessageUpdated += MessageHandler.MessageUpdated;
+			
+			await commandService.AddModulesAsync(Assembly.GetEntryAssembly());
+			
+			// Add token from config
+			await _bot.LoginAsync(TokenType.Bot, BotToken); // Connect to Discord with Bot Login Details
+			await _bot.StartAsync();
 
             // Keep the program running.
             await Task.Delay(-1);
-        }
+		}
 
-        private async Task Disconnected(Exception exception)
+		private Task Log(LogMessage logMessage)
+		{
+			var cc = Console.ForegroundColor;
+			switch (logMessage.Severity)
+			{
+				case LogSeverity.Critical:
+				case LogSeverity.Error:
+					Console.ForegroundColor = ConsoleColor.Red;
+					break;
+				case LogSeverity.Warning:
+					Console.ForegroundColor = ConsoleColor.Yellow;
+					break;
+				case LogSeverity.Info:
+					Console.ForegroundColor = ConsoleColor.White;
+					break;
+				case LogSeverity.Verbose:
+				case LogSeverity.Debug:
+					Console.ForegroundColor = ConsoleColor.DarkGray;
+					break;
+			}
+			Console.WriteLine($"{DateTime.Now,-19} [{logMessage.Severity,8}] {logMessage.Source}: {logMessage.ToString()}");
+			Console.ForegroundColor = cc;
+			return Task.CompletedTask;
+		}
+		
+		private async Task Ready()
+		{
+			await _bot.SetGameAsync(Configuration.Load().Playing);
+			await _bot.SetStatusAsync(Configuration.Load().Status);
+
+			Modules.Mod.ModeratorModule._dt = DateTime.Now;
+
+			Console.WriteLine("-----------------------------------------------------------------");
+			foreach (SocketGuild g in _bot.Guilds)
+			{
+				Console.Write("status: [");
+				Console.ForegroundColor = ConsoleColor.DarkYellow;
+				Console.Write("find");
+				Console.ResetColor();
+				Console.WriteLine("]  " + g.Name + ": attempting to load.");
+
+				GuildConfiguration.EnsureExists(g.Id);
+
+				Console.WriteLine("-----------------------------------------------------------------");
+				foreach (SocketGuildUser u in g.Users)
+				{
+					if (User.CreateUserFile(u.Id))
+					{
+						Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync("[ALERT] " + u.Mention + " (" + u.Id + ") was added to the database while the bot was offline...");
+					}
+				}
+				Console.WriteLine("-----------------------------------------------------------------");
+			}
+
+			Console.WriteLine(_bot.CurrentUser.Id + " | " + _bot.CurrentUser.Username);
+		}
+
+		private async Task Disconnected(Exception exception)
         {
-            Console.WriteLine(exception.ToString());
+			Console.WriteLine(exception.ToString());
+            Console.WriteLine("\n\n\n\n");
 
-            try
-            {
-                await _bot.LogoutAsync();
-            }
-            catch(Exception)
-            {
-                await Task.Delay(1000);
-            }
+            Task.Delay(5000);
 
-            new MogiiBot3().RunBotAsync().GetAwaiter().GetResult();
+            Process process = new Process();
+            process.StartInfo.FileName = Path.Combine(AppContext.BaseDirectory, "DiscordBot.exe");
+            process.StartInfo.CreateNoWindow = false;
+            process.Start();
+
+            Environment.Exit(0);
         }
         
-        private Task Log(LogMessage logMessage)
-        {
-            var cc = Console.ForegroundColor;
-            switch (logMessage.Severity)
-            {
-                case LogSeverity.Critical:
-                case LogSeverity.Error:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    break;
-                case LogSeverity.Warning:
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    break;
-                case LogSeverity.Info:
-                    Console.ForegroundColor = ConsoleColor.White;
-                    break;
-                case LogSeverity.Verbose:
-                case LogSeverity.Debug:
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
-                    break;
-            }
-            Console.WriteLine($"{DateTime.Now,-19} [{logMessage.Severity,8}] {logMessage.Source}: {logMessage.ToString()}");
-            Console.ForegroundColor = cc;
-            return Task.CompletedTask;
-        }
-        
-        private async Task Ready()
-        {
-            await _bot.SetGameAsync(Configuration.Load().Playing);
-            await _bot.SetStatusAsync(Configuration.Load().Status);
-
-            Modules.Mod.ModeratorModule._dt = DateTime.Now;
-
-            Console.WriteLine("-----------------------------------------------------------------");
-            foreach (SocketGuild g in _bot.Guilds)
-            {
-                Console.Write("status: [");
-                Console.ForegroundColor = ConsoleColor.DarkYellow;
-                Console.Write("find");
-                Console.ResetColor();
-                Console.WriteLine("]  " + g.Name + ": attempting to load.");
-
-                GuildConfiguration.EnsureExists(g.Id);
-
-                Console.WriteLine("-----------------------------------------------------------------");
-                foreach (SocketGuildUser u in g.Users)
-                {
-                    User.CreateUserFile(u.Id);
-                }
-                Console.WriteLine("-----------------------------------------------------------------");
-            }
-
-            Console.WriteLine(_bot.CurrentUser.Id + " | " + _bot.CurrentUser.Username);
-        }
-
-        private async Task ChannelCreated(SocketChannel channel)
-        {
-            if (channel is ITextChannel)
-            {
-                var channelParam = channel as ITextChannel;
-                await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync("**New Text Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
-                    + "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
-                    + "\nTopic: " + channelParam.Topic + "```");
-
-                //await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**New Text Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
-                //    + "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
-                //    + "\nTopic: " + channelParam.Topic + "```");
-            }
-            else if (channel is IVoiceChannel)
-            {
-                var channelParam = channel as IVoiceChannel;
-                await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync("**New Voice Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
-                    + "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
-                    + "\nUser Limit: " + channelParam.UserLimit + "```");
-
-                //await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**New Voice Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
-                //    + "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
-                //    + "\nUser Limit: " + channelParam.UserLimit + "```");
-            }
-            else
-            {
-                Console.Write("status: [");
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.Write("error");
-                Console.ResetColor();
-                Console.WriteLine("]    " + ": " + channel.Id + " type is unknown.");
-            }
-        }
-        private async Task ChannelDestroyed(SocketChannel channel)
-        {
-            if (channel is ITextChannel)
-            {
-                var channelParam = channel as ITextChannel;
-                await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync("**Removed Text Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
-                    + "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
-                    + "\nTopic: " + channelParam.Topic + "```");
-
-                //await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**Removed Text Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
-                //    + "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
-                //    + "\nTopic: " + channelParam.Topic + "```");
-            }
-            else if (channel is IVoiceChannel)
-            {
-                var channelParam = channel as IVoiceChannel;
-                await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync("**Removed Voice Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
-                    + "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
-                    + "\nUser Limit: " + channelParam.UserLimit + "```");
-
-                //await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**Removed Voice Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
-                //    + "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
-                //    + "\nUser Limit: " + channelParam.UserLimit + "```");
-            }
-            else
-            {
-                Console.Write("status: [");
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.Write("error");
-                Console.ResetColor();
-                Console.WriteLine("]    " + ": " + channel.Id + " type is unknown.");
-            }
-        }
-
-        private Task MessageUpdated(Cacheable<IMessage, ulong> cachedMessage, SocketMessage message, ISocketMessageChannel channel)
-        {
-            var msg = message as SocketUserMessage;
-            MessageLogger.LogEditMessage(msg);
-            return Task.CompletedTask;
-        }
-        private Task MessageDeleted(Cacheable<IMessage, ulong> cachedMessage, ISocketMessageChannel channel)
-        { 
-            var message = cachedMessage.Value as SocketUserMessage;
-            MessageLogger.LogDeleteMessage(message);
-            return Task.CompletedTask;
-        }
-               
-        // User Events
-        //private async Task UserLeft(SocketGuildUser e)
+        //private async Task InstallCommands()
         //{
-        //    if (e.Guild.Id == Configuration.Load().ServerID)
-        //    {
-        //        StringBuilder sb = new StringBuilder();
-        //        sb.Append("**Username:** @" + e.Username + "\n");
-        //        if (e.Nickname != null)
-        //        {
-        //            sb.Append("**Nickname:** " + e.Nickname + "\n");
-        //        }
-        //        sb.Append("**Id: **" + e.Id + "\n");
-        //        sb.Append("**Joined: **" + e.GuildJoinDate() + "\n");
-        //        sb.Append("\n");
-        //        sb.Append("**Coins: **" + User.Load(e.Id).Coins + "\n");
+        //    _bot.MessageReceived += MessageReceived;
 
-        //        EmbedBuilder eb = new EmbedBuilder()
-        //            .WithTitle("User Left")
-        //            .WithDescription(sb.ToString())
-        //            .WithColor(new Color(255, 28, 28))
-        //            .WithThumbnailUrl(e.GetAvatarUrl())
-        //            .WithCurrentTimestamp();
-
-        //        await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync("", false, eb);
-        //        //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
-        //    }
-        //    else if (e.Guild.Id == Configuration.Load().NSFWServerID)
-        //    {
-        //        StringBuilder sb = new StringBuilder();
-        //        sb.Append("**Username:** @" + e.Username + "\n");
-        //        if (e.Nickname != null)
-        //        {
-        //            sb.Append("**Nickname:** " + e.Nickname + "\n");
-        //        }
-        //        sb.Append("**Id: **" + e.Id + "\n");
-        //        sb.Append("**Joined: **" + e.GuildJoinDate() + "\n");
-        //        sb.Append("\n");
-        //        sb.Append("**Coins: **" + User.Load(e.Id).Coins + "\n");
-
-        //        EmbedBuilder eb = new EmbedBuilder()
-        //            .WithTitle("NSFW Server - User Left")
-        //            .WithDescription(sb.ToString())
-        //            .WithColor(new Color(255, 28, 28))
-        //            .WithThumbnailUrl(e.GetAvatarUrl())
-        //            .WithCurrentTimestamp();
-
-        //        await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync("", false, eb);
-        //        //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
-        //    }
+        //    await commandService.AddModulesAsync(Assembly.GetEntryAssembly());
         //}
-
-        //private async Task UserJoined(SocketGuildUser e)
-        //{
-        //    if (e.Guild.Id == Configuration.Load().ServerID)
-        //    {
-        //        EmbedBuilder eb = new EmbedBuilder()
-        //            .WithTitle("User Joined")
-        //            .WithDescription("@" + e.Username + "\n" + e.Id)
-        //            .WithColor(new Color(28, 255, 28))
-        //            .WithThumbnailUrl(e.GetAvatarUrl())
-        //            .WithCurrentTimestamp();
-
-        //        await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync("", false, eb);
-        //        //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
-
-        //        string wMsg1 = GuildConfiguration.Load(e.Guild.Id).WelcomeMessage.Replace("{USERJOINED}", e.Mention).Replace("{GUILDNAME}", e.Guild.Name);
-        //        await Configuration.Load().MCWelcomeChannelID.GetTextChannel().SendMessageAsync(wMsg1);
-        //        //await GetHandler.getTextChannel(Configuration.Load().MCWelcomeChannelID).SendMessageAsync(wMsg1);
-        //    }
-        //    else if (e.Guild.Id == Configuration.Load().NSFWServerID)
-        //    {
-        //        EmbedBuilder eb = new EmbedBuilder()
-        //            .WithTitle("NSFW Server - User Joined")
-        //            .WithDescription("@" + e.Username + "\n" + e.Id)
-        //            .WithColor(new Color(28, 255, 28))
-        //            .WithThumbnailUrl(e.GetAvatarUrl())
-        //            .WithCurrentTimestamp();
-
-        //        await Configuration.Load().MCLogChannelID.GetTextChannel().SendMessageAsync("", false, eb);
-        //        //await GetHandler.getTextChannel(Configuration.Load().MCLogChannelID).SendMessageAsync("", false, eb);
-        //    }
-
-        //    if (User.CreateUserFile(e.Id))
-        //    {
-        //        await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync(e.Username + " was successfully added to the database. [" + e.Id + "]");
-        //        //await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync(e.Username + " was successfully added to the database. [" + e.Id + "]");
-        //    }
-        //}
-
-        private async Task InstallCommands()
-        {
-            _bot.MessageReceived += MessageReceived;
-
-            await commandService.AddModulesAsync(Assembly.GetEntryAssembly());
-        }
         private async Task MessageReceived(SocketMessage messageParam)
         {
             var message = messageParam as SocketUserMessage;
@@ -327,9 +163,6 @@ namespace DiscordBot
             // Is the bot told to ignore the user? If so, is the user NOT Melissa? Iff => escape Task
             if (User.Load(message.Author.Id).IsBotIgnoringUser && message.Author.Id != DiscordWorker.getMelissaID) return;
             
-            // Only respond on the NSFW Server if the channel id matches the rule34gamble channel id
-            // if (message.IsMessageOnNSFWChannel() && message.Channel.Id != Configuration.Load().RuleGambleChannelID && message.Author.Id != Configuration.Load().Developer) return;
-
             // If the message came from somewhere that is not a text channel -> Private Message
             if (!(messageParam.Channel is ITextChannel))
             {
@@ -360,7 +193,7 @@ namespace DiscordBot
             int argPos = 0;
             if (!(message.HasStringPrefix(GuildConfiguration.Load(message.Channel.GetGuild().Id).Prefix, ref argPos) || message.HasMentionPrefix(_bot.CurrentUser, ref argPos) || message.HasStringPrefix(User.Load(message.Author.Id).CustomPrefix, ref argPos))) // Configuration.Load().Prefix
             {
-                await AwardCoinsToPlayer(message.Author.Id);
+                await AwardCoinsToPlayer(message.Author);
                 return;
             }
 
@@ -391,11 +224,11 @@ namespace DiscordBot
             }
         }
 
-        public static Task AwardCoinsToPlayer(ulong UserId, int CoinsToAward = 1)
+        public static Task AwardCoinsToPlayer(IUser Account, int CoinsToAward = 1)
         {
             try
             {
-                User.UpdateJson(UserId, "Coins", (User.Load(UserId).Coins + CoinsToAward));
+                User.UpdateJson(Account.Id, "Coins", (Account.GetCoins() + CoinsToAward));
             }
             catch (Exception e) { Console.WriteLine(e); }
 

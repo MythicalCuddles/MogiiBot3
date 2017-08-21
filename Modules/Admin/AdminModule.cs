@@ -110,7 +110,13 @@ namespace DiscordBot.Modules.Admin
         public async Task AddQuote([Remainder]string quote)
         {
             QuoteHandler.AddAndUpdateQuotes(quote);
-            await ReplyAsync("Quote successfully added to the list, " + Context.User.Mention);
+            //await ReplyAsync("Quote successfully added to the list, " + Context.User.Mention);
+			
+			EmbedBuilder eb = new EmbedBuilder()
+				.WithDescription(Context.User.Mention + " Quote Added")
+				.WithColor(33, 210, 47);
+
+			await ReplyAsync("", false, eb);
         }
 
         [Command("listquotes"), Summary("Sends a list of all the quotes.")]
@@ -155,11 +161,26 @@ namespace DiscordBot.Modules.Admin
         [Command("deletequote"), Summary("Delete a quote from the list. Make sure to `$listquotes` to get the ID for the quote being removed!")]
         public async Task RemoveQuote(int quoteID)
         {
-            string quote = QuoteHandler.quoteList[quoteID - 1];
-            QuoteHandler.RemoveAndUpdateQuotes(quoteID - 1);
-            await ReplyAsync("Quote " + quoteID + " removed successfully, " + Context.User.Mention + "\n**Quote:** " + quote);
-            
-            await ListQuotes();
+			if(quoteID <= QuoteHandler.quoteList.Count())
+			{
+				string quote = QuoteHandler.quoteList[quoteID - 1];
+				QuoteHandler.RemoveAndUpdateQuotes(quoteID - 1);
+				//await ReplyAsync("Quote " + quoteID + " removed successfully, " + Context.User.Mention + "\n**Quote:** " + quote);
+
+				EmbedBuilder eb = new EmbedBuilder()
+					.WithDescription(Context.User.Mention + " Quote Removed\nQuote: " + quote)
+					.WithColor(210, 47, 33);
+
+				await ReplyAsync("", false, eb);
+			} 
+			else
+			{
+				EmbedBuilder eb = new EmbedBuilder()
+					.WithDescription(Context.User.Mention + " There is no quote with that Id")
+					.WithColor(47, 33, 210);
+
+				await ReplyAsync("", false, eb);
+			}
         }
 
         [Command("listrequestquotes"), Summary("Sends a list of all the request quotes.")]
