@@ -9,19 +9,18 @@ using DiscordBot.Extensions;
 
 namespace DiscordBot.Logging
 {
-    class TransactionLogger
+    public class TransactionLogger
     {
-        public static string FileName { get; private set; } = "common/transactions.txt";
-        public static List<string> transactionsList = new List<string>();
-        public static List<List<string>> splicedTransactionsList = new List<List<string>>();
-
-        public static List<ulong> transactionMessages = new List<ulong>();
-        public static List<int> pageNumber = new List<int>();
+        private const string FileName = "common/transactions.txt";
+        public static List<string> TransactionsList = new List<string>();
+        public static List<List<string>> SplicedTransactionsList = new List<List<string>>();
+        public static List<ulong> TransactionMessages = new List<ulong>();
+        public static List<int> PageNumber = new List<int>();
 
         private static void LoadTransactions()
         {
             string file = Path.Combine(AppContext.BaseDirectory, FileName);
-            transactionsList = File.ReadAllLines(file).ToList();
+            TransactionsList = File.ReadAllLines(file).ToList();
 
             Console.Write("status: [");
             Console.ForegroundColor = ConsoleColor.DarkGreen;
@@ -53,29 +52,29 @@ namespace DiscordBot.Logging
         private static void SaveTransactionsToFile()
         {
             string file = Path.Combine(AppContext.BaseDirectory, FileName);
-            File.WriteAllLines(file, transactionsList);
+            File.WriteAllLines(file, TransactionsList);
         }
 
         public static void AddTransaction(string transaction)
         {
             String timeStamp = DateTime.Now.GetTimestamp();
 
-            transactionsList.Add("[" + timeStamp + "] " + transaction);
+            TransactionsList.Add("[" + timeStamp + "] " + transaction);
             SaveTransactionsToFile();
         }
 
         public static void SpliceTransactionsIntoList()
         {
-            splicedTransactionsList = transactionsList.SplitList();
+            SplicedTransactionsList = TransactionsList.SplitList();
         }
         public static List<string> GetSplicedTransactions(int pageNumber)
         {
             pageNumber = pageNumber - 1;
-            return splicedTransactionsList[pageNumber];
+            return SplicedTransactionsList[pageNumber];
         }
         public static int GetSplicedTransactonListCount
         {
-            get { return splicedTransactionsList.Count(); }
+            get { return SplicedTransactionsList.Count(); }
         }
     }
 }

@@ -22,7 +22,7 @@ namespace DiscordBot.Modules.Mod
     [MinPermissions(PermissionLevel.ServerMod)]
     public class ModeratorModule : ModuleBase
     {
-        private Version _v = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+        private readonly Version ProgramVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
         [Command("stats"), Summary("Sends information about the bot.")]
         public async Task ShowStatistics()
@@ -30,7 +30,7 @@ namespace DiscordBot.Modules.Mod
             int totalUserCount = 0, totalChannelCount = 0, totalTextChannelCount = 0, totalCoins = 0;
             int totalGuildUserCount = 0, totalGuildChannelCount = 0, totalGuildTextChannelCount = 0, totalGuildCoins = 0;
 
-            foreach (SocketGuild g in MogiiBot3._bot.Guilds)
+            foreach (SocketGuild g in MogiiBot3.Bot.Guilds)
             {
                 foreach (SocketChannel c in g.Channels)
                 {
@@ -64,17 +64,18 @@ namespace DiscordBot.Modules.Mod
             }
 
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
-                .WithName(MogiiBot3._bot.CurrentUser.Username + " Version " + _v.Major + "." + _v.Minor + "." + _v.Build + "." + _v.Revision);
+                .WithName(MogiiBot3.Bot.CurrentUser.Username + " Version " + ProgramVersion.Major + "." + ProgramVersion.Minor + "." + ProgramVersion.Build + "." + ProgramVersion.Revision);
             EmbedFooterBuilder efb = new EmbedFooterBuilder()
                 .WithText("MelissasCode Version " + MelissaCode.Version + " | " + ((GuidAttribute)(typeof(Program).Assembly).GetCustomAttributes(typeof(GuidAttribute), true)[0]).Value);
             EmbedBuilder eb = new EmbedBuilder()
                 .WithAuthor(eab)
 
-                .AddField("Bot Information", "**Name:** " + MogiiBot3._bot.CurrentUser.Username + "\n**Discriminator:** #" + MogiiBot3._bot.CurrentUser.Discriminator + "\n**Id:** " + MogiiBot3._bot.CurrentUser.Id)
+                .AddField("Bot Information", "**Name:** " + MogiiBot3.Bot.CurrentUser.Username + "\n**Discriminator:** #" + MogiiBot3.Bot.CurrentUser.Discriminator + "\n**Id:** " + MogiiBot3.Bot.CurrentUser.Id)
                 .AddField("Developer Information", "**Name:** " + DiscordWorker.getMelissaID.GetUser().Username + "\n**Discriminator:** #" + DiscordWorker.getMelissaID.GetUser().Discriminator + "\n**Id:** " + DiscordWorker.getMelissaID)
-                .AddField("Bot Statistics", "**Active for:** " + DevelopmentSince() + "\n" + 
-                "**Latency:** " + MogiiBot3._bot.Latency + "ms" + "\n" +
-                "**Guild Count:** " + MogiiBot3._bot.Guilds.Count() + "\n" +
+                .AddField("Bot Statistics", "**Development for:** " + DevelopmentSince() + "\n" +
+                "**Active for:** " + CalculateUptime() + "\n" +
+                "**Latency:** " + MogiiBot3.Bot.Latency + "ms" + "\n" +
+                "**Guild Count:** " + MogiiBot3.Bot.Guilds.Count() + "\n" +
                 "**User Count:** " + totalUserCount + "\n" +
                 "**Channel Count:** " + totalChannelCount + " (" + totalTextChannelCount + "/" + (totalChannelCount - totalTextChannelCount) + ")" + "\n" +
                 "**Overall Coins:** " + totalCoins + "\n")
@@ -87,23 +88,23 @@ namespace DiscordBot.Modules.Mod
                 "**Coins:** " + totalGuildCoins)
 
                 .WithFooter(efb)
-                .WithThumbnailUrl(MogiiBot3._bot.CurrentUser.GetAvatarUrl())
+                .WithThumbnailUrl(MogiiBot3.Bot.CurrentUser.GetAvatarUrl())
                 .WithColor(new Color(255, 116, 140));
 
-            await ReplyAsync("", false, eb);
+            await ReplyAsync("", false, eb.Build());
         }
-        private static TimeSpan _uptime;
-        public static DateTime _dt = new DateTime();
+        
+        public static DateTime ActiveForDateTime = new DateTime();
         private string CalculateUptime()
         {
-            _uptime = DateTime.Now - _dt;
-            return (_uptime.Days.ToString() + " day(s), " + _uptime.Hours.ToString() + " hour(s), " + _uptime.Minutes.ToString() + " minute(s), " + _uptime.Seconds.ToString() + " second(s)");
+            TimeSpan uptime = DateTime.Now - ActiveForDateTime;
+            return (uptime.Days.ToString() + " day(s), " + uptime.Hours.ToString() + " hour(s), " + uptime.Minutes.ToString() + " minute(s), " + uptime.Seconds.ToString() + " second(s)");
         }
-        private static DateTime startDevelopment = DiscordWorker.developmentTime(MogiiBot3._bot.CurrentUser.Id);
-        private string DevelopmentSince()
+        private static readonly DateTime StartDevelopment = DiscordWorker.developmentTime(MogiiBot3.Bot.CurrentUser.Id);
+        private static string DevelopmentSince()
         {
-            TimeSpan DevelopmentCounter = DateTime.Now - startDevelopment;
-            return (DevelopmentCounter.Days.ToString() + " day(s), " + DevelopmentCounter.Hours.ToString() + " hour(s), " + DevelopmentCounter.Minutes.ToString() + " minute(s), " + DevelopmentCounter.Seconds.ToString() + " second(s)");
+            TimeSpan developmentCounter = DateTime.Now - StartDevelopment;
+            return (developmentCounter.Days.ToString() + " day(s), " + developmentCounter.Hours.ToString() + " hour(s), " + developmentCounter.Minutes.ToString() + " minute(s), " + developmentCounter.Seconds.ToString() + " second(s)");
         }
     }
 }

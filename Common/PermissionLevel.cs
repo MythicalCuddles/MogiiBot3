@@ -13,6 +13,7 @@ namespace DiscordBot.Common
         ServerMod,
         ServerAdmin,
         ServerOwner,
+		TeamMember,
         BotOwner
     }
 }

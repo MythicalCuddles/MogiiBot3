@@ -34,16 +34,16 @@ namespace DiscordBot.Modules.Public
                     list.Add(new Tuple<int, string>(User.Load(u.Id).Coins, u.Username));
             }
 
-            List<Tuple<int, string>> Sorted = list.OrderByDescending(iTuple => iTuple.Item1).ToList();
-            if (Sorted.Count() < topList)
-                topList = Sorted.Count();
+            List<Tuple<int, string>> sorted = list.OrderByDescending(iTuple => iTuple.Item1).ToList();
+            if (sorted.Count() < topList)
+                topList = sorted.Count();
 
             StringBuilder sb = new StringBuilder()
                 .Append("**Coin Leaderboards** - *Top " + topList + "*\n```");
 
             for (int i = 0; i < topList; i++)
             {
-                sb.Append((i + 1) + ". @" + Sorted[i].Item2 + ": " + Sorted[i].Item1 + " coin(s)\n");
+                sb.Append((i + 1) + ". @" + sorted[i].Item2 + ": " + sorted[i].Item1 + " coin(s)\n");
             }
 
             sb.Append("```");

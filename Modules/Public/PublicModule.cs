@@ -36,7 +36,7 @@ namespace DiscordBot.Modules.Public
         }
 
         [Command("setaboutrgb"), Summary("Custom set the color of the about embed message.")]
-        public async Task SetUserAboutRGB(int r = -1, int g = -1, int b = -1)
+        public async Task SetUserAboutRgb(int r = -1, int g = -1, int b = -1)
         {
             if(r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
             {
@@ -56,7 +56,7 @@ namespace DiscordBot.Modules.Public
                 .WithDescription("<-- FYI, this is what you updated.")
                 .WithColor(aboutColor);
 
-            await ReplyAsync(Context.User.Mention + ", updated successfully.", false, eb);
+            await ReplyAsync(Context.User.Mention + ", updated successfully.", false, eb.Build());
         }
 
         [Command("about"), Summary("Returns the about description about the user specified.")]
@@ -86,31 +86,32 @@ namespace DiscordBot.Modules.Public
                 .WithColor(aboutColor);
 
             if (User.Load(userSpecified.Id).Name != null)
-                eb.AddInlineField("Name", User.Load(userSpecified.Id).Name);
+                eb.AddField("Name", userSpecified.GetName(), true);
 
             if (User.Load(userSpecified.Id).Gender != null)
-                eb.AddInlineField("Gender", User.Load(userSpecified.Id).Gender);
-
-            if (User.Load(userSpecified.Id).Pronouns != null)
-                eb.AddInlineField("Pronouns", User.Load(userSpecified.Id).Pronouns);
+                eb.AddField("Gender", userSpecified.GetGender(), true);
             
-            eb.AddInlineField("Coins", userSpecified.GetCoins());
-            eb.AddInlineField("Account Created", userSpecified.UserCreateDate());
-            eb.AddInlineField("Joined Guild", userSpecified.GuildJoinDate());
-
+            if (User.Load(userSpecified.Id).Pronouns != null)
+                eb.AddField("Pronouns", userSpecified.GetPronouns(), true);
+            
+            eb.AddField("Coins", userSpecified.GetCoins(), true);
+			//eb.AddInlineField("Score", userSpecified.GetScore());
+			eb.AddField("Account Created", userSpecified.UserCreateDate(), true);
+            eb.AddField("Joined Guild", userSpecified.GuildJoinDate(), true);
+            
             if (User.Load(userSpecified.Id).MinecraftUsername != null)
-                eb.AddInlineField("Minecraft Username", User.Load(userSpecified.Id).MinecraftUsername);
+                eb.AddField("Minecraft Username", User.Load(userSpecified.Id).MinecraftUsername, true);
 
             if(User.Load(userSpecified.Id).Snapchat != null)
             {
                 string snapchat = User.Load(userSpecified.Id).Snapchat;
-                eb.AddInlineField("Snapchat", "[" + snapchat + "](https://www.snapchat.com/add/" + snapchat + "/)");
+                eb.AddField("Snapchat", "[" + snapchat + "](https://www.snapchat.com/add/" + snapchat + "/)", true);
             }
 
             if (User.Load(userSpecified.Id).CustomPrefix != null)
-                eb.AddInlineField("Custom Prefix", User.Load(userSpecified.Id).CustomPrefix);
+                eb.AddField("Custom Prefix", User.Load(userSpecified.Id).CustomPrefix, true);
 
-            await ReplyAsync("", false, eb);
+            await ReplyAsync("", false, eb.Build());
         }
 
         [Command("setprefix"), Summary("Custom set the prefix for the user.")]
@@ -127,7 +128,7 @@ namespace DiscordBot.Modules.Public
                 User.UpdateJson(Context.User.Id, "CustomPrefix", prefix);
                 User.UpdateJson(Context.User.Id, "Coins", (User.Load(Context.User.Id).Coins - Configuration.Load().PrefixCost));
                 TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") paid " + Configuration.Load().PrefixCost + " for a custom prefix.");
-                await ReplyAsync(Context.User.Mention + ", you have set `" + prefix + "` as a custom prefix for yourself. Please do take note that the following prefixes will work for you:\n```KEY: [Prefix][Command]\n" + prefix + " - User Set Prefix\n" + GuildConfiguration.Load(Context.Guild.Id).Prefix + " - Guild Set Prefix\n@" + MogiiBot3._bot.CurrentUser.Username + " - Global Prefix```");
+                await ReplyAsync(Context.User.Mention + ", you have set `" + prefix + "` as a custom prefix for yourself. Please do take note that the following prefixes will work for you:\n```KEY: [Prefix][Command]\n" + prefix + " - User Set Prefix\n" + GuildConfiguration.Load(Context.Guild.Id).Prefix + " - Guild Set Prefix\n@" + MogiiBot3.Bot.CurrentUser.Username + " - Global Prefix```");
             }
             else
             {

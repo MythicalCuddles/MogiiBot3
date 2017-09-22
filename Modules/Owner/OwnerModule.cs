@@ -72,11 +72,11 @@ namespace DiscordBot.Modules.Owner
 
             if(User.Load(user.Id).IsBotIgnoringUser)
             {
-                await ReplyAsync(Context.User.Mention + ", " + MogiiBot3._bot.CurrentUser.Username + " will start ignoring " + user.Mention);
+                await ReplyAsync(Context.User.Mention + ", " + MogiiBot3.Bot.CurrentUser.Username + " will start ignoring " + user.Mention);
             }
             else
             {
-                await ReplyAsync(Context.User.Mention + ", " + MogiiBot3._bot.CurrentUser.Username + " will start to listen to " + user.Mention);
+                await ReplyAsync(Context.User.Mention + ", " + MogiiBot3.Bot.CurrentUser.Username + " will start to listen to " + user.Mention);
             }
         }
     }

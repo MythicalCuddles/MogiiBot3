@@ -19,14 +19,14 @@ namespace DiscordBot.Modules.Public
     [Name("Help Commands")]
     public class HelpModule : ModuleBase<CommandContext>
     {
-        public CommandService _service;
+        public CommandService Service;
 
-        public List<IUserMessage> helpMessages = new List<IUserMessage>();
-        public List<List<string>> helpList = new List<List<string>>();
+        public List<IUserMessage> HelpMessages = new List<IUserMessage>();
+        public List<List<string>> HelpList = new List<List<string>>();
         
         public HelpModule(CommandService service)
         {
-            _service = service;
+            Service = service;
         }
 
         [Command("help")]
@@ -41,7 +41,7 @@ namespace DiscordBot.Modules.Public
                     Description = "These are the commands you can use."
                 };
 
-                foreach (var module in _service.Modules)
+                foreach (var module in Service.Modules)
                 {
                     string description = null;
                     foreach (var cmd in module.Commands)
@@ -76,7 +76,7 @@ namespace DiscordBot.Modules.Public
             }
             else
             {
-                var result = _service.Search(Context, command);
+                var result = Service.Search(Context, command);
 
                 if (!result.IsSuccess)
                 {

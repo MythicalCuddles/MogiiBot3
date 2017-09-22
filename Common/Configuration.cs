@@ -1,12 +1,15 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MelissasCode;
+
+using Newtonsoft.Json;
+
 using Discord;
+
+using MelissasCode;
 
 namespace DiscordBot.Common
 {
@@ -27,7 +30,7 @@ namespace DiscordBot.Common
         public int PrefixCost { get; set; } = 2500;
         public bool CoinsForReactions { get; set; } = false;
 
-        public ulong LogChannelID { get; set; } = 313318109500932096;
+        public ulong LogChannelId { get; set; } = 313318109500932096;
 
         /// NSFW Variables
         public int MaxRuleXGamble { get; set; } = 2353312;

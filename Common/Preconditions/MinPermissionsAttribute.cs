@@ -8,12 +8,20 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
+using DiscordBot.Common;
+using DiscordBot.Common.Preconditions;
+using DiscordBot.Extensions;
+using DiscordBot.Logging;
+using DiscordBot.Other;
+
+using MelissasCode;
+
 namespace DiscordBot.Common.Preconditions
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class MinPermissionsAttribute : PreconditionAttribute
     {
-        private PermissionLevel _level;
+        private readonly PermissionLevel _level;
 
         public MinPermissionsAttribute(PermissionLevel level)
         {
@@ -24,37 +32,30 @@ namespace DiscordBot.Common.Preconditions
         {
             var permission = GetPermission(context);
 
-            if (permission >= _level)
-            {
-                return Task.FromResult(PreconditionResult.FromSuccess());
-            }
-            else
-            {
-                return Task.FromResult(PreconditionResult.FromError("Insufficient permissions."));
-            }
+            return Task.FromResult(permission >= _level ? PreconditionResult.FromSuccess() : PreconditionResult.FromError("Insufficient permissions."));
         }
 
         public PermissionLevel GetPermission(ICommandContext context)
         {
-            if (context.User.IsBot)
+            var user = ((SocketGuildUser)context.User);
+
+            if (user.IsBot)
                 return PermissionLevel.Bot;
 
-            if (Configuration.Load().Developer == context.User.Id)
-                return PermissionLevel.BotOwner;
+			if (user.IsBotOwner())
+				return PermissionLevel.BotOwner;
 
-            var user = (context.User as SocketGuildUser);
+			if (user.IsTeamMember())
+				return PermissionLevel.TeamMember;
 
-            if (user != null)
-            {
-                if (context.Guild.OwnerId == user.Id)
-                    return PermissionLevel.ServerOwner;
+            if (user.IsGuildOwner(context.Guild))
+                return PermissionLevel.ServerOwner;
 
-                if (user.GuildPermissions.Administrator)
-                    return PermissionLevel.ServerAdmin;
+            if (user.IsGuildAdministrator())
+                return PermissionLevel.ServerAdmin;
 
-                if (user.GuildPermissions.KickMembers || user.GuildPermissions.BanMembers || user.GuildPermissions.ManageMessages || user.GuildPermissions.ManageChannels)
-                    return PermissionLevel.ServerMod;
-            }
+            if (user.IsGuildModerator())
+                return PermissionLevel.ServerMod;
 
             return PermissionLevel.User;
         }

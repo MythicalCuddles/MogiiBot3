@@ -23,7 +23,7 @@ namespace DiscordBot.Modules.Admin
     [MinPermissions(PermissionLevel.ServerAdmin)]
     public class AdminModule : ModuleBase
     {
-        [Command("say"), Summary("Echos a message.")]
+        [Command("echo"), Summary("Echos a message.")]
         public async Task Say([Remainder, Summary("The text to echo")] string echo)
         {
             await ReplyAsync(echo);
@@ -47,7 +47,7 @@ namespace DiscordBot.Modules.Admin
             }
 
             User.UpdateJson(mentionedUser.Id, "Coins", (User.Load(mentionedUser.Id).Coins + awardValue));
-            await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync(Context.User.Mention + " has awarded " + mentionedUser.Mention + " " + awardValue + " coins!");
+            await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has awarded " + mentionedUser.Mention + " " + awardValue + " coins!");
             //await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync(Context.User.Mention + " has awarded " + mentionedUser.Mention + " " + awardValue + " coins!");
             await ReplyAsync(mentionedUser.Mention + " has been awarded " + awardValue + " coins from " + Context.User.Mention);
             TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") awarded " + mentionedUser.Username + "(" + mentionedUser.Id + ") " + awardValue + " coins.");
@@ -69,7 +69,7 @@ namespace DiscordBot.Modules.Admin
             }
 
             User.UpdateJson(mentionedUser.Id, "Coins", (User.Load(mentionedUser.Id).Coins - fineValue));
-            await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync(Context.User.Mention + " has fined " + mentionedUser.Mention + " " + fineValue + " coins!");
+            await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has fined " + mentionedUser.Mention + " " + fineValue + " coins!");
             //await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync(Context.User.Mention + " has fined " + mentionedUser.Mention + " " + fineValue + " coins!");
             await ReplyAsync(mentionedUser.Mention + " has been fined " + fineValue + " coins from " + Context.User.Mention);
             TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") fined " + mentionedUser.Username + "(" + mentionedUser.Id + ") " + fineValue + " coins.");
@@ -78,10 +78,10 @@ namespace DiscordBot.Modules.Admin
         [Command("listtransactions"), Summary("Sends a list of all the transactions.")]
         public async Task ListTransactions()
         {
-            if(TransactionLogger.transactionsList.Count > 0)
+            if(TransactionLogger.TransactionsList.Count > 0)
             {
                 StringBuilder sb = new StringBuilder()
-                .Append("**Transactions**\n**----------------**\n`Total Transactions: " + TransactionLogger.transactionsList.Count + "`\n```");
+                .Append("**Transactions**\n**----------------**\n`Total Transactions: " + TransactionLogger.TransactionsList.Count + "`\n```");
 
                 TransactionLogger.SpliceTransactionsIntoList();
                 List<string> transactions = TransactionLogger.GetSplicedTransactions(1);
@@ -94,11 +94,11 @@ namespace DiscordBot.Modules.Admin
                 sb.Append("``` `Page 1`");
 
                 IUserMessage msg = await ReplyAsync(sb.ToString());
-                TransactionLogger.transactionMessages.Add(msg.Id);
-                TransactionLogger.pageNumber.Add(1);
+                TransactionLogger.TransactionMessages.Add(msg.Id);
+                TransactionLogger.PageNumber.Add(1);
 
-                if (TransactionLogger.transactionsList.Count() > 10)
-                    await msg.AddReactionAsync(Extensions.Extensions.arrow_right);
+                if (TransactionLogger.TransactionsList.Count() > 10)
+                    await msg.AddReactionAsync(Extensions.Extensions.ArrowRight);
             }
             else
             {
@@ -116,13 +116,13 @@ namespace DiscordBot.Modules.Admin
 				.WithDescription(Context.User.Mention + " Quote Added")
 				.WithColor(33, 210, 47);
 
-			await ReplyAsync("", false, eb);
+			await ReplyAsync("", false, eb.Build());
         }
 
         [Command("listquotes"), Summary("Sends a list of all the quotes.")]
         public async Task ListQuotes()
         {
-            if(QuoteHandler.quoteList.Count > 0)
+            if(QuoteHandler.QuoteList.Count > 0)
             {
                 StringBuilder sb = new StringBuilder()
                 .Append("**Quote List** : *Page 1*\n```");
@@ -138,11 +138,11 @@ namespace DiscordBot.Modules.Admin
                 sb.Append("```");
 
                 IUserMessage msg = await ReplyAsync(sb.ToString());
-                QuoteHandler.quoteMessages.Add(msg.Id);
-                QuoteHandler.pageNumber.Add(1);
+                QuoteHandler.QuoteMessages.Add(msg.Id);
+                QuoteHandler.PageNumber.Add(1);
 
-                if (QuoteHandler.quoteList.Count() > 10)
-                    await msg.AddReactionAsync(Extensions.Extensions.arrow_right);
+                if (QuoteHandler.QuoteList.Count() > 10)
+                    await msg.AddReactionAsync(Extensions.Extensions.ArrowRight);
             }
             else
             {
@@ -151,27 +151,27 @@ namespace DiscordBot.Modules.Admin
         }
 
         [Command("editquote"), Summary("Edit a quote from the list.")]
-        public async Task EditQuote(int quoteID, [Remainder]string quote)
+        public async Task EditQuote(int quoteId, [Remainder]string quote)
         {
-            string oldQuote = QuoteHandler.quoteList[quoteID - 1];
-            QuoteHandler.UpdateQuote(quoteID - 1, quote);
-            await ReplyAsync(Context.User.Mention + " updated quote id: " + quoteID + "\nOld quote: `" + oldQuote + "`\nUpdated: `" + quote + "`");
+            string oldQuote = QuoteHandler.QuoteList[quoteId - 1];
+            QuoteHandler.UpdateQuote(quoteId - 1, quote);
+            await ReplyAsync(Context.User.Mention + " updated quote id: " + quoteId + "\nOld quote: `" + oldQuote + "`\nUpdated: `" + quote + "`");
         }
 
         [Command("deletequote"), Summary("Delete a quote from the list. Make sure to `$listquotes` to get the ID for the quote being removed!")]
-        public async Task RemoveQuote(int quoteID)
+        public async Task RemoveQuote(int quoteId)
         {
-			if(quoteID <= QuoteHandler.quoteList.Count())
+			if(quoteId <= QuoteHandler.QuoteList.Count())
 			{
-				string quote = QuoteHandler.quoteList[quoteID - 1];
-				QuoteHandler.RemoveAndUpdateQuotes(quoteID - 1);
+				string quote = QuoteHandler.QuoteList[quoteId - 1];
+				QuoteHandler.RemoveAndUpdateQuotes(quoteId - 1);
 				//await ReplyAsync("Quote " + quoteID + " removed successfully, " + Context.User.Mention + "\n**Quote:** " + quote);
 
 				EmbedBuilder eb = new EmbedBuilder()
 					.WithDescription(Context.User.Mention + " Quote Removed\nQuote: " + quote)
 					.WithColor(210, 47, 33);
 
-				await ReplyAsync("", false, eb);
+				await ReplyAsync("", false, eb.Build());
 			} 
 			else
 			{
@@ -179,14 +179,14 @@ namespace DiscordBot.Modules.Admin
 					.WithDescription(Context.User.Mention + " There is no quote with that Id")
 					.WithColor(47, 33, 210);
 
-				await ReplyAsync("", false, eb);
+				await ReplyAsync("", false, eb.Build());
 			}
         }
 
         [Command("listrequestquotes"), Summary("Sends a list of all the request quotes.")]
         public async Task ListRequestQuotes()
         {
-            if(QuoteHandler.requestQuoteList.Count() > 0)
+            if(QuoteHandler.RequestQuoteList.Count() > 0)
             {
                 StringBuilder sb = new StringBuilder()
                 .Append("**Request Quote List** : *Page 1*\nTo accept a quote, type **" + GuildConfiguration.Load(Context.Guild.Id).Prefix + "acceptquote [id]**.\nTo reject a quote, type **" + GuildConfiguration.Load(Context.Guild.Id).Prefix + "denyquote [id]**.\n```");
@@ -202,11 +202,11 @@ namespace DiscordBot.Modules.Admin
                 sb.Append("```");
 
                 IUserMessage msg = await ReplyAsync(sb.ToString());
-                QuoteHandler.requestQuoteMessages.Add(msg.Id);
-                QuoteHandler.requestPageNumber.Add(1);
+                QuoteHandler.RequestQuoteMessages.Add(msg.Id);
+                QuoteHandler.RequestPageNumber.Add(1);
 
-                if (QuoteHandler.requestQuoteList.Count() > 10)
-                    await msg.AddReactionAsync(Extensions.Extensions.arrow_right);
+                if (QuoteHandler.RequestQuoteList.Count() > 10)
+                    await msg.AddReactionAsync(Extensions.Extensions.ArrowRight);
             }
             else
             {
@@ -215,28 +215,35 @@ namespace DiscordBot.Modules.Admin
         }
 
         [Command("acceptquote"), Summary("Add a quote to the list.")]
-        public async Task AcceptQuote(int quoteID)
+        public async Task AcceptQuote(int quoteId)
         {
-            string quote = QuoteHandler.requestQuoteList[quoteID - 1];
+            string quote = QuoteHandler.RequestQuoteList[quoteId - 1];
             QuoteHandler.AddAndUpdateQuotes(quote);
-            QuoteHandler.RemoveAndUpdateRequestQuotes(quoteID - 1);
-            await ReplyAsync(Context.User.Mention + " has accepted Quote " + quoteID + " from the request quote list.\nQuote: " + quote);
+            QuoteHandler.RemoveAndUpdateRequestQuotes(quoteId - 1);
+            await ReplyAsync(Context.User.Mention + " has accepted Quote " + quoteId + " from the request quote list.\nQuote: " + quote);
         }
 
         [Command("denyquote"), Summary("")]
         [Alias("rejectquote")]
-        public async Task DenyQuote(int quoteID)
+        public async Task DenyQuote(int quoteId)
         {
-            string quote = QuoteHandler.requestQuoteList[quoteID - 1];
-            QuoteHandler.RemoveAndUpdateRequestQuotes(quoteID - 1);
-            await ReplyAsync(Context.User.Mention + " has denied Quote " + quoteID + " from the request quote list.\nQuote: " + quote);
+            string quote = QuoteHandler.RequestQuoteList[quoteId - 1];
+            QuoteHandler.RemoveAndUpdateRequestQuotes(quoteId - 1);
+            await ReplyAsync(Context.User.Mention + " has denied Quote " + quoteId + " from the request quote list.\nQuote: " + quote);
         }
 
         [Command("addvotelink"), Summary("Add a voting link to the list.")]
         public async Task AddVoteLink([Remainder]string link)
         {
             VoteLinkHandler.AddAndUpdateLinks(link);
-            await ReplyAsync("Link successfully added to the list, " + Context.User.Mention);
+
+			EmbedBuilder eb = new EmbedBuilder()
+				.WithDescription(Context.User.Mention + " Link Added")
+				.WithColor(33, 210, 47);
+
+			await ReplyAsync("", false, eb.Build());
+
+			//await ReplyAsync("Link successfully added to the list, " + Context.User.Mention);
         }
 
         [Command("listvotelinks"), Summary("Sends a list of all the voting links.")]
@@ -245,9 +252,9 @@ namespace DiscordBot.Modules.Admin
             StringBuilder sb = new StringBuilder()
                 .Append("**Voting Link List**\n```");
 
-            for (int i = 0; i < VoteLinkHandler.voteLinkList.Count; i++)
+            for (int i = 0; i < VoteLinkHandler.VoteLinkList.Count; i++)
             {
-                sb.Append(i + ": " + VoteLinkHandler.voteLinkList[i] + "\n");
+                sb.Append(i + ": " + VoteLinkHandler.VoteLinkList[i] + "\n");
             }
 
             sb.Append("```");
@@ -256,41 +263,55 @@ namespace DiscordBot.Modules.Admin
         }
 
         [Command("editvotelink"), Summary("Edit a voting link from the list.")]
-        public async Task EditVotingLink(int linkID, [Remainder]string link)
+        public async Task EditVotingLink(int linkId, [Remainder]string link)
         {
-            string oldLink = VoteLinkHandler.voteLinkList[linkID];
-            VoteLinkHandler.UpdateLink(linkID, link);
-            await ReplyAsync(Context.User.Mention + " updated vote link id: " + linkID + "\nOld link: `" + oldLink + "`\nUpdated: `" + link + "`");
+            string oldLink = VoteLinkHandler.VoteLinkList[linkId];
+            VoteLinkHandler.UpdateLink(linkId, link);
+            await ReplyAsync(Context.User.Mention + " updated vote link id: " + linkId + "\nOld link: `" + oldLink + "`\nUpdated: `" + link + "`");
         }
 
         [Command("deletevotelink"), Summary("Delete a voting link from the list. Make sure to `$listvotelinks` to get the ID for the link being removed!")]
-        public async Task RemoveVotingLink(int linkID)
+        public async Task RemoveVotingLink(int linkId)
         {
-            string link = VoteLinkHandler.voteLinkList[linkID];
-            VoteLinkHandler.RemoveAndUpdateLinks(linkID);
-            await ReplyAsync("Link " + linkID + " removed successfully, " + Context.User.Mention + "\n**Link:** " + link);
+            string link = VoteLinkHandler.VoteLinkList[linkId];
+            VoteLinkHandler.RemoveAndUpdateLinks(linkId);
 
-            await ListVotingLinks();
+			EmbedBuilder eb = new EmbedBuilder()
+					.WithDescription(Context.User.Mention + " Link Removed\nLink: " + link)
+					.WithColor(210, 47, 33);
+
+			await ReplyAsync("", false, eb.Build());
+
+			//await ReplyAsync("Link " + linkID + " removed successfully, " + Context.User.Mention + "\n**Link:** " + link);
+
+			await ListVotingLinks();
         }
 
         [Command("addmusic"), Summary("Add a music link to the list.")]
         public async Task AddMusicLink([Remainder]string link)
         {
-            if (MusicHandler.musicLinkList.Contains(link))
+            if (MusicHandler.MusicLinkList.Contains(link))
             {
                 await ReplyAsync("\"Bitch no, it's already in the list\" - Flamesies.\nBut seriously... that link already is in the list, so you don't need to add it again.");
             }
             else
             {
                 MusicHandler.AddAndUpdateLinks(link);
-                await ReplyAsync("Link successfully added to the list, " + Context.User.Mention);
+
+				EmbedBuilder eb = new EmbedBuilder()
+				.WithDescription(Context.User.Mention + " Link Added")
+				.WithColor(33, 210, 47);
+
+				await ReplyAsync("", false, eb.Build());
+
+				//await ReplyAsync("Link successfully added to the list, " + Context.User.Mention);
             }
         }
 
         [Command("listmusic"), Summary("Sends a list of all the music links.")]
         public async Task ListMusicLinks()
         {
-            if(MusicHandler.musicLinkList.Count > 0)
+            if(MusicHandler.MusicLinkList.Count > 0)
             {
                 StringBuilder sb = new StringBuilder()
                 .Append("**Music Links**\n```");
@@ -306,11 +327,11 @@ namespace DiscordBot.Modules.Admin
                 sb.Append("``` `Page 1`");
 
                 IUserMessage msg = await ReplyAsync(sb.ToString());
-                MusicHandler.musicMessages.Add(msg.Id);
-                MusicHandler.pageNumber.Add(1);
+                MusicHandler.MusicMessages.Add(msg.Id);
+                MusicHandler.PageNumber.Add(1);
 
-                if (MusicHandler.musicLinkList.Count() > 10)
-                    await msg.AddReactionAsync(Extensions.Extensions.arrow_right);
+                if (MusicHandler.MusicLinkList.Count() > 10)
+                    await msg.AddReactionAsync(Extensions.Extensions.ArrowRight);
             }
             else
             {
@@ -319,19 +340,26 @@ namespace DiscordBot.Modules.Admin
         }
         
         [Command("editmusic"), Summary("Edit a music link from the list.")]
-        public async Task EditMusicLink(int linkID, [Remainder]string link)
+        public async Task EditMusicLink(int linkId, [Remainder]string link)
         {
-            string oldLink = MusicHandler.musicLinkList[linkID];
-            MusicHandler.UpdateLink(linkID, link);
-            await ReplyAsync(Context.User.Mention + " updated music link id: " + linkID + "\nOld link: `" + oldLink + "`\nUpdated: `" + link + "`");
+            string oldLink = MusicHandler.MusicLinkList[linkId];
+            MusicHandler.UpdateLink(linkId, link);
+            await ReplyAsync(Context.User.Mention + " updated music link id: " + linkId + "\nOld link: `" + oldLink + "`\nUpdated: `" + link + "`");
         }
 
         [Command("deletemusic"), Summary("Delete a music link from the list. Make sure to `listmusic` to get the ID for the link being removed!")]
-        public async Task RemoveMusicLink(int linkID)
+        public async Task RemoveMusicLink(int linkId)
         {
-            string link = MusicHandler.musicLinkList[linkID];
-            MusicHandler.RemoveAndUpdateLinks(linkID);
-            await ReplyAsync("Link " + linkID + " removed successfully, " + Context.User.Mention + "\n**Link:** " + link);
+            string link = MusicHandler.MusicLinkList[linkId];
+            MusicHandler.RemoveAndUpdateLinks(linkId);
+
+			EmbedBuilder eb = new EmbedBuilder()
+					.WithDescription(Context.User.Mention + " Link Removed\nLink: " + link)
+					.WithColor(210, 47, 33);
+
+			await ReplyAsync("", false, eb.Build());
+
+			//await ReplyAsync("Link " + linkID + " removed successfully, " + Context.User.Mention + "\n**Link:** " + link);
 
             await ListMusicLinks();
         }
@@ -339,21 +367,28 @@ namespace DiscordBot.Modules.Admin
         [Command("addimage"), Summary("Add a image link to the list.")]
         public async Task AddImageLink([Remainder]string link)
         {
-            if (ImageHandler.imageLinkList.Contains(link))
+            if (ImageHandler.ImageLinkList.Contains(link))
             {
                 await ReplyAsync("\"Bitch no, it's already in the list\" - Flamesies.\nBut seriously... that link already is in the list, so you don't need to add it again.");
             }
             else
             {
                 ImageHandler.AddAndUpdateLinks(link);
-                await ReplyAsync("Link successfully added to the list, " + Context.User.Mention);
+
+				EmbedBuilder eb = new EmbedBuilder()
+				.WithDescription(Context.User.Mention + " Link Added")
+				.WithColor(33, 210, 47);
+
+				await ReplyAsync("", false, eb.Build());
+
+				//await ReplyAsync("Link successfully added to the list, " + Context.User.Mention);
             }
         }
 
         [Command("listimages"), Summary("Sends a list of all the image links.")]
         public async Task ListImageLinks()
         {
-            if (ImageHandler.imageLinkList.Count > 0)
+            if (ImageHandler.ImageLinkList.Count > 0)
             {
                 StringBuilder sb = new StringBuilder()
                 .Append("**Image Links**\n```");
@@ -369,11 +404,11 @@ namespace DiscordBot.Modules.Admin
                 sb.Append("``` `Page 1`");
 
                 IUserMessage msg = await ReplyAsync(sb.ToString());
-                ImageHandler.imageMessages.Add(msg.Id);
-                ImageHandler.pageNumber.Add(1);
+                ImageHandler.ImageMessages.Add(msg.Id);
+                ImageHandler.PageNumber.Add(1);
 
-                if (ImageHandler.imageLinkList.Count() > 10)
-                    await msg.AddReactionAsync(Extensions.Extensions.arrow_right);
+                if (ImageHandler.ImageLinkList.Count() > 10)
+                    await msg.AddReactionAsync(Extensions.Extensions.ArrowRight);
             }
             else
             {
@@ -382,21 +417,28 @@ namespace DiscordBot.Modules.Admin
         }
 
         [Command("editimage"), Summary("Edit a image link from the list.")]
-        public async Task EditImageLink(int linkID, [Remainder]string link)
+        public async Task EditImageLink(int linkId, [Remainder]string link)
         {
-            string oldLink = ImageHandler.imageLinkList[linkID];
-            ImageHandler.UpdateLink(linkID, link);
-            await ReplyAsync(Context.User.Mention + " updated image link id: " + linkID + "\nOld link: `" + oldLink + "`\nUpdated: `" + link + "`");
+            string oldLink = ImageHandler.ImageLinkList[linkId];
+            ImageHandler.UpdateLink(linkId, link);
+            await ReplyAsync(Context.User.Mention + " updated image link id: " + linkId + "\nOld link: `" + oldLink + "`\nUpdated: `" + link + "`");
         }
 
         [Command("deleteimage"), Summary("Delete a image link from the list. Make sure to `listimages` to get the ID for the link being removed!")]
-        public async Task RemoveImageLink(int linkID)
+        public async Task RemoveImageLink(int linkId)
         {
-            string link = ImageHandler.imageLinkList[linkID];
-            ImageHandler.RemoveAndUpdateLinks(linkID);
-            await ReplyAsync("Link " + linkID + " removed successfully, " + Context.User.Mention + "\n**Link:** " + link);
+            string link = ImageHandler.ImageLinkList[linkId];
+            ImageHandler.RemoveAndUpdateLinks(linkId);
 
-            await ListImageLinks();
+			EmbedBuilder eb = new EmbedBuilder()
+					.WithDescription(Context.User.Mention + " Link Removed\nLink: " + link)
+					.WithColor(210, 47, 33);
+
+			await ReplyAsync("", false, eb.Build());
+
+			//await ReplyAsync("Link " + linkID + " removed successfully, " + Context.User.Mention + "\n**Link:** " + link);
+
+			await ListImageLinks();
         }
     }
 }

@@ -33,11 +33,11 @@ namespace DiscordBot.Handlers
             if(GuildConfiguration.Load(e.Guild.Id).WelcomeMessage != null || GuildConfiguration.Load(e.Guild.Id).WelcomeChannelId != 0)
                 await GuildConfiguration.Load(e.Guild.Id).WelcomeChannelId.GetTextChannel().SendMessageAsync(GuildConfiguration.Load(e.Guild.Id).WelcomeMessage.FormatWelcomeMessage(e));
 
-            await GuildConfiguration.Load(e.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("", false, eb);
+            await GuildConfiguration.Load(e.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
 
             if (User.CreateUserFile(e.Id))
             {
-                await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync(e.Username + " was successfully added to the database. [" + e.Id + "]");
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(e.Username + " was successfully added to the database. [" + e.Id + "]");
             }
         }
 
@@ -61,7 +61,7 @@ namespace DiscordBot.Handlers
                 .WithThumbnailUrl(e.GetAvatarUrl())
                 .WithCurrentTimestamp();
             
-            await GuildConfiguration.Load(e.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("", false, eb);
+            await GuildConfiguration.Load(e.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
         }
     }
 }

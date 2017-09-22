@@ -9,19 +9,19 @@ using DiscordBot.Extensions;
 
 namespace DiscordBot.Other
 {
-    class MusicHandler
+    public class MusicHandler
     {
-        public static string FileName { get; private set; } = "common/musicLinks.txt";
-        public static List<string> musicLinkList = new List<string>();
-        public static List<List<string>> splicedMusicList = new List<List<string>>();
-
-        public static List<ulong> musicMessages = new List<ulong>();
-        public static List<int> pageNumber = new List<int>();
+        private const string FileName = "common/musicLinks.txt";
+        
+        public static List<string> MusicLinkList = new List<string>();
+        public static List<List<string>> SplicedMusicList = new List<List<string>>();
+        public static List<ulong> MusicMessages = new List<ulong>();
+        public static List<int> PageNumber = new List<int>();
 
         private static void LoadMusic()
         {
             string file = Path.Combine(AppContext.BaseDirectory, FileName);
-            musicLinkList = File.ReadAllLines(file).ToList();
+            MusicLinkList = File.ReadAllLines(file).ToList();
             
             Console.Write("status: [");
             Console.ForegroundColor = ConsoleColor.DarkGreen;
@@ -53,39 +53,39 @@ namespace DiscordBot.Other
         private static void SaveLinks()
         {
             string file = Path.Combine(AppContext.BaseDirectory, FileName);
-            File.WriteAllLines(file, musicLinkList);
+            File.WriteAllLines(file, MusicLinkList);
         }
 
         public static void AddAndUpdateLinks(string link)
         {
-            musicLinkList.Add(link);
+            MusicLinkList.Add(link);
             SaveLinks();
         }
 
         public static void RemoveAndUpdateLinks(int index)
         {
-            musicLinkList.RemoveAt(index);
+            MusicLinkList.RemoveAt(index);
             SaveLinks();
         }
 
         public static void UpdateLink(int index, string link)
         {
-            musicLinkList[index] = link;
+            MusicLinkList[index] = link;
             SaveLinks();
         }
 
         public static void SpliceMusicIntoList()
         {
-            splicedMusicList = musicLinkList.SplitList();
+            SplicedMusicList = MusicLinkList.SplitList();
         }
         public static List<string> GetSplicedMusic(int pageNumber)
         {
             pageNumber = pageNumber - 1;
-            return splicedMusicList[pageNumber];
+            return SplicedMusicList[pageNumber];
         }
         public static int GetSplicedMusicListCount
         {
-            get { return splicedMusicList.Count(); }
+            get { return SplicedMusicList.Count(); }
         }
     }
 }

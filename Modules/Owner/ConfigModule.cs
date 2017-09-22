@@ -21,11 +21,32 @@ namespace DiscordBot.Modules.Owner
     [MinPermissions(PermissionLevel.BotOwner)]
     public class ConfigModule : ModuleBase
     {
+        [Command("")]
+        public async Task Send()
+        {
+            await ReplyAsync("**Syntax:** " +
+                             GuildConfiguration.Load(Context.Guild.Id).Prefix + "editconfig [variable] [command syntax]\n```" +
+                             "Available Commands\n" +
+                             "-----------------------------\n" +
+                             "Channel Message\n" +
+                             "-> editconfig playing [message]\n" +
+                             "-> editconfig twitch [twitch link] [message]\n" +
+                             "-> editconfig status [status]\n" +
+                             "• statuses: online, donotdisturb, idle, invisible\n" +
+                             "-> editconfig toggleunknowncommand\n" +
+                             "-> editconfig leaderboardamount [number of users to display]\n" +
+                             "-> editconfig quoteprice [price to add quote]\n" +
+                             "-> editconfig prefixprice [price to change custom prefix]\n" +
+                             "-> editconfig globallogchannel [channel mention / channel id]\n" +
+                             "-> editconfig rule34 [max number for random to use]\n" +
+                             "```");
+        }
+        
         [Command("playing"), Summary("Changes the playing message of the bot.")]
         public async Task PlayingMessage([Remainder] string playingMessage)
         {
             Configuration.UpdateJson("Playing", playingMessage);
-            await MogiiBot3._bot.SetGameAsync(playingMessage);
+            await MogiiBot3.Bot.SetGameAsync(playingMessage);
         }
 
         [Command("twitch"), Summary("Sets the twitch streaming link. Type \"none\" to disable.")]
@@ -34,12 +55,12 @@ namespace DiscordBot.Modules.Owner
         {
             if (linkOrValue.Contains("https://www.twitch.tv/"))
             {
-                await MogiiBot3._bot.SetGameAsync(playing, linkOrValue, StreamType.Twitch);
+                await MogiiBot3.Bot.SetGameAsync(playing, linkOrValue, StreamType.Twitch);
                 await ReplyAsync(Context.User.Mention + ", my status has been updated to streaming with the Twitch.TV link of <" + linkOrValue + ">");
             }
             else
             {
-                await MogiiBot3._bot.SetGameAsync(playing, null, StreamType.NotStreaming);
+                await MogiiBot3.Bot.SetGameAsync(playing);
             }
         }
 
@@ -51,7 +72,7 @@ namespace DiscordBot.Modules.Owner
             public async Task SetOnline()
             {
                 Configuration.UpdateJson("Status", (int)UserStatus.Online);
-                await MogiiBot3._bot.SetStatusAsync(UserStatus.Online);
+                await MogiiBot3.Bot.SetStatusAsync(UserStatus.Online);
                 await ReplyAsync("Status updated to Online, " + Context.User.Mention);
             }
 
@@ -60,7 +81,7 @@ namespace DiscordBot.Modules.Owner
             public async Task SetBusy()
             {
                 Configuration.UpdateJson("Status", (int)UserStatus.DoNotDisturb);
-                await MogiiBot3._bot.SetStatusAsync(UserStatus.DoNotDisturb);
+                await MogiiBot3.Bot.SetStatusAsync(UserStatus.DoNotDisturb);
                 await ReplyAsync("Status updated to Do Not Disturb, " + Context.User.Mention);
             }
 
@@ -69,7 +90,7 @@ namespace DiscordBot.Modules.Owner
             public async Task SetIdle()
             {
                 Configuration.UpdateJson("Status", (int)UserStatus.AFK);
-                await MogiiBot3._bot.SetStatusAsync(UserStatus.AFK);
+                await MogiiBot3.Bot.SetStatusAsync(UserStatus.AFK);
                 await ReplyAsync("Status updated to Idle, " + Context.User.Mention);
             }
 
@@ -78,16 +99,16 @@ namespace DiscordBot.Modules.Owner
             public async Task SetInvisible()
             {
                 Configuration.UpdateJson("Status", (int)UserStatus.Invisible);
-                await MogiiBot3._bot.SetStatusAsync(UserStatus.Invisible);
+                await MogiiBot3.Bot.SetStatusAsync(UserStatus.Invisible);
                 await ReplyAsync("Status updated to Invisible, " + Context.User.Mention);
             }
         }
 
         [Command("toggleunknowncommand"), Summary("Toggles the unknown command message.")]
-        public async Task ToggleUC()
+        public async Task ToggleUc()
         {
             Configuration.UpdateJson("UnknownCommandEnabled", !Configuration.Load().UnknownCommandEnabled);
-            await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync("UnknownCommand has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().UnknownCommandEnabled + ")");
+            await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("UnknownCommand has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().UnknownCommandEnabled + ")");
         }
 
         [Command("leaderboardamount"), Summary("Set the amount of users who show up in the leaderboards.")]
@@ -95,7 +116,7 @@ namespace DiscordBot.Modules.Owner
         {
             int oldValue = Configuration.Load().LeaderboardAmount;
             Configuration.UpdateJson("LeaderboardAmount", value);
-            await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the Leaderboard amount to: " + value + " (was: " + oldValue + ")");
+            await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the Leaderboard amount to: " + value + " (was: " + oldValue + ")");
         }
 
         [Command("quoteprice"), Summary("")]
@@ -104,7 +125,7 @@ namespace DiscordBot.Modules.Owner
         {
             int oldPrice = Configuration.Load().QuoteCost;
             Configuration.UpdateJson("QuoteCost", price);
-            await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync("**" + Context.User.Mention + "** has updated the quote cost to **" + price + "** coins. (Was: **" + oldPrice + "** coins)");
+            await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**" + Context.User.Mention + "** has updated the quote cost to **" + price + "** coins. (Was: **" + oldPrice + "** coins)");
         }
 
         [Command("prefixprice"), Summary("")]
@@ -113,7 +134,7 @@ namespace DiscordBot.Modules.Owner
         {
             int oldPrice = Configuration.Load().PrefixCost;
             Configuration.UpdateJson("PrefixCost", price);
-            await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync("**" + Context.User.Mention + "** has updated the prefix cost to **" + price + "** coins. (Was: **" + oldPrice + "** coins)");
+            await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**" + Context.User.Mention + "** has updated the prefix cost to **" + price + "** coins. (Was: **" + oldPrice + "** coins)");
         }
 
         //CoinsForReactions
@@ -122,7 +143,7 @@ namespace DiscordBot.Modules.Owner
         public async Task SetGlobalLogChannel(SocketTextChannel channel)
         {
             Configuration.UpdateJson("LogChannelID", channel.Id);
-            await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated \"LogChannelID\" to: " + channel.Mention);
+            await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated \"LogChannelID\" to: " + channel.Mention);
         }
 
         [Command("rule34"), Summary("Set the max random value for the Rule34 Gamble.")]
@@ -130,7 +151,7 @@ namespace DiscordBot.Modules.Owner
         {
             int oldValue = Configuration.Load().MaxRuleXGamble;
             Configuration.UpdateJson("MaxRuleXGamble", value);
-            await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the Rule34 Max to: " + value + " (was: " + oldValue + ")");
+            await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the Rule34 Max to: " + value + " (was: " + oldValue + ")");
         }
     }
 }

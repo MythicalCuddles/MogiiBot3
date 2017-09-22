@@ -21,9 +21,9 @@ namespace DiscordBot.Extensions
 {
     public static class StringExtensions
     {
-        public static String FormatWelcomeMessage(this string WelcomeMessage, SocketGuildUser e)
+        public static String FormatWelcomeMessage(this string welcomeMessage, SocketGuildUser e)
         {
-            string msg = WelcomeMessage;
+            string msg = welcomeMessage;
 
             msg = Regex.Replace(msg, "{USER.MENTION}", e.Mention, RegexOptions.IgnoreCase);
             msg = Regex.Replace(msg, "{USER.USERNAME}", e.Username, RegexOptions.IgnoreCase);
@@ -37,8 +37,9 @@ namespace DiscordBot.Extensions
             msg = Regex.Replace(msg, "{GUILD.OWNER.USERNAME}", e.Guild.Owner.Username, RegexOptions.IgnoreCase);
             msg = Regex.Replace(msg, "{GUILD.OWNER.MENTION}", e.Guild.Owner.Mention, RegexOptions.IgnoreCase);
             msg = Regex.Replace(msg, "{GUILD.OWNER.ID}", e.Guild.Owner.Id.ToString(), RegexOptions.IgnoreCase);
-            
-            return msg;
+			msg = Regex.Replace(msg, "{GUILD.PREFIX}", GuildConfiguration.Load(e.Guild.Id).Prefix, RegexOptions.IgnoreCase);
+
+			return msg;
         }
     }
 }

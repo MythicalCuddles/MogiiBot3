@@ -7,15 +7,16 @@ using System.Threading.Tasks;
 
 namespace DiscordBot.Other
 {
-    class VoteLinkHandler
+    public class VoteLinkHandler
     {
-        public static string FileName { get; private set; } = "common/voteLinks.txt";
-        public static List<string> voteLinkList = new List<string>();
+        private const string FileName = "common/voteLinks.txt";
+        
+        public static List<string> VoteLinkList = new List<string>();
 
         private static void LoadQuotes()
         {
             string file = Path.Combine(AppContext.BaseDirectory, FileName);
-            voteLinkList = File.ReadAllLines(file).ToList();
+            VoteLinkList = File.ReadAllLines(file).ToList();
 
             Console.Write("status: [");
             Console.ForegroundColor = ConsoleColor.DarkGreen;
@@ -47,24 +48,24 @@ namespace DiscordBot.Other
         private static void SaveLinks()
         {
             string file = Path.Combine(AppContext.BaseDirectory, FileName);
-            File.WriteAllLines(file, voteLinkList);
+            File.WriteAllLines(file, VoteLinkList);
         }
 
         public static void AddAndUpdateLinks(string link)
         {
-            voteLinkList.Add(link);
+            VoteLinkList.Add(link);
             SaveLinks();
         }
 
         public static void RemoveAndUpdateLinks(int index)
         {
-            voteLinkList.RemoveAt(index);
+            VoteLinkList.RemoveAt(index);
             SaveLinks();
         }
 
         public static void UpdateLink(int index, string link)
         {
-            voteLinkList[index] = link;
+            VoteLinkList[index] = link;
             SaveLinks();
         }
     }

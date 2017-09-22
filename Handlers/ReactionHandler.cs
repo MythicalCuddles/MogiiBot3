@@ -26,31 +26,31 @@ namespace DiscordBot.Handlers
             if (reaction.User.Value.IsBot)
                 return;
 
-            if (QuoteHandler.quoteMessages.Contains(message.Id))
+            if (QuoteHandler.QuoteMessages.Contains(message.Id))
             {
                 await HandleQuoteReactions(message, channel, reaction);
                 return;
             }
 
-            if (QuoteHandler.requestQuoteMessages.Contains(message.Id))
+            if (QuoteHandler.RequestQuoteMessages.Contains(message.Id))
             {
                 await HandleRequestQuoteReactions(message, channel, reaction);
                 return;
             }
 
-            if (TransactionLogger.transactionMessages.Contains(message.Id))
+            if (TransactionLogger.TransactionMessages.Contains(message.Id))
             {
                 await HandleTransactionReactions(message, channel, reaction);
                 return;
             }
 
-            if (MusicHandler.musicMessages.Contains(message.Id))
+            if (MusicHandler.MusicMessages.Contains(message.Id))
             {
                 await HandleMusicReactions(message, channel, reaction);
                 return;
             }
 
-            if (ImageHandler.imageMessages.Contains(message.Id))
+            if (ImageHandler.ImageMessages.Contains(message.Id))
             {
                 await HandleImageReactions(message, channel, reaction);
                 return;
@@ -66,29 +66,29 @@ namespace DiscordBot.Handlers
         private static async Task HandleQuoteReactions(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
         {
             // Check to see if the next page or previous page was clicked.
-            if (reaction.Emote.Name == Extensions.Extensions.arrow_left.Name)
+            if (reaction.Emote.Name == Extensions.Extensions.ArrowLeft.Name)
             {
-                if (QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)] == 1)
+                if (QuoteHandler.PageNumber[QuoteHandler.QuoteMessages.IndexOf(message.Id)] == 1)
                     return;
 
-                QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)]--;
+                QuoteHandler.PageNumber[QuoteHandler.QuoteMessages.IndexOf(message.Id)]--;
             }
-            else if (reaction.Emote.Name == Extensions.Extensions.arrow_right.Name)
+            else if (reaction.Emote.Name == Extensions.Extensions.ArrowRight.Name)
             {
-                if (QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)] == QuoteHandler.GetQuotesListLength)
+                if (QuoteHandler.PageNumber[QuoteHandler.QuoteMessages.IndexOf(message.Id)] == QuoteHandler.GetQuotesListLength)
                     return;
 
-                QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)]++;
+                QuoteHandler.PageNumber[QuoteHandler.QuoteMessages.IndexOf(message.Id)]++;
             }
 
             StringBuilder sb = new StringBuilder()
-            .Append("**Quote List** : *Page " + QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)] + "*\n```");
+            .Append("**Quote List** : *Page " + QuoteHandler.PageNumber[QuoteHandler.QuoteMessages.IndexOf(message.Id)] + "*\n```");
 
-            List<string> quotes = QuoteHandler.GetQuotes(QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)]);
+            List<string> quotes = QuoteHandler.GetQuotes(QuoteHandler.PageNumber[QuoteHandler.QuoteMessages.IndexOf(message.Id)]);
 
             for (int i = 0; i < quotes.Count; i++)
             {
-                sb.Append(((i + 1) + ((QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)] - 1) * 10)) + ": " + quotes[i] + "\n");
+                sb.Append(((i + 1) + ((QuoteHandler.PageNumber[QuoteHandler.QuoteMessages.IndexOf(message.Id)] - 1) * 10)) + ": " + quotes[i] + "\n");
             }
 
             sb.Append("```");
@@ -96,46 +96,46 @@ namespace DiscordBot.Handlers
             await message.Value.ModifyAsync(msg => msg.Content = sb.ToString());
             await message.Value.RemoveAllReactionsAsync();
 
-            if (QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)] == 1)
+            if (QuoteHandler.PageNumber[QuoteHandler.QuoteMessages.IndexOf(message.Id)] == 1)
             {
-                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_right);
+                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowRight);
             }
-            else if (QuoteHandler.pageNumber[QuoteHandler.quoteMessages.IndexOf(message.Id)] == QuoteHandler.GetQuotesListLength)
+            else if (QuoteHandler.PageNumber[QuoteHandler.QuoteMessages.IndexOf(message.Id)] == QuoteHandler.GetQuotesListLength)
             {
-                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_left);
+                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowLeft);
             }
             else
             {
-                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_left);
-                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_right);
+                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowLeft);
+                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowRight);
             }
         }
         private static async Task HandleRequestQuoteReactions(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
         {
             // Check to see if the next page or previous page was clicked.
-            if (reaction.Emote.Name == Extensions.Extensions.arrow_left.Name)
+            if (reaction.Emote.Name == Extensions.Extensions.ArrowLeft.Name)
             {
-                if (QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] == 1)
+                if (QuoteHandler.RequestPageNumber[QuoteHandler.RequestQuoteMessages.IndexOf(message.Id)] == 1)
                     return;
 
-                QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)]--;
+                QuoteHandler.RequestPageNumber[QuoteHandler.RequestQuoteMessages.IndexOf(message.Id)]--;
             }
-            else if (reaction.Emote.Name == Extensions.Extensions.arrow_right.Name)
+            else if (reaction.Emote.Name == Extensions.Extensions.ArrowRight.Name)
             {
-                if (QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] == QuoteHandler.GetRequestQuotesListLength)
+                if (QuoteHandler.RequestPageNumber[QuoteHandler.RequestQuoteMessages.IndexOf(message.Id)] == QuoteHandler.GetRequestQuotesListLength)
                     return;
 
-                QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)]++;
+                QuoteHandler.RequestPageNumber[QuoteHandler.RequestQuoteMessages.IndexOf(message.Id)]++;
             }
 
             StringBuilder sb = new StringBuilder()
-            .Append("**Request Quote List** : *Page " + QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] + "*\nTo accept a quote, type **" + GuildConfiguration.Load(channel.GetGuild().Id).Prefix + "acceptquote[id]**.\nTo reject a quote, type **" + GuildConfiguration.Load(channel.GetGuild().Id).Prefix + "denyquote[id]**.\n```");
+            .Append("**Request Quote List** : *Page " + QuoteHandler.RequestPageNumber[QuoteHandler.RequestQuoteMessages.IndexOf(message.Id)] + "*\nTo accept a quote, type **" + GuildConfiguration.Load(channel.GetGuild().Id).Prefix + "acceptquote[id]**.\nTo reject a quote, type **" + GuildConfiguration.Load(channel.GetGuild().Id).Prefix + "denyquote[id]**.\n```");
 
-            List<string> requestQuotes = QuoteHandler.GetRequestQuotes(QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)]);
+            List<string> requestQuotes = QuoteHandler.GetRequestQuotes(QuoteHandler.RequestPageNumber[QuoteHandler.RequestQuoteMessages.IndexOf(message.Id)]);
 
             for (int i = 0; i < requestQuotes.Count; i++)
             {
-                sb.Append(((i + 1) + ((QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] - 1) * 10)) + ": " + requestQuotes[i] + "\n");
+                sb.Append(((i + 1) + ((QuoteHandler.RequestPageNumber[QuoteHandler.RequestQuoteMessages.IndexOf(message.Id)] - 1) * 10)) + ": " + requestQuotes[i] + "\n");
             }
 
             sb.Append("```");
@@ -143,159 +143,159 @@ namespace DiscordBot.Handlers
             await message.Value.ModifyAsync(msg => msg.Content = sb.ToString());
             await message.Value.RemoveAllReactionsAsync();
 
-            if (QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] == 1)
+            if (QuoteHandler.RequestPageNumber[QuoteHandler.RequestQuoteMessages.IndexOf(message.Id)] == 1)
             {
-                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_right);
+                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowRight);
             }
-            else if (QuoteHandler.requestPageNumber[QuoteHandler.requestQuoteMessages.IndexOf(message.Id)] == QuoteHandler.GetRequestQuotesListLength)
+            else if (QuoteHandler.RequestPageNumber[QuoteHandler.RequestQuoteMessages.IndexOf(message.Id)] == QuoteHandler.GetRequestQuotesListLength)
             {
-                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_left);
+                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowLeft);
             }
             else
             {
-                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_left);
-                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_right);
+                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowLeft);
+                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowRight);
             }
         }
         private static async Task HandleTransactionReactions(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
         {
             // Check to see if the next page or previous page was clicked.
-            if (reaction.Emote.Name == Extensions.Extensions.arrow_left.Name)
+            if (reaction.Emote.Name == Extensions.Extensions.ArrowLeft.Name)
             {
-                if (TransactionLogger.pageNumber[TransactionLogger.transactionMessages.IndexOf(message.Id)] == 1)
+                if (TransactionLogger.PageNumber[TransactionLogger.TransactionMessages.IndexOf(message.Id)] == 1)
                     return;
 
-                TransactionLogger.pageNumber[TransactionLogger.transactionMessages.IndexOf(message.Id)]--;
+                TransactionLogger.PageNumber[TransactionLogger.TransactionMessages.IndexOf(message.Id)]--;
             }
-            else if (reaction.Emote.Name == Extensions.Extensions.arrow_right.Name)
+            else if (reaction.Emote.Name == Extensions.Extensions.ArrowRight.Name)
             {
-                if (TransactionLogger.pageNumber[TransactionLogger.transactionMessages.IndexOf(message.Id)] == TransactionLogger.GetSplicedTransactonListCount)
+                if (TransactionLogger.PageNumber[TransactionLogger.TransactionMessages.IndexOf(message.Id)] == TransactionLogger.GetSplicedTransactonListCount)
                     return;
 
-                TransactionLogger.pageNumber[TransactionLogger.transactionMessages.IndexOf(message.Id)]++;
+                TransactionLogger.PageNumber[TransactionLogger.TransactionMessages.IndexOf(message.Id)]++;
             }
 
             StringBuilder sb = new StringBuilder()
-                .Append("**Transactions**\n**----------------**\n`Total Transactions: " + TransactionLogger.transactionsList.Count + "`\n```");
+                .Append("**Transactions**\n**----------------**\n`Total Transactions: " + TransactionLogger.TransactionsList.Count + "`\n```");
 
-            List<string> transactions = TransactionLogger.GetSplicedTransactions(TransactionLogger.pageNumber[TransactionLogger.transactionMessages.IndexOf(message.Id)]);
+            List<string> transactions = TransactionLogger.GetSplicedTransactions(TransactionLogger.PageNumber[TransactionLogger.TransactionMessages.IndexOf(message.Id)]);
 
             for (int i = 0; i < transactions.Count; i++)
             {
-                sb.Append(((i + 1) + ((TransactionLogger.pageNumber[TransactionLogger.transactionMessages.IndexOf(message.Id)] - 1) * 10)) + ": " + transactions[i] + "\n");
+                sb.Append(((i + 1) + ((TransactionLogger.PageNumber[TransactionLogger.TransactionMessages.IndexOf(message.Id)] - 1) * 10)) + ": " + transactions[i] + "\n");
             }
 
-            sb.Append("``` `Page " + TransactionLogger.pageNumber[TransactionLogger.transactionMessages.IndexOf(message.Id)] + "`");
+            sb.Append("``` `Page " + TransactionLogger.PageNumber[TransactionLogger.TransactionMessages.IndexOf(message.Id)] + "`");
 
             await message.Value.ModifyAsync(msg => msg.Content = sb.ToString());
             await message.Value.RemoveAllReactionsAsync();
 
-            if (TransactionLogger.pageNumber[TransactionLogger.transactionMessages.IndexOf(message.Id)] == 1)
+            if (TransactionLogger.PageNumber[TransactionLogger.TransactionMessages.IndexOf(message.Id)] == 1)
             {
-                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_right);
+                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowRight);
             }
-            else if (TransactionLogger.pageNumber[TransactionLogger.transactionMessages.IndexOf(message.Id)] == TransactionLogger.GetSplicedTransactonListCount)
+            else if (TransactionLogger.PageNumber[TransactionLogger.TransactionMessages.IndexOf(message.Id)] == TransactionLogger.GetSplicedTransactonListCount)
             {
-                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_left);
+                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowLeft);
             }
             else
             {
-                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_left);
-                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_right);
+                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowLeft);
+                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowRight);
             }
         }
         private static async Task HandleMusicReactions(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
         {
             // Check to see if the next page or previous page was clicked.
-            if (reaction.Emote.Name == Extensions.Extensions.arrow_left.Name)
+            if (reaction.Emote.Name == Extensions.Extensions.ArrowLeft.Name)
             {
-                if (MusicHandler.pageNumber[MusicHandler.musicMessages.IndexOf(message.Id)] == 1)
+                if (MusicHandler.PageNumber[MusicHandler.MusicMessages.IndexOf(message.Id)] == 1)
                     return;
 
-                MusicHandler.pageNumber[MusicHandler.musicMessages.IndexOf(message.Id)]--;
+                MusicHandler.PageNumber[MusicHandler.MusicMessages.IndexOf(message.Id)]--;
             }
-            else if (reaction.Emote.Name == Extensions.Extensions.arrow_right.Name)
+            else if (reaction.Emote.Name == Extensions.Extensions.ArrowRight.Name)
             {
-                if (MusicHandler.pageNumber[MusicHandler.musicMessages.IndexOf(message.Id)] == MusicHandler.GetSplicedMusicListCount)
+                if (MusicHandler.PageNumber[MusicHandler.MusicMessages.IndexOf(message.Id)] == MusicHandler.GetSplicedMusicListCount)
                     return;
 
-                MusicHandler.pageNumber[MusicHandler.musicMessages.IndexOf(message.Id)]++;
+                MusicHandler.PageNumber[MusicHandler.MusicMessages.IndexOf(message.Id)]++;
             }
 
             StringBuilder sb = new StringBuilder()
                 .Append("**Music Links**\n```");
 
-            List<string> musicLinks = MusicHandler.GetSplicedMusic(MusicHandler.pageNumber[MusicHandler.musicMessages.IndexOf(message.Id)]);
+            List<string> musicLinks = MusicHandler.GetSplicedMusic(MusicHandler.PageNumber[MusicHandler.MusicMessages.IndexOf(message.Id)]);
 
             for (int i = 0; i < musicLinks.Count; i++)
             {
-                sb.Append(((i + 1) + ((MusicHandler.pageNumber[MusicHandler.musicMessages.IndexOf(message.Id)] - 1) * 10)) + ": " + musicLinks[i] + "\n");
+                sb.Append(((i + 1) + ((MusicHandler.PageNumber[MusicHandler.MusicMessages.IndexOf(message.Id)] - 1) * 10)) + ": " + musicLinks[i] + "\n");
             }
 
-            sb.Append("``` `Page " + MusicHandler.pageNumber[MusicHandler.musicMessages.IndexOf(message.Id)] + "`");
+            sb.Append("``` `Page " + MusicHandler.PageNumber[MusicHandler.MusicMessages.IndexOf(message.Id)] + "`");
 
             await message.Value.ModifyAsync(msg => msg.Content = sb.ToString());
             await message.Value.RemoveAllReactionsAsync();
 
-            if (MusicHandler.pageNumber[MusicHandler.musicMessages.IndexOf(message.Id)] == 1)
+            if (MusicHandler.PageNumber[MusicHandler.MusicMessages.IndexOf(message.Id)] == 1)
             {
-                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_right);
+                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowRight);
             }
-            else if (MusicHandler.pageNumber[MusicHandler.musicMessages.IndexOf(message.Id)] == MusicHandler.GetSplicedMusicListCount)
+            else if (MusicHandler.PageNumber[MusicHandler.MusicMessages.IndexOf(message.Id)] == MusicHandler.GetSplicedMusicListCount)
             {
-                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_left);
+                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowLeft);
             }
             else
             {
-                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_left);
-                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_right);
+                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowLeft);
+                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowRight);
             }
         }
         private static async Task HandleImageReactions(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
         {
             // Check to see if the next page or previous page was clicked.
-            if (reaction.Emote.Name == Extensions.Extensions.arrow_left.Name)
+            if (reaction.Emote.Name == Extensions.Extensions.ArrowLeft.Name)
             {
-                if (ImageHandler.pageNumber[ImageHandler.imageMessages.IndexOf(message.Id)] == 1)
+                if (ImageHandler.PageNumber[ImageHandler.ImageMessages.IndexOf(message.Id)] == 1)
                     return;
 
-                ImageHandler.pageNumber[ImageHandler.imageMessages.IndexOf(message.Id)]--;
+                ImageHandler.PageNumber[ImageHandler.ImageMessages.IndexOf(message.Id)]--;
             }
-            else if (reaction.Emote.Name == Extensions.Extensions.arrow_right.Name)
+            else if (reaction.Emote.Name == Extensions.Extensions.ArrowRight.Name)
             {
-                if (ImageHandler.pageNumber[ImageHandler.imageMessages.IndexOf(message.Id)] == ImageHandler.GetSplicedListCount)
+                if (ImageHandler.PageNumber[ImageHandler.ImageMessages.IndexOf(message.Id)] == ImageHandler.GetSplicedListCount)
                     return;
 
-                ImageHandler.pageNumber[ImageHandler.imageMessages.IndexOf(message.Id)]++;
+                ImageHandler.PageNumber[ImageHandler.ImageMessages.IndexOf(message.Id)]++;
             }
 
             StringBuilder sb = new StringBuilder()
                 .Append("**Image Links**\n```");
 
-            List<string> imageLinks = ImageHandler.GetSplicedList(ImageHandler.pageNumber[ImageHandler.imageMessages.IndexOf(message.Id)]);
+            List<string> imageLinks = ImageHandler.GetSplicedList(ImageHandler.PageNumber[ImageHandler.ImageMessages.IndexOf(message.Id)]);
 
             for (int i = 0; i < imageLinks.Count; i++)
             {
-                sb.Append(((i + 1) + ((ImageHandler.pageNumber[ImageHandler.imageMessages.IndexOf(message.Id)] - 1) * 10)) + ": " + imageLinks[i] + "\n");
+                sb.Append(((i + 1) + ((ImageHandler.PageNumber[ImageHandler.ImageMessages.IndexOf(message.Id)] - 1) * 10)) + ": " + imageLinks[i] + "\n");
             }
 
-            sb.Append("``` `Page " + ImageHandler.pageNumber[ImageHandler.imageMessages.IndexOf(message.Id)] + "`");
+            sb.Append("``` `Page " + ImageHandler.PageNumber[ImageHandler.ImageMessages.IndexOf(message.Id)] + "`");
 
             await message.Value.ModifyAsync(msg => msg.Content = sb.ToString());
             await message.Value.RemoveAllReactionsAsync();
 
-            if (ImageHandler.pageNumber[ImageHandler.imageMessages.IndexOf(message.Id)] == 1)
+            if (ImageHandler.PageNumber[ImageHandler.ImageMessages.IndexOf(message.Id)] == 1)
             {
-                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_right);
+                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowRight);
             }
-            else if (ImageHandler.pageNumber[ImageHandler.imageMessages.IndexOf(message.Id)] == ImageHandler.GetSplicedListCount)
+            else if (ImageHandler.PageNumber[ImageHandler.ImageMessages.IndexOf(message.Id)] == ImageHandler.GetSplicedListCount)
             {
-                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_left);
+                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowLeft);
             }
             else
             {
-                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_left);
-                await message.Value.AddReactionAsync(Extensions.Extensions.arrow_right);
+                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowLeft);
+                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowRight);
             }
         }
     }

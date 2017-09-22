@@ -67,7 +67,7 @@ namespace DiscordBot.Modules.Admin
                 .WithFooter(efb)
                 .WithCurrentTimestamp();
 
-            await ReplyAsync("", false, eb);
+            await ReplyAsync("", false, eb.Build());
         }
 
         [Command("privatemessage"), Summary("Sends a private message to the user specified.")]
@@ -95,7 +95,7 @@ namespace DiscordBot.Modules.Admin
                 .WithFooter(efb)
                 .WithCurrentTimestamp();
 
-            await ReplyAsync("", false, eb);
+            await ReplyAsync("", false, eb.Build());
         }
     }
 }

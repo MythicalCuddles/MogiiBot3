@@ -7,9 +7,17 @@ using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 
-using MelissasCode;
 using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
+
+using DiscordBot.Common;
+using DiscordBot.Extensions;
+using DiscordBot.Handlers;
+using DiscordBot.Logging;
+using DiscordBot.Other;
+
+using MelissasCode;
 
 namespace DiscordBot.Common
 {
@@ -24,12 +32,12 @@ namespace DiscordBot.Common
         public bool SenpaiEnabled { get; set; } = true;
         public bool QuotesEnabled { get; set; } = true;
 
-        public bool EnableNSFWCommands { get; set; } = false;
+        public bool EnableNsfwCommands { get; set; } = false;
         public ulong RuleGambleChannelId { get; set; } = 0;
 
-        public static void EnsureExists(ulong GuildID)
+        public static void EnsureExists(ulong guildId)
         {
-            string file = Path.Combine(AppContext.BaseDirectory, GetPath(GuildID));
+            string file = Path.Combine(AppContext.BaseDirectory, GetPath(guildId));
             if (!File.Exists(file))
             {
                 string path = Path.GetDirectoryName(file);
@@ -37,73 +45,73 @@ namespace DiscordBot.Common
                     Directory.CreateDirectory(path);
 
                 var guildConfig = new GuildConfiguration();
-                guildConfig.SaveJson(GuildID);
+                guildConfig.SaveJson(guildId);
 
                 Console.Write("status: [");
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Console.Write("ok");
                 Console.ResetColor();
-                Console.WriteLine("]    " + GetPath(GuildID) + ": created.");
+                Console.WriteLine("]    " + GetPath(guildId) + ": created.");
             }
 
             Console.Write("status: [");
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.Write("ok");
             Console.ResetColor();
-            Console.WriteLine("]    " + GetPath(GuildID) + ": loaded.");
+            Console.WriteLine("]    " + GetPath(guildId) + ": loaded.");
         }
 
-        private static string GetPath(ulong GuildID)
+        private static string GetPath(ulong guildId)
         {
-            return ("config/guilds/" + GuildID + ".json");
+            return ("config/guilds/" + guildId + ".json");
         }
 
-        public void SaveJson(ulong GuildID)
+        public void SaveJson(ulong guildId)
         {
-            string file = Path.Combine(AppContext.BaseDirectory, GetPath(GuildID));
+            string file = Path.Combine(AppContext.BaseDirectory, GetPath(guildId));
             File.WriteAllText(file, ToJson());
         }
 
-        public static GuildConfiguration Load(ulong GuildID)
+        public static GuildConfiguration Load(ulong guildId)
         {
-            string file = Path.Combine(AppContext.BaseDirectory, GetPath(GuildID));
+            string file = Path.Combine(AppContext.BaseDirectory, GetPath(guildId));
             return JsonConvert.DeserializeObject<GuildConfiguration>(File.ReadAllText(file));
         }
 
         public string ToJson()
             => JsonConvert.SerializeObject(this, Formatting.Indented);
 
-        public static void UpdateJson(ulong GuildID, string parameterName, string newValue)
+        public static void UpdateJson(ulong guildId, string parameterName, string newValue)
         {
-            string json = File.ReadAllText(GetPath(GuildID));
+            string json = File.ReadAllText(GetPath(guildId));
             dynamic jsonObj = JsonConvert.DeserializeObject(json);
             jsonObj[parameterName] = newValue;
             string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-            File.WriteAllText(GetPath(GuildID), output);
+            File.WriteAllText(GetPath(guildId), output);
         }
-        public static void UpdateJson(ulong GuildID, string parameterName, int newValue)
+        public static void UpdateJson(ulong guildId, string parameterName, int newValue)
         {
-            string json = File.ReadAllText(GetPath(GuildID));
+            string json = File.ReadAllText(GetPath(guildId));
             dynamic jsonObj = JsonConvert.DeserializeObject(json);
             jsonObj[parameterName] = newValue;
             string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-            File.WriteAllText(GetPath(GuildID), output);
+            File.WriteAllText(GetPath(guildId), output);
         }
-        public static void UpdateJson(ulong GuildID, string parameterName, bool newValue)
+        public static void UpdateJson(ulong guildId, string parameterName, bool newValue)
         {
-            string json = File.ReadAllText(GetPath(GuildID));
+            string json = File.ReadAllText(GetPath(guildId));
             dynamic jsonObj = JsonConvert.DeserializeObject(json);
             jsonObj[parameterName] = newValue;
             string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-            File.WriteAllText(GetPath(GuildID), output);
+            File.WriteAllText(GetPath(guildId), output);
         }
-        public static void UpdateJson(ulong GuildID, string parameterName, ulong newValue)
+        public static void UpdateJson(ulong guildId, string parameterName, ulong newValue)
         {
-            string json = File.ReadAllText(GetPath(GuildID));
+            string json = File.ReadAllText(GetPath(guildId));
             dynamic jsonObj = JsonConvert.DeserializeObject(json);
             jsonObj[parameterName] = newValue;
             string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-            File.WriteAllText(GetPath(GuildID), output);
+            File.WriteAllText(GetPath(guildId), output);
         }
     }
 }

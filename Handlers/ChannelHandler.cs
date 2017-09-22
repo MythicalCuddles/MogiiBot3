@@ -26,24 +26,16 @@ namespace DiscordBot.Handlers
 			if (channel is ITextChannel)
 			{
 				var channelParam = channel as ITextChannel;
-				await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync("**New Text Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
+				await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**New Text Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
 					+ "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
 					+ "\nTopic: " + channelParam.Topic + "```");
-
-				//await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**New Text Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
-				//    + "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
-				//    + "\nTopic: " + channelParam.Topic + "```");
 			}
 			else if (channel is IVoiceChannel)
 			{
 				var channelParam = channel as IVoiceChannel;
-				await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync("**New Voice Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
+				await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**New Voice Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
 					+ "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
 					+ "\nUser Limit: " + channelParam.UserLimit + "```");
-
-				//await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**New Voice Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
-				//    + "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
-				//    + "\nUser Limit: " + channelParam.UserLimit + "```");
 			}
 			else
 			{
@@ -60,24 +52,16 @@ namespace DiscordBot.Handlers
 			if (channel is ITextChannel)
 			{
 				var channelParam = channel as ITextChannel;
-				await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync("**Removed Text Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
+				await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**Removed Text Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
 					+ "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
 					+ "\nTopic: " + channelParam.Topic + "```");
-
-				//await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**Removed Text Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
-				//    + "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
-				//    + "\nTopic: " + channelParam.Topic + "```");
 			}
 			else if (channel is IVoiceChannel)
 			{
 				var channelParam = channel as IVoiceChannel;
-				await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync("**Removed Voice Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
+				await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**Removed Voice Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
 					+ "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
 					+ "\nUser Limit: " + channelParam.UserLimit + "```");
-
-				//await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync("**Removed Voice Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
-				//    + "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
-				//    + "\nUser Limit: " + channelParam.UserLimit + "```");
 			}
 			else
 			{

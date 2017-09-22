@@ -1,79 +1,80 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Reflection;
-using System.Threading.Tasks;
-
-using System.IO;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
 using Discord;
 using Discord.Commands;
-using Discord.WebSocket;
-using Discord.Net.Providers.WS4Net;
 using Discord.Net.Providers.UDPClient;
+using Discord.Net.Providers.WS4Net;
+using Discord.WebSocket;
 
+using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
+using DiscordBot.Extensions;
 using DiscordBot.Handlers;
 using DiscordBot.Other;
-using DiscordBot.Extensions;
 using DiscordBot.Logging;
 
 using MelissasCode;
-//
+
 namespace DiscordBot
 {
-    public class MogiiBot3
+	public class MogiiBot3
     {
-        private static string BotToken = DiscordToken.MogiiBot;
+        private static readonly string BotToken = DiscordToken.MogiiBot;
 
-        public static DiscordSocketClient _bot;
-        public static CommandService commandService;
+        public static DiscordSocketClient Bot;
+        public static CommandService CommandService;
 
-        Random _r = new Random();
+        private readonly Random _random = new Random();
+
+        public List<SocketGuildUser> OfflineUsersList = new List<SocketGuildUser>();
 
         public async Task RunBotAsync()
         {
-            _bot = new DiscordSocketClient(new DiscordSocketConfig
+            Bot = new DiscordSocketClient(new DiscordSocketConfig
             {
                 LogLevel = LogSeverity.Debug,
                 MessageCacheSize = 50,
                 WebSocketProvider = WS4NetProvider.Instance,
                 UdpSocketProvider = UDPClientProvider.Instance,
             });
-            commandService = new CommandService();
+            CommandService = new CommandService();
 
             // Create Tasks for Bot Events
-            _bot.Log += Log;
+            Bot.Log += Log;
             
-            _bot.UserJoined += UserHandler.UserJoined;
-            _bot.UserLeft += UserHandler.UserLeft;
+            Bot.UserJoined += UserHandler.UserJoined;
+            Bot.UserLeft += UserHandler.UserLeft;
 
-            _bot.ChannelCreated += ChannelHandler.ChannelCreated;
-            _bot.ChannelDestroyed += ChannelHandler.ChannelDestroyed;
+            Bot.ChannelCreated += ChannelHandler.ChannelCreated;
+            Bot.ChannelDestroyed += ChannelHandler.ChannelDestroyed;
 
-            _bot.Ready += Ready;
-			_bot.Disconnected += Disconnected;
+            Bot.Ready += Ready;
+			Bot.Disconnected += Disconnected;
 
-			_bot.ReactionAdded += ReactionHandler.ReactionAdded;
+			Bot.ReactionAdded += ReactionHandler.ReactionAdded;
 
-            //await InstallCommands();
-			_bot.MessageReceived += MessageReceived;
-			_bot.MessageDeleted += MessageHandler.MessageDeleted;
-            _bot.MessageUpdated += MessageHandler.MessageUpdated;
+			Bot.MessageReceived += MessageReceived;
+			Bot.MessageDeleted += MessageHandler.MessageDeleted;
+            Bot.MessageUpdated += MessageHandler.MessageUpdated;
 			
-			await commandService.AddModulesAsync(Assembly.GetEntryAssembly());
+			await CommandService.AddModulesAsync(Assembly.GetEntryAssembly());
 			
 			// Add token from config
-			await _bot.LoginAsync(TokenType.Bot, BotToken); // Connect to Discord with Bot Login Details
-			await _bot.StartAsync();
+			await Bot.LoginAsync(TokenType.Bot, BotToken); // Connect to Discord with Bot Login Details
+			await Bot.StartAsync();
 
             // Keep the program running.
             await Task.Delay(-1);
 		}
 
-		private Task Log(LogMessage logMessage)
+	    private static Task Log(LogMessage logMessage)
 		{
 			var cc = Console.ForegroundColor;
 			switch (logMessage.Severity)
@@ -82,16 +83,23 @@ namespace DiscordBot
 				case LogSeverity.Error:
 					Console.ForegroundColor = ConsoleColor.Red;
 					break;
-				case LogSeverity.Warning:
+
+                case LogSeverity.Warning:
 					Console.ForegroundColor = ConsoleColor.Yellow;
 					break;
-				case LogSeverity.Info:
+
+                case LogSeverity.Info:
 					Console.ForegroundColor = ConsoleColor.White;
 					break;
-				case LogSeverity.Verbose:
+
+                case LogSeverity.Verbose:
 				case LogSeverity.Debug:
 					Console.ForegroundColor = ConsoleColor.DarkGray;
 					break;
+
+                default:
+			        Console.ForegroundColor = ConsoleColor.Blue;
+			        break;
 			}
 			Console.WriteLine($"{DateTime.Now,-19} [{logMessage.Severity,8}] {logMessage.Source}: {logMessage.ToString()}");
 			Console.ForegroundColor = cc;
@@ -100,13 +108,13 @@ namespace DiscordBot
 		
 		private async Task Ready()
 		{
-			await _bot.SetGameAsync(Configuration.Load().Playing);
-			await _bot.SetStatusAsync(Configuration.Load().Status);
+			await Bot.SetGameAsync(Configuration.Load().Playing);
+			await Bot.SetStatusAsync(Configuration.Load().Status);
 
-			Modules.Mod.ModeratorModule._dt = DateTime.Now;
+			Modules.Mod.ModeratorModule.ActiveForDateTime = DateTime.Now;
 
 			Console.WriteLine("-----------------------------------------------------------------");
-			foreach (SocketGuild g in _bot.Guilds)
+			foreach (SocketGuild g in Bot.Guilds)
 			{
 				Console.Write("status: [");
 				Console.ForegroundColor = ConsoleColor.DarkYellow;
@@ -121,36 +129,59 @@ namespace DiscordBot
 				{
 					if (User.CreateUserFile(u.Id))
 					{
-						Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync("[ALERT] " + u.Mention + " (" + u.Id + ") was added to the database while the bot was offline...");
+                        OfflineUsersList.Add(u);
 					}
 				}
 				Console.WriteLine("-----------------------------------------------------------------");
 			}
 
-			Console.WriteLine(_bot.CurrentUser.Id + " | " + _bot.CurrentUser.Username);
+            Console.Write("status: [");
+		    Console.ForegroundColor = ConsoleColor.DarkGreen;
+		    Console.Write("ok");
+		    Console.ResetColor();
+		    Console.WriteLine("]    " + Bot.CurrentUser.Id + ": " + Bot.CurrentUser.Username + " loaded.");
+
+			// Send message to log channel to announce bot is up and running.
+			Version v = Assembly.GetExecutingAssembly().GetName().Version;
+			EmbedBuilder eb = new EmbedBuilder()
+					.WithTitle("Startup Log")
+					.WithColor(59, 212, 50)
+					.WithThumbnailUrl(Bot.CurrentUser.GetAvatarUrl())
+					.WithDescription("**" + Bot.CurrentUser.Username + "** : status [ok] : If there was any new users, they will be shown below.")
+                    .AddField("Version", v.Major + "." + v.Minor + "." + v.Build + "." + v.Revision, true)
+					.AddField("MelissasCode", MelissaCode.Version, true)
+					.AddField("Database Status", MelissaCode.GetDatabaseStatus(), true)
+					.AddField("Latency", MogiiBot3.Bot.Latency + "ms", true)
+                    .WithCurrentTimestamp();
+				await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
+
+            foreach (SocketGuildUser user in OfflineUsersList)
+		    {
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("[ALERT] While " + Bot.CurrentUser.Username + " was offline, " + user.Mention + " (" + user.Id + ") joined a guild. They have been added to the database.");
+            }
 		}
 
-		private async Task Disconnected(Exception exception)
+		private static Task Disconnected(Exception exception)
         {
 			Console.WriteLine(exception.ToString());
             Console.WriteLine("\n\n\n\n");
 
             Task.Delay(5000);
 
-            Process process = new Process();
-            process.StartInfo.FileName = Path.Combine(AppContext.BaseDirectory, "DiscordBot.exe");
-            process.StartInfo.CreateNoWindow = false;
+            Process process = new Process
+            {
+                StartInfo =
+                {
+                    FileName = Path.Combine(AppContext.BaseDirectory, "DiscordBot.exe"),
+                    CreateNoWindow = false
+                }
+            };
             process.Start();
 
             Environment.Exit(0);
+            return Task.CompletedTask;
         }
-        
-        //private async Task InstallCommands()
-        //{
-        //    _bot.MessageReceived += MessageReceived;
-
-        //    await commandService.AddModulesAsync(Assembly.GetEntryAssembly());
-        //}
+	    
         private async Task MessageReceived(SocketMessage messageParam)
         {
             var message = messageParam as SocketUserMessage;
@@ -179,7 +210,7 @@ namespace DiscordBot
                     .WithFooter(efb)
                     .WithCurrentTimestamp();
 
-                await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync("", false, eb);
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
             }
 
             // If the message is just "F", pay respects.
@@ -191,21 +222,21 @@ namespace DiscordBot
 
             // If the message does not contain the prefix or mentioning the bot
             int argPos = 0;
-            if (!(message.HasStringPrefix(GuildConfiguration.Load(message.Channel.GetGuild().Id).Prefix, ref argPos) || message.HasMentionPrefix(_bot.CurrentUser, ref argPos) || message.HasStringPrefix(User.Load(message.Author.Id).CustomPrefix, ref argPos))) // Configuration.Load().Prefix
+            if (!(message.HasStringPrefix(GuildConfiguration.Load(message.Channel.GetGuild().Id).Prefix, ref argPos) || message.HasMentionPrefix(Bot.CurrentUser, ref argPos) || message.HasStringPrefix(User.Load(message.Author.Id).CustomPrefix, ref argPos))) // Configuration.Load().Prefix
             {
                 await AwardCoinsToPlayer(message.Author);
                 return;
             }
 
-            var context = new CommandContext(_bot, message);
-            var result = await commandService.ExecuteAsync(context, argPos);
+            var context = new CommandContext(Bot, message);
+            var result = await CommandService.ExecuteAsync(context, argPos);
             
             if (!result.IsSuccess && Configuration.Load().UnknownCommandEnabled)
             {
                 IUserMessage errorMessage;
                 if (result.ErrorReason.ToUpper().Contains(MelissaCode.GetOldFullNameUpper))
                 {
-                    errorMessage = await context.Channel.SendMessageAsync(messageParam.Author.Mention + ", an error containing classified information has occured. Please contact Melissa.\n`Error Code/Log File: #Ex00f" + _r.RandomNumber(0, 1000000) + "`");
+                    errorMessage = await context.Channel.SendMessageAsync(messageParam.Author.Mention + ", an error containing classified information has occured. Please contact Melissa.\n`Error Code/Log File: #Ex00f" + _random.RandomNumber(0, 1000000) + "`");
                 }
                 else if(result.ErrorReason.ToUpper().Contains("END ON AN INCOMPLETE ESCAPE") && context.Message.Content.ToUpper().Contains("$SETPREFIX"))
                 {
@@ -219,16 +250,14 @@ namespace DiscordBot
                 Console.WriteLine(messageParam.Author.Mention + ", " + result.ErrorReason);
                 
                 errorMessage.DeleteAfter(20);
-
-                return;
             }
         }
 
-        public static Task AwardCoinsToPlayer(IUser Account, int CoinsToAward = 1)
+        public static Task AwardCoinsToPlayer(IUser user, int coinsToAward = 1)
         {
             try
             {
-                User.UpdateJson(Account.Id, "Coins", (Account.GetCoins() + CoinsToAward));
+                User.UpdateJson(user.Id, "Coins", (user.GetCoins() + coinsToAward));
             }
             catch (Exception e) { Console.WriteLine(e); }
 

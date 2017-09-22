@@ -17,19 +17,51 @@ using MelissasCode;
 
 namespace DiscordBot.Extensions
 {
-    public static class Extensions
+	public static class Extensions
     {
-        #region Variables
-        //public const String arrow_left = "⬅", arrow_right = "➡";
-        public static Emoji 
-            arrow_left = EmojiExtensions.FromText(":arrow_left:"), 
-            arrow_right = EmojiExtensions.FromText(":arrow_right:");
-			
-        #endregion
+        //public static EmbedBuilder AddInlineField(this EmbedBuilder eb, object name, object value)
+        //{
+        //    eb.AddField(name.ToString(), value.ToString(), true);
+        //    return eb;
+        //}
 
-        #region Dictionaries
-        public static List<string> SlotEmotes = new List<string>()
-        {           
+		#region Variables
+		//public const String arrow_left = "⬅", arrow_right = "➡";
+		public static Emoji
+			ArrowLeft = EmojiExtensions.FromText(":arrow_left:"),
+			ArrowRight = EmojiExtensions.FromText(":arrow_right:"),
+
+			LetterA = EmojiExtensions.FromText(":regional_indicator_a:"),
+			LetterB = EmojiExtensions.FromText(":regional_indicator_b:"),
+			LetterC = EmojiExtensions.FromText(":regional_indicator_c:"),
+			LetterD = EmojiExtensions.FromText(":regional_indicator_d:"),
+			LetterE = EmojiExtensions.FromText(":regional_indicator_e:"),
+			LetterF = EmojiExtensions.FromText(":regional_indicator_f:"),
+			LetterG = EmojiExtensions.FromText(":regional_indicator_g:"),
+			LetterH = EmojiExtensions.FromText(":regional_indicator_h:"),
+			LetterI = EmojiExtensions.FromText(":regional_indicator_i:"),
+			LetterJ = EmojiExtensions.FromText(":regional_indicator_j:"),
+			LetterK = EmojiExtensions.FromText(":regional_indicator_k:"),
+			LetterL = EmojiExtensions.FromText(":regional_indicator_l:"),
+			LetterM = EmojiExtensions.FromText(":regional_indicator_m:"),
+			LetterN = EmojiExtensions.FromText(":regional_indicator_n:"),
+			LetterO = EmojiExtensions.FromText(":regional_indicator_o:"),
+			LetterP = EmojiExtensions.FromText(":regional_indicator_p:"),
+			LetterQ = EmojiExtensions.FromText(":regional_indicator_q:"),
+			LetterR = EmojiExtensions.FromText(":regional_indicator_r:"),
+			LetterS = EmojiExtensions.FromText(":regional_indicator_s:"),
+			LetterT = EmojiExtensions.FromText(":regional_indicator_t:"),
+			LetterU = EmojiExtensions.FromText(":regional_indicator_u:"),
+			LetterV = EmojiExtensions.FromText(":regional_indicator_v:"),
+			LetterW = EmojiExtensions.FromText(":regional_indicator_w:"),
+			LetterX = EmojiExtensions.FromText(":regional_indicator_x:"),
+			LetterY = EmojiExtensions.FromText(":regional_indicator_y:"),
+			LetterZ = EmojiExtensions.FromText(":regional_indicator_z:");
+		#endregion
+
+		#region Dictionaries
+		public static List<string> SlotEmotes = new List<string>()
+        {
             ":green_apple:",
             ":apple:",
             ":pear:",
@@ -187,27 +219,44 @@ namespace DiscordBot.Extensions
             });
             return msg;
         }
-        //public static Boolean IsMessageOnNSFWChannel(this IUserMessage message)
-        //{
-        //    foreach (SocketGuild g in MogiiBot3._bot.Guilds)
-        //    {
-        //        if (g.Id == Configuration.Load().NSFWServerID)
-        //        {
-        //            foreach (SocketChannel c in g.Channels)
-        //            {
-        //                if (c.Id == message.Channel.Id)
-        //                {
-        //                    return true;
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    return false;
-        //}
         #endregion
 
         #region User Extensions
+		public static Boolean IsBotOwner(this IUser user)
+		{
+			if (Configuration.Load().Developer == user.Id)
+				return true;
+			else
+				return false;
+		}
+		public static Boolean IsTeamMember(this IUser user)
+		{
+			if (User.Load(user.Id).TeamMember)
+				return true;
+			else
+				return false;
+		}
+		public static Boolean IsGuildOwner(this SocketGuildUser user, IGuild guild)
+		{
+			if (guild.OwnerId == user.Id)
+				return true;
+			else
+				return false;
+		}
+		public static Boolean IsGuildAdministrator(this SocketGuildUser user)
+		{
+			if (user.GuildPermissions.Administrator)
+				return true;
+			else
+				return false;
+		}
+		public static Boolean IsGuildModerator(this SocketGuildUser user)
+		{
+			if (user.GuildPermissions.KickMembers || user.GuildPermissions.BanMembers || user.GuildPermissions.ManageMessages || user.GuildPermissions.ManageChannels)
+				return true;
+			else
+				return false;
+		}
         public static String UserCreateDate(this IUser user)
         {
             return user.CreatedAt.Day + " " + user.CreatedAt.Month.GetMonthText() + " " + user.CreatedAt.Year;
@@ -218,32 +267,12 @@ namespace DiscordBot.Extensions
 
             return u.JoinedAt.Value.Day + " " + u.JoinedAt.Value.Month.GetMonthText() + " " + u.JoinedAt.Value.Year;
         }
-        //public static Boolean NSFWMember(this IUser user)
-        //{
-        //    var cUser = user as SocketGuildUser;
-
-        //    foreach (SocketGuild g in MogiiBot3._bot.Guilds)
-        //    {
-        //        if (g.Id == Configuration.Load().NSFWServerID)
-        //        {
-        //            foreach (SocketGuildUser u in g.Users)
-        //            {
-        //                if (u == cUser)
-        //                {
-        //                    return true;
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    return false;
-        //}
         #endregion
         
         #region SocketUser Gets
         public static SocketUser GetUser(this ulong id)
         {
-            var user = MogiiBot3._bot.GetUser(id) as SocketUser;
+            var user = MogiiBot3.Bot.GetUser(id) as SocketUser;
             if (user == null) return null;
             return user;
         }
@@ -252,13 +281,13 @@ namespace DiscordBot.Extensions
         #region SocketChannel Gets
         public static SocketTextChannel GetTextChannel(this ulong id)
         {
-            var channel = MogiiBot3._bot.GetChannel(id) as SocketTextChannel;
+            var channel = MogiiBot3.Bot.GetChannel(id) as SocketTextChannel;
             if (channel == null) return null;
             return channel;
         }
         public static SocketVoiceChannel GetVoiceChannel(this ulong id)
         {
-            var channel = MogiiBot3._bot.GetChannel(id) as SocketVoiceChannel;
+            var channel = MogiiBot3.Bot.GetChannel(id) as SocketVoiceChannel;
             if (channel == null) return null;
             return channel;
         }
@@ -267,13 +296,13 @@ namespace DiscordBot.Extensions
         #region SocketGuild Gets
         public static SocketGuild GetGuild(this ulong id)
         {
-            var guild = MogiiBot3._bot.GetGuild(id) as SocketGuild;
+            var guild = MogiiBot3.Bot.GetGuild(id) as SocketGuild;
             if (guild == null) return null;
             return guild;
         }
         public static SocketGuild GetGuild(this ISocketMessageChannel textChannel)
         {
-            foreach (SocketGuild g in MogiiBot3._bot.Guilds)
+            foreach (SocketGuild g in MogiiBot3.Bot.Guilds)
             {
                 foreach (SocketTextChannel tc in g.TextChannels)
                 {
@@ -288,7 +317,7 @@ namespace DiscordBot.Extensions
         }
         public static SocketGuild GetGuild(this SocketChannel channel)
         {
-            foreach (SocketGuild g in MogiiBot3._bot.Guilds)
+            foreach (SocketGuild g in MogiiBot3.Bot.Guilds)
             {
                 foreach (SocketTextChannel t in g.TextChannels)
                 {
@@ -310,6 +339,5 @@ namespace DiscordBot.Extensions
             return null;
         }
         #endregion
-        
     }
 }

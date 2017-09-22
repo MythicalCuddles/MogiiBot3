@@ -4,13 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Discord;
 using Discord.Commands;
+using Discord;
 using Discord.WebSocket;
 
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
+using DiscordBot.Other;
+using DiscordBot.Logging;
 
 using MelissasCode;
 
@@ -20,8 +22,6 @@ namespace DiscordBot.Modules.SOwner
     [Name("Server Owner Commands")]
     public class ServerOwnerModule : ModuleBase
     {
-        //public ulong RuleGambleChannelId { get; set; } = 0;
-
         [Command("guildprefix"), Summary("Set the prefix for the bot for the server.")]
         public async Task SetPrefix(string prefix)
         {
@@ -53,14 +53,15 @@ namespace DiscordBot.Modules.SOwner
                     .Append("{GUILD.OWNER.USERNAME} - " + Context.Guild.GetOwnerAsync().Result.Username + "\n")
                     .Append("{GUILD.OWNER.MENTION} - @" + Context.Guild.GetOwnerAsync().Result.Username  + "\n")
                     .Append("{GUILD.OWNER.ID} - " + Context.Guild.GetOwnerAsync().Result.Id + "\n")
-                    .Append("```");
+					.Append("{GUILD.PREFIX} - " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "\n")
+					.Append("```");
 
                 await ReplyAsync(sb.ToString());
                 return;
             }
 
             GuildConfiguration.UpdateJson(Context.Guild.Id, "WelcomeMessage", message);
-            await ReplyAsync("Welcome message has been changed successfully by " + Context.User.Mention + "\n**SAMPLE WELCOME MESSAGE**\n" + GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.FormatWelcomeMessage(Context.User as SocketGuildUser));
+            await ReplyAsync("Welcome message has been changed successfully by " + Context.User.Mention + "\n\n**SAMPLE WELCOME MESSAGE**\n" + GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.FormatWelcomeMessage(Context.User as SocketGuildUser));
         }
 
         [Command("welcomechannel"), Summary("Set the welcome channel for the server.")]
@@ -92,14 +93,14 @@ namespace DiscordBot.Modules.SOwner
         }
 
         [Command("togglensfwstatus"), Summary("")]
-        public async Task ToggleNSFWStatus()
+        public async Task ToggleNsfwStatus()
         {
-            GuildConfiguration.UpdateJson(Context.Guild.Id, "EnableNSFWCommands", !GuildConfiguration.Load(Context.Guild.Id).EnableNSFWCommands);
-            await GuildConfiguration.Load(Context.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("NSFW Server Status have been toggled by " + Context.User.Mention + " (NSFW Server? " + GuildConfiguration.Load(Context.Guild.Id).EnableNSFWCommands + ")");
+            GuildConfiguration.UpdateJson(Context.Guild.Id, "EnableNSFWCommands", !GuildConfiguration.Load(Context.Guild.Id).EnableNsfwCommands);
+            await GuildConfiguration.Load(Context.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("NSFW Server Status have been toggled by " + Context.User.Mention + " (NSFW Server? " + GuildConfiguration.Load(Context.Guild.Id).EnableNsfwCommands + ")");
         }
 
         [Command("rule34channel"), Summary("Set the Rule34 channel for the server.")]
-        public async Task SetNSFWRule34Channel(SocketTextChannel channel)
+        public async Task SetNsfwRule34Channel(SocketTextChannel channel)
         {
             GuildConfiguration.UpdateJson(Context.Guild.Id, "RuleGambleChannelId", channel.Id);
             await ReplyAsync(Context.User.Mention + " has updated the Rule34 Gamble Channel to: " + channel.Mention);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,65 +16,23 @@ using DiscordBot.Extensions;
 using DiscordBot.Logging;
 
 using MelissasCode;
-using Discord.Commands;
-using System.Reflection;
 
 namespace DiscordBot
 {
     public class Program
     {
-        private static Version _v = Assembly.GetExecutingAssembly().GetName().Version;
+        private static readonly Version ProgramVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
         public static void Main(string[] args)
         {
             StartBot();
-
-            //Console.Write("MogiiBot 3: [");
-            //Console.ForegroundColor = ConsoleColor.Yellow;
-            //Console.Write("Version " + _v.Major + "." + _v.Minor + "." + _v.Build + "." + _v.Revision);
-            //Console.ResetColor();
-            //Console.WriteLine("]    ");
-
-            //Console.WriteLine("A Discord.Net Bot");
-            //Console.WriteLine("-----------------------------------------------------------------");
-            
-            //Console.Write("Developed by Melissa B. (");
-            //Console.ForegroundColor = ConsoleColor.Magenta;
-            //Console.Write("@MythicalCuddles");
-            //Console.ResetColor();
-            //Console.WriteLine(")");
-
-            //Console.Write("MelissasCode: [");
-            //Console.ForegroundColor = ConsoleColor.Yellow;
-            //Console.Write("Version " + MelissaCode.Version);
-            //Console.ResetColor();
-            //Console.WriteLine("]    ");
-
-            //Console.WriteLine("Web: www.mythicalcuddles.xyz");
-            //Console.WriteLine("Contact: melissa@mythicalcuddles.xyz" + "\n");
-            //Console.WriteLine("Copyright 2017 Melissa B. | Licensed under the MIT License.");
-            //Console.WriteLine("-----------------------------------------------------------------");
-
-            //License.PrintMIT();
-            //Console.WriteLine("-----------------------------------------------------------------");
-
-            //Configuration.EnsureExists();
-
-            //QuoteHandler.EnsureExists();
-            //VoteLinkHandler.EnsureExists();
-            //MusicHandler.EnsureExists();
-            //ImageHandler.EnsureExists();
-            //TransactionLogger.EnsureExists();
-            //Console.WriteLine("-----------------------------------------------------------------");
-
-            //new MogiiBot3().RunBotAsync().GetAwaiter().GetResult();
         }
 
         public static void StartBot()
         {
             Console.Write("MogiiBot 3: [");
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write("Version " + _v.Major + "." + _v.Minor + "." + _v.Build + "." + _v.Revision);
+            Console.Write("Version " + ProgramVersion.Major + "." + ProgramVersion.Minor + "." + ProgramVersion.Build + "." + ProgramVersion.Revision);
             Console.ResetColor();
             Console.WriteLine("]    ");
 

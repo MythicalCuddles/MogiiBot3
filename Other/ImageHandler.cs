@@ -9,19 +9,19 @@ using DiscordBot.Extensions;
 
 namespace DiscordBot.Other
 {
-    class ImageHandler
+    public class ImageHandler
     {
-        public static string FileName { get; private set; } = "common/ImageLinks.txt";
-        public static List<string> imageLinkList = new List<string>();
-        public static List<List<string>> splicedImageList = new List<List<string>>();
-
-        public static List<ulong> imageMessages = new List<ulong>();
-        public static List<int> pageNumber = new List<int>();
+        private const string FileName = "common/ImageLinks.txt";
+        
+        public static List<string> ImageLinkList = new List<string>();
+        public static List<List<string>> SplicedImageList = new List<List<string>>();
+        public static List<ulong> ImageMessages = new List<ulong>();
+        public static List<int> PageNumber = new List<int>();
 
         private static void LoadImages()
         {
             string file = Path.Combine(AppContext.BaseDirectory, FileName);
-            imageLinkList = File.ReadAllLines(file).ToList();
+            ImageLinkList = File.ReadAllLines(file).ToList();
 
             Console.Write("status: [");
             Console.ForegroundColor = ConsoleColor.DarkGreen;
@@ -53,39 +53,39 @@ namespace DiscordBot.Other
         private static void SaveLinks()
         {
             string file = Path.Combine(AppContext.BaseDirectory, FileName);
-            File.WriteAllLines(file, imageLinkList);
+            File.WriteAllLines(file, ImageLinkList);
         }
 
         public static void AddAndUpdateLinks(string link)
         {
-            imageLinkList.Add(link);
+            ImageLinkList.Add(link);
             SaveLinks();
         }
 
         public static void RemoveAndUpdateLinks(int index)
         {
-            imageLinkList.RemoveAt(index);
+            ImageLinkList.RemoveAt(index);
             SaveLinks();
         }
 
         public static void UpdateLink(int index, string link)
         {
-            imageLinkList[index] = link;
+            ImageLinkList[index] = link;
             SaveLinks();
         }
 
         public static void SpliceIntoList()
         {
-            splicedImageList = imageLinkList.SplitList();
+            SplicedImageList = ImageLinkList.SplitList();
         }
         public static List<string> GetSplicedList(int pageNumber)
         {
             pageNumber = pageNumber - 1;
-            return splicedImageList[pageNumber];
+            return SplicedImageList[pageNumber];
         }
         public static int GetSplicedListCount
         {
-            get { return splicedImageList.Count(); }
+            get { return SplicedImageList.Count(); }
         }
     }
 }

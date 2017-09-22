@@ -12,48 +12,46 @@ using DiscordBot.Extensions;
 
 namespace DiscordBot.Logging
 {
-    class MessageLogger
+    public class MessageLogger
     {
         //private static string MESSAGELOGFILE = "log/messages.log";
-        private static string directory = "log/messages/";
-        private static string extension = ".txt";
-        private static string serverDirectory;
-        private static string logFile;
+        private const string Directory = "log/messages/";
+        private const string Extension = ".txt";
+        private static string _serverDirectory;
+        private static string _logFile;
 
         public static void LogNewMessage(SocketUserMessage message)
         {
             if(!(message.Channel is ITextChannel))
             {
-                logFile = directory + "0#PRIVATE MESSAGE" + extension;
+                _logFile = Directory + "0#PRIVATE MESSAGE" + Extension;
             }
             else
             {
                 IGuild g = message.Channel.GetGuild();
-                serverDirectory = g.Id + "#" + g.Name + "/";
-                logFile = directory + serverDirectory + message.Channel.Id + "#" + message.Channel.Name + extension;
+                _serverDirectory = g.Id + "#" + g.Name + "/";
+                _logFile = Directory + _serverDirectory + message.Channel.Id + "#" + message.Channel.Name + Extension;
             }
 
             try
             {
-                if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + logFile))
+                if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + _logFile))
                 {
-                    //File.Create(AppDomain.CurrentDomain.BaseDirectory + logFile).Dispose();
-                    
-                    if (!File.Exists(logFile))
+                    if (!File.Exists(_logFile))
                     {
-                        string path = Path.GetDirectoryName(logFile);
-                        if (!Directory.Exists(path))
-                            Directory.CreateDirectory(path);
+                        string path = Path.GetDirectoryName(_logFile);
+                        if (!System.IO.Directory.Exists(path))
+                            System.IO.Directory.CreateDirectory(path);
 
                         Console.Write("status: [");
                         Console.ForegroundColor = ConsoleColor.DarkGreen;
                         Console.Write("ok");
                         Console.ResetColor();
-                        Console.WriteLine("]    " + logFile + ": created.");
+                        Console.WriteLine("]    " + _logFile + ": created.");
                     }
                 }
                 
-                using (StreamWriter sWriter = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + logFile, true))
+                using (StreamWriter sWriter = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + _logFile, true))
                 {
                     String timeStamp = DateTime.Now.GetTimestamp();
                     
@@ -85,36 +83,36 @@ namespace DiscordBot.Logging
         {
             if (!(message.Channel is ITextChannel))
             {
-                logFile = directory + "0#PRIVATE MESSAGE" + extension;
+                _logFile = Directory + "0#PRIVATE MESSAGE" + Extension;
             }
             else
             {
                 IGuild g = message.Channel.GetGuild();
-                serverDirectory = g.Id + "#" + g.Name + "/";
-                logFile = directory + serverDirectory + message.Channel.Id + "#" + message.Channel.Name + extension;
+                _serverDirectory = g.Id + "#" + g.Name + "/";
+                _logFile = Directory + _serverDirectory + message.Channel.Id + "#" + message.Channel.Name + Extension;
             }
 
             try
             {
-                if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + logFile))
+                if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + _logFile))
                 {
                     //File.Create(AppDomain.CurrentDomain.BaseDirectory + logFile).Dispose();
 
-                    if (!File.Exists(logFile))
+                    if (!File.Exists(_logFile))
                     {
-                        string path = Path.GetDirectoryName(logFile);
-                        if (!Directory.Exists(path))
-                            Directory.CreateDirectory(path);
+                        string path = Path.GetDirectoryName(_logFile);
+                        if (!System.IO.Directory.Exists(path))
+                            System.IO.Directory.CreateDirectory(path);
 
                         Console.Write("status: [");
                         Console.ForegroundColor = ConsoleColor.DarkGreen;
                         Console.Write("ok");
                         Console.ResetColor();
-                        Console.WriteLine("]    " + logFile + ": created.");
+                        Console.WriteLine("]    " + _logFile + ": created.");
                     }
                 }
 
-                using (StreamWriter sWriter = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + logFile, true))
+                using (StreamWriter sWriter = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + _logFile, true))
                 {
                     String timeStamp = DateTime.Now.GetTimestamp();
 
@@ -156,36 +154,36 @@ namespace DiscordBot.Logging
         {
             if (!(message.Channel is ITextChannel))
             {
-                logFile = directory + "0#PRIVATE MESSAGE" + extension;
+                _logFile = Directory + "0#PRIVATE MESSAGE" + Extension;
             }
             else
             {
                 IGuild g = message.Channel.GetGuild();
-                serverDirectory = g.Id + "#" + g.Name + "/";
-                logFile = directory + serverDirectory + message.Channel.Id + "#" + message.Channel.Name + extension;
+                _serverDirectory = g.Id + "#" + g.Name + "/";
+                _logFile = Directory + _serverDirectory + message.Channel.Id + "#" + message.Channel.Name + Extension;
             }
 
             try
             {
-                if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + logFile))
+                if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + _logFile))
                 {
                     //File.Create(AppDomain.CurrentDomain.BaseDirectory + logFile).Dispose();
 
-                    if (!File.Exists(logFile))
+                    if (!File.Exists(_logFile))
                     {
-                        string path = Path.GetDirectoryName(logFile);
-                        if (!Directory.Exists(path))
-                            Directory.CreateDirectory(path);
+                        string path = Path.GetDirectoryName(_logFile);
+                        if (!System.IO.Directory.Exists(path))
+                            System.IO.Directory.CreateDirectory(path);
 
                         Console.Write("status: [");
                         Console.ForegroundColor = ConsoleColor.DarkGreen;
                         Console.Write("ok");
                         Console.ResetColor();
-                        Console.WriteLine("]    " + logFile + ": created.");
+                        Console.WriteLine("]    " + _logFile + ": created.");
                     }
                 }
 
-                using (StreamWriter sWriter = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + logFile, true))
+                using (StreamWriter sWriter = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + _logFile, true))
                 {
                     String timeStamp = DateTime.Now.GetTimestamp();
 

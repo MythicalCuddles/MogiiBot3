@@ -22,7 +22,7 @@ namespace DiscordBot.Modules.Public.Games
     [RequireContext(ContextType.Guild)]
     public class SlotsGameModule : ModuleBase
     {
-        Random _r = new Random();
+        private readonly Random _random = new Random();
 
         [Command("buyslots"), Summary("")]
         [Alias("slots")]
@@ -40,32 +40,41 @@ namespace DiscordBot.Modules.Public.Games
             }
 
             int slotEmotesCount = Extensions.Extensions.SlotEmotes.Count();
-            int one = _r.Next(0, slotEmotesCount), two = _r.Next(0, slotEmotesCount), three = _r.Next(0, slotEmotesCount);
+            int one = _random.Next(0, slotEmotesCount), two = _random.Next(0, slotEmotesCount), three = _random.Next(0, slotEmotesCount);
 
             StringBuilder sb = new StringBuilder()
                 .Append("**[  :slot_machine: l SLOTS ]**\n")
                 .Append("------------------\n")
-                .Append(Extensions.Extensions.SlotEmotes[_r.Next(0, slotEmotesCount)] + " : " + Extensions.Extensions.SlotEmotes[_r.Next(0, slotEmotesCount)] + " : " + Extensions.Extensions.SlotEmotes[_r.Next(0, slotEmotesCount)] + "\n")
+                .Append(Extensions.Extensions.SlotEmotes[_random.Next(0, slotEmotesCount)] + " : " + Extensions.Extensions.SlotEmotes[_random.Next(0, slotEmotesCount)] + " : " + Extensions.Extensions.SlotEmotes[_random.Next(0, slotEmotesCount)] + "\n")
                 .Append(Extensions.Extensions.SlotEmotes[one] + " : " + Extensions.Extensions.SlotEmotes[two] + " : " + Extensions.Extensions.SlotEmotes[three] + " < \n")
-                .Append(Extensions.Extensions.SlotEmotes[_r.Next(0, slotEmotesCount)] + " : " + Extensions.Extensions.SlotEmotes[_r.Next(0, slotEmotesCount)] + " : " + Extensions.Extensions.SlotEmotes[_r.Next(0, slotEmotesCount)] + "\n")
+                .Append(Extensions.Extensions.SlotEmotes[_random.Next(0, slotEmotesCount)] + " : " + Extensions.Extensions.SlotEmotes[_random.Next(0, slotEmotesCount)] + " : " + Extensions.Extensions.SlotEmotes[_random.Next(0, slotEmotesCount)] + "\n")
                 .Append("------------------\n");
 
             User.UpdateJson(Context.User.Id, "Coins", (User.Load(Context.User.Id).Coins - inputCoins));
 
-            if (one == two || two == three || one == three)
+            if (one == two && two == three)
             {
                 sb.Append("| : : : : **WIN** : : : : |\n\n");
                 int coinsWon = (inputCoins * 2) + inputCoins;
                 sb.Append("**" + Context.User.Username + "** bet **" + inputCoins + "** coin(s) and won **" + coinsWon + "** coin(s).");
 
                 User.UpdateJson(Context.User.Id, "Coins", (User.Load(Context.User.Id).Coins + coinsWon));
-                TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") bet " + inputCoins + " coins on the slots and won " + coinsWon + " coins.");
+                TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") bet " + inputCoins + " coins on the slots and won " + coinsWon + " coins. [ALL]");
+            }
+            else if (one == two || two == three || one == three)
+            {
+                sb.Append("| : : : : **WIN** : : : : |\n\n");
+                int coinsWon = (inputCoins) + inputCoins;
+                sb.Append("**" + Context.User.Username + "** bet **" + inputCoins + "** coin(s) and won **" + coinsWon + "** coin(s).");
+
+                User.UpdateJson(Context.User.Id, "Coins", (User.Load(Context.User.Id).Coins + coinsWon));
+                TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") bet " + inputCoins + " coins on the slots and won " + coinsWon + " coins. [TWO]");
             }
             else
             {
                 sb.Append("| : : :  **LOST**  : : : |\n\n");
                 sb.Append("**" + Context.User.Username + "** bet **" + inputCoins + "** coin(s) and lost.");
-                TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") bet " + inputCoins + " coins on the slots and lost.");
+                TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") bet " + inputCoins + " coins on the slots and lost. [NONE]");
             }
 
             await ReplyAsync(sb.ToString());

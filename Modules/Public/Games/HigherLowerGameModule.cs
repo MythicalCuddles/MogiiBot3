@@ -23,7 +23,7 @@ namespace DiscordBot.Modules.Public.Games
     [RequireContext(ContextType.Guild)]
     public class HigherLowerGameModule : ModuleBase
     {
-        Random _r = new Random();
+        private readonly Random _random = new Random();
 
         [Command("higher")]
         public async Task DiceHigherBet(int coinsBet)
@@ -35,11 +35,11 @@ namespace DiscordBot.Modules.Public.Games
                 return;
             }
 
-            int botOne = _r.RandomNumber(1, 6), botTwo = _r.RandomNumber(1, 6), botTotal = botOne + botTwo;
-            int userOne = _r.RandomNumber(1, 6), userTwo = _r.RandomNumber(1, 6), userTotal = userOne + userTwo;
+            int botOne = _random.RandomNumber(1, 6), botTwo = _random.RandomNumber(1, 6), botTotal = botOne + botTwo;
+            int userOne = _random.RandomNumber(1, 6), userTwo = _random.RandomNumber(1, 6), userTotal = userOne + userTwo;
 
             StringBuilder sb = new StringBuilder()
-                .Append(MogiiBot3._bot.CurrentUser.Mention + " has rolled **" + botOne + "** and **" + botTwo + "** giving a total of **" + botTotal + "**\n")
+                .Append(MogiiBot3.Bot.CurrentUser.Mention + " has rolled **" + botOne + "** and **" + botTwo + "** giving a total of **" + botTotal + "**\n")
                 .Append(Context.User.Mention + " has rolled **" + userOne + "** and **" + userTwo + "** giving a total of **" + userTotal + "**\n");
 
             User.UpdateJson(Context.User.Id, "Coins", (userCoins - coinsBet));
@@ -76,11 +76,11 @@ namespace DiscordBot.Modules.Public.Games
                 return;
             }
 
-            int botOne = _r.RandomNumber(1, 6), botTwo = _r.RandomNumber(1, 6), botTotal = botOne + botTwo;
-            int userOne = _r.RandomNumber(1, 6), userTwo = _r.RandomNumber(1, 6), userTotal = userOne + userTwo;
+            int botOne = _random.RandomNumber(1, 6), botTwo = _random.RandomNumber(1, 6), botTotal = botOne + botTwo;
+            int userOne = _random.RandomNumber(1, 6), userTwo = _random.RandomNumber(1, 6), userTotal = userOne + userTwo;
 
             StringBuilder sb = new StringBuilder()
-                .Append(MogiiBot3._bot.CurrentUser.Mention + " has rolled **" + botOne + "** and **" + botTwo + "** giving a total of **" + botTotal + "**\n")
+                .Append(MogiiBot3.Bot.CurrentUser.Mention + " has rolled **" + botOne + "** and **" + botTwo + "** giving a total of **" + botTotal + "**\n")
                 .Append(Context.User.Mention + " has rolled **" + userOne + "** and **" + userTwo + "** giving a total of **" + userTotal + "**\n");
 
             User.UpdateJson(Context.User.Id, "Coins", (userCoins - coinsBet));

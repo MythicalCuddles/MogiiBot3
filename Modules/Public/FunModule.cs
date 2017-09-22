@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Discord.Commands;
 using Discord;
+using Discord.WebSocket;
 
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
@@ -22,7 +23,7 @@ namespace DiscordBot.Modules.Public
     [RequireContext(ContextType.Guild)]
     public class FunModule : ModuleBase
     {
-        Random _r = new Random();
+        private readonly Random _random = new Random();
         
         [Command("dice"), Summary("Rolls a x sided dice.")]
         public async Task RollDice(int numberOfDice = 1)
@@ -34,32 +35,34 @@ namespace DiscordBot.Modules.Public
             }
             else if(numberOfDice < 1)
             {
-                await ReplyAsync("You can need to roll at least 1 dice, " + Context.User.Mention);
+                await ReplyAsync("You need to roll at least 1 dice, " + Context.User.Mention);
                 return;
             }
 
             EmbedBuilder eb = new EmbedBuilder()
                 .WithDescription(Context.User.Mention + " rolled " + numberOfDice + " 6-sided dice.");
-            
-            int totalOfRoll = 0, roll = 0;
+
+            int totalOfRoll = 0;
             for(int i = 0; i < numberOfDice; i++)
             {
-                roll = _r.RandomNumber(1, 6);
+                var roll = _random.RandomNumber(1, 6);
                 totalOfRoll += roll;
 
-                eb.AddInlineField("Dice " + (i + 1), roll.ToString());
+                eb.AddField("Dice " + (i + 1), roll.ToString(), true);
             }
 
             eb.AddField("Sum of roll", totalOfRoll);
+            eb.WithFooter("Did you know? You can roll more dice by doing \"" +
+                          GuildConfiguration.Load(Context.Guild.Id).Prefix + "dice [number of dice]\"!");
 
-            await ReplyAsync("", false, eb);
+            await ReplyAsync("", false, eb.Build());
         }
 
         [Command("dice20"), Summary("Rolls a 20 sided dice.")]
         [Alias("d20")]
         public async Task Roll20Dice()
         {
-            int value = _r.RandomNumber(1, 20);
+            int value = _random.RandomNumber(1, 20);
             await ReplyAsync("A 20-sided dice was rolled, and landed on: " + value);
         }
 
@@ -67,7 +70,7 @@ namespace DiscordBot.Modules.Public
         [Alias("flip", "tosscoin", "coinflip")]
         public async Task FlipCoin()
         {
-            int value = _r.RandomNumber(1, 2);
+            int value = _random.RandomNumber(1, 2);
 
             if(value == 1)
             {
@@ -113,6 +116,12 @@ namespace DiscordBot.Modules.Public
             await ReplyAsync("https://cdn.discordapp.com/attachments/235124701964271618/310169979083423744/received_10206534636842919.jpeg");
         }
 
+        [Command("wat"), Summary("")]
+        public async Task Wat()
+        {
+            await ReplyAsync("https://giphy.com/gifs/wat-loop-old-woman-jA8TT03Sj2pXO");
+        }
+
         [Command("why"), Summary("y tho")]
         public async Task WhyTho()
         {
@@ -143,9 +152,9 @@ namespace DiscordBot.Modules.Public
         {
             if (GuildConfiguration.Load(Context.Guild.Id).SenpaiEnabled)
             {
-                if (_r.Next(0, 20) == _r.Next(0, 20))
+                if (_random.Next(0, 20) == _random.Next(0, 20) || Context.User.IsBotOwner())
                 {
-                    await ReplyAsync(Context.User.Mention + ", Senpai has noticed you!");
+					await ReplyAsync(Context.User.Mention + ", Senpai has noticed you!");
                 }
                 else
                 {
@@ -208,12 +217,12 @@ namespace DiscordBot.Modules.Public
         {
             if (GuildConfiguration.Load(Context.Guild.Id).QuotesEnabled)
             {
-                int generatedNumber = _r.Next(0, QuoteHandler.quoteList.Count());
+                int generatedNumber = _random.Next(0, QuoteHandler.QuoteList.Count());
 
                // while (generatedNumber == lastQuote)
                     //generatedNumber = _r.Next(0, QuoteHandler.quoteList.Count());
 
-                await ReplyAsync(QuoteHandler.quoteList[generatedNumber]); // Context.User.Mention + ", here's your generated quote: \n" + 
+                await ReplyAsync(QuoteHandler.QuoteList[generatedNumber]); // Context.User.Mention + ", here's your generated quote: \n" + 
 
                 //lastQuote = generatedNumber;
             }
@@ -224,10 +233,22 @@ namespace DiscordBot.Modules.Public
         }
 
         [Command("buyquote"), Summary("Request a quote to be added for a price.")]
-        public async Task RequestToAddQuote([Remainder]string quote)
-        {
-            int userCoins = User.Load(Context.User.Id).Coins;
-            int quoteCost = Configuration.Load().QuoteCost;
+        public async Task RequestToAddQuote([Remainder]string quote = null)
+		{
+			int userCoins = User.Load(Context.User.Id).Coins;
+			int quoteCost = Configuration.Load().QuoteCost;
+
+			if (quote == null)
+			{
+				await ReplyAsync("**Syntax:** " +
+				  GuildConfiguration.Load(Context.Guild.Id).Prefix + "buyquote [quote]\n```" +
+				  "**Information:**\n" +
+				  "-----------------------------\n" +
+				  "• You can buy a quote for " + quoteCost + " coins.\n" +
+				  "• Your quote will not be added instantly to the list. A staff member must first verify that it is safe to put on the list.\n" +
+				  "```");
+				return;
+			}
 
             if (userCoins < quoteCost)
             {
@@ -238,26 +259,26 @@ namespace DiscordBot.Modules.Public
             QuoteHandler.AddAndUpdateRequestQuotes(quote);
             User.UpdateJson(Context.User.Id, "Coins", (userCoins - quoteCost));
             TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") paid " + quoteCost + " for a custom quote.");
-            await ReplyAsync(Context.User.Mention + ", thank you for your quote. This costed you " + quoteCost + " coins. Your quote has been added to a wait list, and should be verified by a staff member shortly.");
+            await ReplyAsync(Context.User.Mention + ", your quote has been added to the list, and should be verified by a staff member shortly.");
 
-            await Configuration.Load().LogChannelID.GetTextChannel().SendMessageAsync("**New Quote**\nQuote requested by: **" + Context.User.Mention + "**\nQuote: " + quote);
+            await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**New Quote**\nQuote requested by: **" + Context.User.Mention + "**\nQuote: " + quote);
             await GuildConfiguration.Load(Context.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("**New Quote**\n" + quote + "\n\n*Do " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "listrequestquotes to view the ID and other quotes.*");
         }
 
         [Command("music"), Summary("Replies posting a music link which has been set by staff.")]
         public async Task FavouriteMusicLink()
         {
-            int generatedNumber = _r.Next(0, MusicHandler.musicLinkList.Count());
+            int generatedNumber = _random.Next(0, MusicHandler.MusicLinkList.Count());
 
-            await ReplyAsync("Here's the music!\n" + MusicHandler.musicLinkList[generatedNumber]);
+            await ReplyAsync("Here's the music!\n" + MusicHandler.MusicLinkList[generatedNumber]);
         }
 
         [Command("image"), Summary("Replies posting a image link which has been set by staff.")]
         public async Task PostImageLink()
         {
-            int generatedNumber = _r.Next(0, ImageHandler.imageLinkList.Count());
+            int generatedNumber = _random.Next(0, ImageHandler.ImageLinkList.Count());
 
-            await ReplyAsync("Here's the image!\n" + ImageHandler.imageLinkList[generatedNumber]);
+            await ReplyAsync("Here's the image!\n" + ImageHandler.ImageLinkList[generatedNumber]);
         }
     }
 }
