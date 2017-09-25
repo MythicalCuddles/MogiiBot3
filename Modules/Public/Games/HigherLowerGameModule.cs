@@ -25,6 +25,23 @@ namespace DiscordBot.Modules.Public.Games
     {
         private readonly Random _random = new Random();
 
+        [Command("")]
+        public async Task Dice()
+        {
+            //await ReplyAsync("**Syntax:** " +
+            //                 GuildConfiguration.Load(Context.Guild.Id).Prefix + "dice [higher/lower] [coins]\n```" +
+            //                 "-----------------------------\n" +
+            //                 "Looking to roll a dice? " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "rolldice\n" +
+            //                 "```");
+
+            EmbedBuilder eb = new EmbedBuilder()
+                .WithTitle("Syntax")
+                .WithDescription(GuildConfiguration.Load(Context.Guild.Id).Prefix + "dice [higher/lower] [coins]")
+                .WithFooter("Looking to roll some dice? Use \"" + GuildConfiguration.Load(Context.Guild.Id).Prefix + "rolldice\"");
+            await ReplyAsync("", false, eb.Build());
+
+        }
+
         [Command("higher")]
         public async Task DiceHigherBet(int coinsBet)
         {

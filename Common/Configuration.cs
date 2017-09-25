@@ -28,7 +28,7 @@ namespace DiscordBot.Common
         public int LeaderboardAmount { get; set; } = 5;
         public int QuoteCost { get; set; } = 250;
         public int PrefixCost { get; set; } = 2500;
-        public bool CoinsForReactions { get; set; } = false;
+        public int SenpaiChanceRate { get; set; } = 5;
 
         public ulong LogChannelId { get; set; } = 313318109500932096;
 

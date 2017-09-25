@@ -55,12 +55,6 @@ namespace DiscordBot.Handlers
                 await HandleImageReactions(message, channel, reaction);
                 return;
             }
-
-            // Coin System to add a coin for each reaction that is added to a message.
-            if (Configuration.Load().CoinsForReactions)
-            {
-                await MogiiBot3.AwardCoinsToPlayer(reaction.User.Value);
-            }
         }
 
         private static async Task HandleQuoteReactions(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)

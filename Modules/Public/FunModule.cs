@@ -25,7 +25,7 @@ namespace DiscordBot.Modules.Public
     {
         private readonly Random _random = new Random();
         
-        [Command("dice"), Summary("Rolls a x sided dice.")]
+        [Command("rolldice"), Summary("Rolls a x sided dice.")]
         public async Task RollDice(int numberOfDice = 1)
         {
             if (numberOfDice > 10)
@@ -53,7 +53,7 @@ namespace DiscordBot.Modules.Public
 
             eb.AddField("Sum of roll", totalOfRoll);
             eb.WithFooter("Did you know? You can roll more dice by doing \"" +
-                          GuildConfiguration.Load(Context.Guild.Id).Prefix + "dice [number of dice]\"!");
+                          GuildConfiguration.Load(Context.Guild.Id).Prefix + "rolldice [number of dice]\"!");
 
             await ReplyAsync("", false, eb.Build());
         }
@@ -70,19 +70,19 @@ namespace DiscordBot.Modules.Public
         [Alias("flip", "tosscoin", "coinflip")]
         public async Task FlipCoin()
         {
-            int value = _random.RandomNumber(1, 2);
+            var value = _random.RandomNumber(1, 2);
 
-            if(value == 1)
+            switch (value)
             {
-                await ReplyAsync("A coin has been flipped, and landed on: **Heads**");
-            }
-            else if(value == 2)
-            {
-                await ReplyAsync("A coin has been flipped, and landed on: **Tails**");
-            }
-            else
-            {
-                await ReplyAsync("A coin had been flipped, but got lost while landing.");
+                case 1:
+                    await ReplyAsync("A coin has been flipped, and landed on: **Heads**");
+                    break;
+                case 2:
+                    await ReplyAsync("A coin has been flipped, and landed on: **Tails**");
+                    break;
+                default:
+                    await ReplyAsync("A coin had been flipped, but got lost while landing.");
+                    break;
             }
         }
 
@@ -152,7 +152,7 @@ namespace DiscordBot.Modules.Public
         {
             if (GuildConfiguration.Load(Context.Guild.Id).SenpaiEnabled)
             {
-                if (_random.Next(0, 20) == _random.Next(0, 20) || Context.User.IsBotOwner())
+                if (_random.RandomNumber(0, 100) <= Configuration.Load().SenpaiChanceRate)
                 {
 					await ReplyAsync(Context.User.Mention + ", Senpai has noticed you!");
                 }
@@ -171,7 +171,7 @@ namespace DiscordBot.Modules.Public
         [Alias("purse", "balance", "bal", "coins", "mogiicoins")]
         public async Task LoadUserBalance()
         {
-            int userCoins = Context.User.GetCoins();
+            var userCoins = Context.User.GetCoins();
             await ReplyAsync(":moneybag: **" + Context.User.Username + "'s Balance** :moneybag:\n" + 
                 "\n" +
                 "**" + userCoins + "** coins\n");

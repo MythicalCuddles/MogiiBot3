@@ -24,9 +24,9 @@ namespace DiscordBot.Common
     public class User
     {
         [JsonIgnore]
-        private static string DirectoryPath { get; set; } = "users/";
+        private static string DirectoryPath { get; } = "users/";
         [JsonIgnore]
-        private static string Extension { get; set; } = ".json";
+        private static string Extension { get; } = ".json";
 
         public int Coins { get; set; } = 0;
         public int XP { get; set; } = 0;

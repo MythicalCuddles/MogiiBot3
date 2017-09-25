@@ -48,23 +48,18 @@ namespace DiscordBot
 
             // Create Tasks for Bot Events
             Bot.Log += Log;
-            
             Bot.UserJoined += UserHandler.UserJoined;
             Bot.UserLeft += UserHandler.UserLeft;
-
             Bot.ChannelCreated += ChannelHandler.ChannelCreated;
             Bot.ChannelDestroyed += ChannelHandler.ChannelDestroyed;
-
-            Bot.Ready += Ready;
-			Bot.Disconnected += Disconnected;
-
 			Bot.ReactionAdded += ReactionHandler.ReactionAdded;
-
 			Bot.MessageReceived += MessageReceived;
 			Bot.MessageDeleted += MessageHandler.MessageDeleted;
             Bot.MessageUpdated += MessageHandler.MessageUpdated;
-			
-			await CommandService.AddModulesAsync(Assembly.GetEntryAssembly());
+            Bot.Ready += Ready;
+            Bot.Disconnected += Disconnected;
+
+            await CommandService.AddModulesAsync(Assembly.GetEntryAssembly());
 			
 			// Add token from config
 			await Bot.LoginAsync(TokenType.Bot, BotToken); // Connect to Discord with Bot Login Details
@@ -74,7 +69,7 @@ namespace DiscordBot
             await Task.Delay(-1);
 		}
 
-	    private static Task Log(LogMessage logMessage)
+        private static Task Log(LogMessage logMessage)
 		{
 			var cc = Console.ForegroundColor;
 			switch (logMessage.Severity)
@@ -224,7 +219,7 @@ namespace DiscordBot
             int argPos = 0;
             if (!(message.HasStringPrefix(GuildConfiguration.Load(message.Channel.GetGuild().Id).Prefix, ref argPos) || message.HasMentionPrefix(Bot.CurrentUser, ref argPos) || message.HasStringPrefix(User.Load(message.Author.Id).CustomPrefix, ref argPos))) // Configuration.Load().Prefix
             {
-                await AwardCoinsToPlayer(message.Author);
+                AwardCoinsToPlayer(message.Author);
                 return;
             }
 

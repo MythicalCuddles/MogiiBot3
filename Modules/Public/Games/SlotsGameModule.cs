@@ -33,7 +33,8 @@ namespace DiscordBot.Modules.Public.Games
                 await ReplyAsync("You can not play with " + inputCoins + " coin(s)!");
                 return;
             }
-            else if (inputCoins > User.Load(Context.User.Id).Coins)
+
+            if (inputCoins > User.Load(Context.User.Id).Coins)
             {
                 await ReplyAsync(Context.User.Mention + ", you don't have enough coin(s) to play with.");
                 return;

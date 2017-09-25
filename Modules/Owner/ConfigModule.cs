@@ -39,6 +39,7 @@ namespace DiscordBot.Modules.Owner
                              "-> editconfig prefixprice [price to change custom prefix]\n" +
                              "-> editconfig globallogchannel [channel mention / channel id]\n" +
                              "-> editconfig rule34 [max number for random to use]\n" +
+                             "-> editconfig senpaichance [number 1-100]\n" +
                              "```");
         }
         
@@ -127,7 +128,7 @@ namespace DiscordBot.Modules.Owner
             Configuration.UpdateJson("QuoteCost", price);
             await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**" + Context.User.Mention + "** has updated the quote cost to **" + price + "** coins. (Was: **" + oldPrice + "** coins)");
         }
-
+        
         [Command("prefixprice"), Summary("")]
         [Alias("changeprefixprice", "updateprefixprice")]
         public async Task ChangePrefixPrice(int price)
@@ -137,7 +138,13 @@ namespace DiscordBot.Modules.Owner
             await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**" + Context.User.Mention + "** has updated the prefix cost to **" + price + "** coins. (Was: **" + oldPrice + "** coins)");
         }
 
-        //CoinsForReactions
+        [Command("senpaichance"), Summary("")]
+        public async Task ChangeSenpaiChance(int chanceValue)
+        {
+            int oldChance = Configuration.Load().SenpaiChanceRate;
+            Configuration.UpdateJson("SenpaiChanceRate", chanceValue);
+            await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**" + Context.User.Mention + "** has updated the senpai chance to **" + chanceValue + "%**. (Was: **" + oldChance + "%**)");
+        }
 
         [Command("globallogchannel"), Summary("")]
         public async Task SetGlobalLogChannel(SocketTextChannel channel)
