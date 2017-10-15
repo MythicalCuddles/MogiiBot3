@@ -29,8 +29,9 @@ namespace DiscordBot.Modules.Owner
                              "Available Commands\n" +
                              "-----------------------------\n" +
                              "Channel Message\n" +
-                             "-> editconfig playing [message]\n" +
-                             "-> editconfig twitch [twitch link] [message]\n" +
+                             "-> editconfig gameactivity [activity message] (twitch link)" +
+                             //"-> editconfig playing [message]\n" +
+                             //"-> editconfig twitch [twitch link] [message]\n" +
                              "-> editconfig status [status]\n" +
                              "• statuses: online, donotdisturb, idle, invisible\n" +
                              "-> editconfig toggleunknowncommand\n" +
@@ -42,28 +43,56 @@ namespace DiscordBot.Modules.Owner
                              "-> editconfig senpaichance [number 1-100]\n" +
                              "```");
         }
-        
-        [Command("playing"), Summary("Changes the playing message of the bot.")]
-        public async Task PlayingMessage([Remainder] string playingMessage)
-        {
-            Configuration.UpdateJson("Playing", playingMessage);
-            await MogiiBot3.Bot.SetGameAsync(playingMessage);
-        }
 
-        [Command("twitch"), Summary("Sets the twitch streaming link. Type \"none\" to disable.")]
-        [Alias("streaming", "twitchstreaming")]
-        public async Task SetTwitchStreamingStatus(string linkOrValue, [Remainder]string playing)
+        [Command("gameactivity"), Summary("Changes the playing message of the bot, and changes it to streaming mode if twitch link is inserted.")]
+        public async Task SetGameActivity(string activityMessage = null, string twitchLink = null)
         {
-            if (linkOrValue.Contains("https://www.twitch.tv/"))
+            if (activityMessage == null)
             {
-                await MogiiBot3.Bot.SetGameAsync(playing, linkOrValue, StreamType.Twitch);
-                await ReplyAsync(Context.User.Mention + ", my status has been updated to streaming with the Twitch.TV link of <" + linkOrValue + ">");
+                await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "gameactivity [\"activity message\"] (twitch link)\n`Note: Activity message needs to contain the speech marks to register properly.`");
+                return;
+            }
+
+            Configuration.UpdateJson("Playing", activityMessage);
+            Configuration.UpdateJson("TwitchLink", twitchLink);
+
+            if (twitchLink == null)
+            {
+                await MogiiBot3.Bot.SetGameAsync(activityMessage);
             }
             else
             {
-                await MogiiBot3.Bot.SetGameAsync(playing);
+                await MogiiBot3.Bot.SetGameAsync(activityMessage, twitchLink, StreamType.Twitch);
             }
+
+            var eb = new EmbedBuilder()
+                .WithDescription(Context.User.Username + " updated " + MogiiBot3.Bot.CurrentUser.Mention + "'s game activity message.")
+                .WithColor(Color.DarkGreen);
+
+            await ReplyAsync("", false, eb.Build());
         }
+
+        //[Command("playing"), Summary("Changes the playing message of the bot.")]
+        //public async Task PlayingMessage([Remainder] string playingMessage)
+        //{
+        //    Configuration.UpdateJson("Playing", playingMessage);
+        //    await MogiiBot3.Bot.SetGameAsync(playingMessage);
+        //}
+
+        //[Command("twitch"), Summary("Sets the twitch streaming link. Type \"none\" to disable.")]
+        //[Alias("streaming", "twitchstreaming")]
+        //public async Task SetTwitchStreamingStatus(string linkOrValue, [Remainder]string playing)
+        //{
+        //    if (linkOrValue.Contains("https://www.twitch.tv/"))
+        //    {
+        //        await MogiiBot3.Bot.SetGameAsync(playing, linkOrValue, StreamType.Twitch);
+        //        await ReplyAsync(Context.User.Mention + ", my status has been updated to streaming with the Twitch.TV link of <" + linkOrValue + ">");
+        //    }
+        //    else
+        //    {
+        //        await MogiiBot3.Bot.SetGameAsync(playing);
+        //    }
+        //}
 
         [Group("status")]
         public class StatusModule : ModuleBase

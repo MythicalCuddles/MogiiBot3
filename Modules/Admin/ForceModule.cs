@@ -10,9 +10,11 @@ using Discord.WebSocket;
 
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
+using DiscordBot.Extensions;
 using DiscordBot.Other;
 
 using MelissasCode;
+using MelissaNet;
 
 namespace DiscordBot.Modules.Admin
 {
@@ -43,33 +45,55 @@ namespace DiscordBot.Modules.Admin
         [Command("about"), Summary("Force set the about message for the specified user.")]
         public async Task ForceAbout(IUser user, [Remainder]string about)
         {
-            string oldAbout = User.Load(user.Id).About;
             User.UpdateJson(user.Id, "About", about);
-            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s about message!");
+
+            var eb = new EmbedBuilder()
+                .WithDescription(Context.User.Username + " changed " + user.Mention + "'s about text successfully.")
+                .WithColor(Color.DarkGreen);
+
+            await ReplyAsync("", false, eb.Build());
         }
 
         [Command("name"), Summary("Force set the name message for the specified user.")]
         public async Task ForceName(IUser user, [Remainder]string name)
         {
-            string oldName = User.Load(user.Id).Name;
+            //string oldName = User.Load(user.Id).Name;
             User.UpdateJson(user.Id, "Name", name);
-            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s name message!");
+            //await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s name message!");
+
+            var eb = new EmbedBuilder()
+                .WithDescription(Context.User.Username + " changed " + user.Mention + "'s name text successfully.")
+                .WithColor(Color.DarkGreen);
+
+            await ReplyAsync("", false, eb.Build());
         }
 
         [Command("gender"), Summary("Force set the gender message for the specified user.")]
         public async Task ForceGender(IUser user, [Remainder]string gender)
         {
-            string oldGender = User.Load(user.Id).Gender;
+            //string oldGender = User.Load(user.Id).Gender;
             User.UpdateJson(user.Id, "Gender", gender);
-            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s gender message!");
+            //await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s gender message!");
+
+            var eb = new EmbedBuilder()
+                .WithDescription(Context.User.Username + " changed " + user.Mention + "'s gender text successfully.")
+                .WithColor(Color.DarkGreen);
+
+            await ReplyAsync("", false, eb.Build());
         }
 
         [Command("pronouns"), Summary("Force set the pronouns message for the specified user.")]
         public async Task ForcePronouns(IUser user, [Remainder]string pronouns)
         {
-            string oldPronouns = User.Load(user.Id).Pronouns;
+            //string oldPronouns = User.Load(user.Id).Pronouns;
             User.UpdateJson(user.Id, "Pronouns", pronouns);
-            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s pronouns message!");
+            //await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s pronouns message!");
+
+            var eb = new EmbedBuilder()
+                .WithDescription(Context.User.Username + " changed " + user.Mention + "'s pronoun text successfully.")
+                .WithColor(Color.DarkGreen);
+
+            await ReplyAsync("", false, eb.Build());
         }
 
         [Command("coins"), Summary("Force set the coins for the specified user.")]
@@ -77,31 +101,56 @@ namespace DiscordBot.Modules.Admin
         {
             int oldCoins = User.Load(user.Id).Coins;
             User.UpdateJson(user.Id, "Coins", newValue);
-            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s coins value to " + newValue + " (Was: " + oldCoins + ")");
+            //await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s coins value to " + newValue + " (Was: " + oldCoins + ")");
+
+            var eb = new EmbedBuilder()
+                .WithDescription(Context.User.Username + " changed " + user.Mention + "'s coins successfully.")
+                .WithFooter("Was: " + oldCoins)
+                .WithColor(Color.DarkGreen);
+
+            await ReplyAsync("", false, eb.Build());
         }
 
         [Command("minecraftusername"), Summary("Force set the minecraft username for the specified user.")]
         public async Task ForceMinecraftUsername(IUser user, [Remainder]string username)
         {
-            string oldName = User.Load(user.Id).MinecraftUsername;
+            //string oldName = User.Load(user.Id).MinecraftUsername;
             User.UpdateJson(user.Id, "MinecraftUsername", username);
-            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s minecraft username to " + username + " (Was: " + oldName + ")");
+            //await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s minecraft username to " + username + " (Was: " + oldName + ")");
+
+            var eb = new EmbedBuilder()
+                .WithDescription(Context.User.Username + " changed " + user.Mention + "'s Minecraft username text successfully.")
+                .WithColor(Color.DarkGreen);
+
+            await ReplyAsync("", false, eb.Build());
         }
 
         [Command("snapchat"), Summary("")]
         public async Task ForceSnapchatUsername(IUser user, [Remainder]string username)
         {
-            string oldName = User.Load(user.Id).Snapchat;
+            //string oldName = User.Load(user.Id).Snapchat;
             User.UpdateJson(user.Id, "Snapchat", username);
-            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s Snapchat Username to " + username + " (Was: " + oldName + ")");
+            //await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s Snapchat Username to " + username + " (Was: " + oldName + ")");
+
+            var eb = new EmbedBuilder()
+                .WithDescription(Context.User.Username + " changed " + user.Mention + "'s Snapchat username text successfully.")
+                .WithColor(Color.DarkGreen);
+
+            await ReplyAsync("", false, eb.Build());
         }
 
         [Command("prefix"), Summary("")]
         public async Task ForcePrefix(IUser user, [Remainder]string prefix)
         {
-            string oldPrefix = User.Load(user.Id).CustomPrefix;
+            //string oldPrefix = User.Load(user.Id).CustomPrefix;
             User.UpdateJson(user.Id, "CustomPrefix", prefix);
-            await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s Custom Prefix to " + prefix + " (Was: " + oldPrefix + ")");
+            //await ReplyAsync("**LOG MESSAGE**\n" + Context.User.Mention + " has changed " + user.Mention + "'s Custom Prefix to " + prefix + " (Was: " + oldPrefix + ")");
+
+            var eb = new EmbedBuilder()
+                .WithDescription(Context.User.Username + " changed " + user.Mention + "'s custom prefix successfully.")
+                .WithColor(Color.DarkGreen);
+
+            await ReplyAsync("", false, eb.Build());
         }
     }
 }

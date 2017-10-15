@@ -66,7 +66,7 @@ namespace DiscordBot.Modules.Mod
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
                 .WithName(MogiiBot3.Bot.CurrentUser.Username + " Version " + ProgramVersion.Major + "." + ProgramVersion.Minor + "." + ProgramVersion.Build + "." + ProgramVersion.Revision);
             EmbedFooterBuilder efb = new EmbedFooterBuilder()
-                .WithText("MelissasCode Version " + MelissaCode.Version + " | " + ((GuidAttribute)(typeof(Program).Assembly).GetCustomAttributes(typeof(GuidAttribute), true)[0]).Value);
+                .WithText("MelissasCode Version " + MelissaCode.Version + " | " + "MelissaNet Version " + MelissaNet.VersionInfo.Version + " | " + ((GuidAttribute)(typeof(Program).Assembly).GetCustomAttributes(typeof(GuidAttribute), true)[0]).Value);
             EmbedBuilder eb = new EmbedBuilder()
                 .WithAuthor(eab)
 

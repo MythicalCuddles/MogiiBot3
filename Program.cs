@@ -16,6 +16,7 @@ using DiscordBot.Extensions;
 using DiscordBot.Logging;
 
 using MelissasCode;
+using MelissaNet;
 
 namespace DiscordBot
 {
@@ -45,7 +46,13 @@ namespace DiscordBot
             Console.ResetColor();
             Console.WriteLine(")");
 
-			Console.Write("MelissasCode: [");
+            Console.Write("MelissaNet: [");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write("Version " + VersionInfo.Version);
+            Console.ResetColor();
+            Console.WriteLine("]    ");
+
+            Console.Write("MelissasCode: [");
 			Console.ForegroundColor = ConsoleColor.Yellow;
 			Console.Write("Version " + MelissaCode.Version);
 			Console.ResetColor();

@@ -52,12 +52,6 @@ namespace DiscordBot.Common
 
         public bool IsBotIgnoringUser { get; set; } = false;
 
-		/// Games
-		// Card Game
-		public int LastCard { get; set; } = 0;
-
-        /// Achievements
-
 
 		public static bool CreateUserFile(ulong uId)
         {
@@ -138,6 +132,33 @@ namespace DiscordBot.Common
             jsonObj[parameterName] = newValue;
             string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
             File.WriteAllText(fileName, output);
+        }
+
+        internal static bool SetCoinsForAll(int newValue = 0)
+        {
+            string filePath = Path.Combine(AppContext.BaseDirectory, DirectoryPath);
+            DirectoryInfo d = new DirectoryInfo(filePath);
+
+            Console.WriteLine("-----------------------------------------------------------------");
+            Console.WriteLine("[WARNING] A command was issued resetting the coins for all users.");
+
+            foreach (var file in d.GetFiles("*.json"))
+            {
+                string[] fileName = file.ToString().Split('.');
+
+                Console.WriteLine("[Info] " + file + " - " + Load(Convert.ToUInt64(fileName[0])).Coins + " coins has been set to " + newValue + "!");
+                UpdateJson(Convert.ToUInt64(fileName[0]), "Coins", newValue);
+            }
+
+            Console.WriteLine("-----------------------------------------------------------------");
+            Console.Write("status: [");
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.Write("ok");
+            Console.ResetColor();
+            Console.WriteLine("]  " + "Coin Reset" + ": reset completed.");
+            Console.WriteLine("-----------------------------------------------------------------");
+
+            return true;
         }
     }
 }

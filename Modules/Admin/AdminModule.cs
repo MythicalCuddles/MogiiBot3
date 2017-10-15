@@ -15,6 +15,7 @@ using DiscordBot.Other;
 using DiscordBot.Logging;
 
 using MelissasCode;
+using MelissaNet;
 
 namespace DiscordBot.Modules.Admin
 {

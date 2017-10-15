@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 using Discord;
@@ -13,27 +13,25 @@ using Discord.Net.Providers.UDPClient;
 using Discord.Net.Providers.WS4Net;
 using Discord.WebSocket;
 
-using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
 using DiscordBot.Handlers;
-using DiscordBot.Other;
 using DiscordBot.Logging;
+using DiscordBot.Modules.Mod;
 
+using MelissaNet;
 using MelissasCode;
 
 namespace DiscordBot
 {
 	public class MogiiBot3
     {
-        private static readonly string BotToken = DiscordToken.MogiiBot;
+        protected static readonly string BotToken = Configuration.Load().BotToken ?? DiscordToken.MogiiBot;
 
         public static DiscordSocketClient Bot;
         public static CommandService CommandService;
 
         private readonly Random _random = new Random();
-
-        public List<SocketGuildUser> OfflineUsersList = new List<SocketGuildUser>();
 
         public async Task RunBotAsync()
         {
@@ -42,7 +40,7 @@ namespace DiscordBot
                 LogLevel = LogSeverity.Debug,
                 MessageCacheSize = 50,
                 WebSocketProvider = WS4NetProvider.Instance,
-                UdpSocketProvider = UDPClientProvider.Instance,
+                UdpSocketProvider = UDPClientProvider.Instance
             });
             CommandService = new CommandService();
 
@@ -101,12 +99,18 @@ namespace DiscordBot
 			return Task.CompletedTask;
 		}
 		
-		private async Task Ready()
-		{
-			await Bot.SetGameAsync(Configuration.Load().Playing);
+		private static async Task Ready()
+        {
+            DateTime nDateTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            Console.WriteLine(nDateTime);
+
+            List<Tuple<SocketGuildUser, SocketGuild>> offlineList = new List<Tuple<SocketGuildUser, SocketGuild>>();
+
+		    if (Configuration.Load().TwitchLink == null) { await Bot.SetGameAsync(Configuration.Load().Playing); }
+            else { await Bot.SetGameAsync(Configuration.Load().Playing, Configuration.Load().TwitchLink, StreamType.Twitch); }
 			await Bot.SetStatusAsync(Configuration.Load().Status);
 
-			Modules.Mod.ModeratorModule.ActiveForDateTime = DateTime.Now;
+			ModeratorModule.ActiveForDateTime = DateTime.Now;
 
 			Console.WriteLine("-----------------------------------------------------------------");
 			foreach (SocketGuild g in Bot.Guilds)
@@ -120,15 +124,27 @@ namespace DiscordBot
 				GuildConfiguration.EnsureExists(g.Id);
 
 				Console.WriteLine("-----------------------------------------------------------------");
+
 				foreach (SocketGuildUser u in g.Users)
 				{
 					if (User.CreateUserFile(u.Id))
 					{
-                        OfflineUsersList.Add(u);
+                        offlineList.Add(new Tuple<SocketGuildUser, SocketGuild>(u, g));
 					}
 				}
-				Console.WriteLine("-----------------------------------------------------------------");
-			}
+
+			    Console.WriteLine("-----------------------------------------------------------------");
+            }
+
+            Console.Write("status: [");
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.Write("info");
+            Console.ResetColor();
+            Console.Write("]  " + Bot.CurrentUser.Username + " : ");
+            if (offlineList.Any())
+                Console.WriteLine(offlineList.Count + " new users added.");
+            else
+                Console.WriteLine("no new users added.");
 
             Console.Write("status: [");
 		    Console.ForegroundColor = ConsoleColor.DarkGreen;
@@ -144,15 +160,17 @@ namespace DiscordBot
 					.WithThumbnailUrl(Bot.CurrentUser.GetAvatarUrl())
 					.WithDescription("**" + Bot.CurrentUser.Username + "** : status [ok] : If there was any new users, they will be shown below.")
                     .AddField("Version", v.Major + "." + v.Minor + "." + v.Build + "." + v.Revision, true)
+                    .AddField("Latest Version", MythicalCuddlesXYZ.CheckForNewVersion("MogiiBot3").Item1, true)
 					.AddField("MelissasCode", MelissaCode.Version, true)
+                    .AddField("MelissaNet", VersionInfo.Version, true)
 					.AddField("Database Status", MelissaCode.GetDatabaseStatus(), true)
-					.AddField("Latency", MogiiBot3.Bot.Latency + "ms", true)
+					.AddField("Latency", Bot.Latency + "ms", true)
                     .WithCurrentTimestamp();
 				await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
-
-            foreach (SocketGuildUser user in OfflineUsersList)
+            
+            foreach (Tuple<SocketGuildUser, SocketGuild> tupleList in offlineList)
 		    {
-                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("[ALERT] While " + Bot.CurrentUser.Username + " was offline, " + user.Mention + " (" + user.Id + ") joined a guild. They have been added to the database.");
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("[ALERT] While " + Bot.CurrentUser.Username + " was offline, " + tupleList.Item1.Mention + " (" + tupleList.Item1.Id + ") joined " + tupleList.Item2.Name + ". They have been added to the database.");
             }
 		}
 
@@ -211,7 +229,16 @@ namespace DiscordBot
             // If the message is just "F", pay respects.
             if (message.Content.ToUpper() == "F")
             {
-                await message.Channel.SendMessageAsync("Respects have been paid.");
+                var respects = Configuration.Load().Respects + 1;
+                Configuration.UpdateJson("Respects", respects);
+
+                var eb = new EmbedBuilder()
+                    .WithDescription("**" + message.Author.Username + "** has paid their respects.")
+                    .WithFooter("Total Respects: " + respects + " (since V2.6)")
+                    .WithColor(User.Load(message.Author.Id).AboutR, User.Load(message.Author.Id).AboutG, User.Load(message.Author.Id).AboutB);
+
+                //await message.Channel.SendMessageAsync("Respects have been paid.");
+                await message.Channel.SendMessageAsync("", false, eb.Build());
                 return;
             }
 
@@ -228,35 +255,21 @@ namespace DiscordBot
             
             if (!result.IsSuccess && Configuration.Load().UnknownCommandEnabled)
             {
-                IUserMessage errorMessage;
-                if (result.ErrorReason.ToUpper().Contains(MelissaCode.GetOldFullNameUpper))
-                {
-                    errorMessage = await context.Channel.SendMessageAsync(messageParam.Author.Mention + ", an error containing classified information has occured. Please contact Melissa.\n`Error Code/Log File: #Ex00f" + _random.RandomNumber(0, 1000000) + "`");
-                }
-                else if(result.ErrorReason.ToUpper().Contains("END ON AN INCOMPLETE ESCAPE") && context.Message.Content.ToUpper().Contains("$SETPREFIX"))
-                {
-                    errorMessage = await context.Channel.SendMessageAsync(messageParam.Author.Mention + ", you can not use that prefix as it contains an escape character.");
-                }
-                else
-                {
-                    errorMessage = await context.Channel.SendMessageAsync(messageParam.Author.Mention + ", " + result.ErrorReason);
-                }
+                var errorMessage = await context.Channel.SendMessageAsync(messageParam.Author.Mention + ", " + result.ErrorReason);
 
-                Console.WriteLine(messageParam.Author.Mention + ", " + result.ErrorReason);
+                Console.WriteLine("[ERROR] " + messageParam.Author.Mention + " - " + result.ErrorReason);
                 
                 errorMessage.DeleteAfter(20);
             }
         }
 
-        public static Task AwardCoinsToPlayer(IUser user, int coinsToAward = 1)
+        public static void AwardCoinsToPlayer(IUser user, int coinsToAward = 1)
         {
             try
             {
                 User.UpdateJson(user.Id, "Coins", (user.GetCoins() + coinsToAward));
             }
             catch (Exception e) { Console.WriteLine(e); }
-
-            return Task.CompletedTask;
         }
     }
 }

@@ -16,12 +16,13 @@ namespace DiscordBot.Common
     public class Configuration
     {
         [JsonIgnore]
-        public static string FileName { get; private set; } = "config/configuration.json";
+        public static string FileName { get; } = "config/configuration.json";
 
-        public string BotToken { get; set; } = "INSERT_BOT_TOKEN_HERE";
+        public string BotToken { get; set; } = null;
         
         public ulong Developer { get; set; } = 149991092337639424;
         public string Playing { get; set; } = null;
+        public string TwitchLink { get; set; } = null;
         public UserStatus Status { get; set; } = UserStatus.Online;
         
         public bool UnknownCommandEnabled { get; set; } = true;
@@ -34,6 +35,9 @@ namespace DiscordBot.Common
 
         /// NSFW Variables
         public int MaxRuleXGamble { get; set; } = 2353312;
+
+        /// Fun Variables
+        public int Respects { get; set; } = 0;
 
         
         public static void EnsureExists()

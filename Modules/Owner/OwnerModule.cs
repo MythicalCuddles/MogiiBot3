@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,7 +14,6 @@ using DiscordBot.Common;
 using DiscordBot.Extensions;
 
 using MelissasCode;
-using System.IO;
 
 namespace DiscordBot.Modules.Owner
 {
@@ -59,10 +59,58 @@ namespace DiscordBot.Modules.Owner
             }
 
             User.UpdateJson(user.Id, "FooterText", footer);
-            var message = await ReplyAsync("Updated.");
+
+            var eb = new EmbedBuilder()
+                .WithDescription(Context.User.Username + " updated " + user.Mention + "'s footer successfully.")
+                .WithColor(Color.DarkGreen);
+            var message = await ReplyAsync("", false, eb.Build());
 
             Context.Message.DeleteAfter(10);
             message.DeleteAfter(10);
+        }
+
+        [Command("editiconurl")]
+        public async Task EditIconUrl(IUser user = null, string position = null, string url = null)
+        {
+            if (user == null || position == null)
+            {
+                await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "editiconurl [@User] [Author/Footer] [Link to Icon/Image]");
+                return;
+            }
+
+            var eb = new EmbedBuilder();
+            string oldLink, newLink = url;
+
+            if (url.Contains('<') && url.Contains('>'))
+            {
+                newLink = url.FindAndReplaceFirstInstance("<", "");
+                newLink = newLink.FindAndReplaceFirstInstance(">", "");
+            }
+
+            switch (position.ToUpper())
+            {
+                case "AUTHOR":
+                    oldLink = User.Load(user.Id).EmbedAuthorBuilderIconUrl;
+                    User.UpdateJson(user.Id, "EmbedAuthorBuilderIconUrl", newLink);
+                    eb.WithColor(Color.DarkGreen);
+                    eb.WithDescription(Context.User.Username + " successfully updated " + user.Mention + "'s Author Icon to: " + url);
+                    eb.WithFooter("Old Link: " + oldLink);
+                    await ReplyAsync("", false, eb.Build());
+                    break;
+                case "FOOTER":
+                    oldLink = User.Load(user.Id).EmbedAuthorBuilderIconUrl;
+                    User.UpdateJson(user.Id, "EmbedFooterBuilderIconUrl", newLink);
+                    eb.WithColor(Color.DarkGreen);
+                    eb.WithDescription(Context.User.Username + " successfully updated " + user.Mention + "'s Footer Icon to: " + url);
+                    eb.WithFooter("Old Link: " + oldLink);
+                    await ReplyAsync("", false, eb.Build());
+                    break;
+                default:
+                    eb.WithColor(Color.DarkGreen);
+                    eb.WithDescription("");
+                    await ReplyAsync("", false, eb.Build());
+                    break;
+            }
         }
 
         [Command("botignore"), Summary("Make the bot ignore a user.")]
@@ -77,6 +125,32 @@ namespace DiscordBot.Modules.Owner
             else
             {
                 await ReplyAsync(Context.User.Mention + ", " + MogiiBot3.Bot.CurrentUser.Username + " will start to listen to " + user.Mention);
+            }
+        }
+
+        [Command("resetallcoins")]
+        public async Task SetCoinsForAll(string confirmation = null)
+        {
+            Context.Message.DeleteAfter(30);
+
+            if (confirmation == "confirm")
+            {
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has forced all users coins to reset value.");
+
+                User.SetCoinsForAll();
+
+                var eb = new EmbedBuilder()
+                    .WithDescription(Context.User.Username + " has successfully reset the coin value for all users.")
+                    .WithColor(Color.DarkGreen)
+                    .WithCurrentTimestamp()
+                    .WithFooter("Info: This command has been logged successfully to " + Configuration.Load().LogChannelId.GetTextChannel().Name);
+
+                await ReplyAsync("", false, eb.Build());
+            }
+            else
+            {
+                var message = await ReplyAsync("**Warning**\nIssuing this command will **reset all users coins**. This action is irreversible and any data not backed-up will be lost. Please ensure that you create a backup of the data if you wish to roll-back to the current state. If you wish to issue this command, please type `" + GuildConfiguration.Load(Context.Guild.Id).Prefix + "resetallcoins confirm`");
+                message.DeleteAfter(60);
             }
         }
     }

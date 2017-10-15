@@ -35,13 +35,13 @@ namespace DiscordBot.Modules.Public
             await ReplyAsync("Updated successfully, " + Context.User.Mention);
         }
 
-        [Command("setaboutrgb"), Summary("Custom set the color of the about embed message.")]
-        public async Task SetUserAboutRgb(int r = -1, int g = -1, int b = -1)
+        [Command("setcustomrgb"), Summary("Custom set the color of the about embed message.")]
+        public async Task SetUserRgb(int r = -1, int g = -1, int b = -1)
         {
             if(r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
             {
                 await ReplyAsync(Context.User.Mention + ", you have entered an invalid value. You can use this website to help get your RGB values - <http://www.colorhexa.com/>\n\n" +
-                    "**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "setaboutrgb [R value] [G value] [B value]\n**Example:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "setaboutrgb 140 90 210");
+                    "**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "setcustomrgb [R value] [G value] [B value]\n**Example:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "setcustomrgb 140 90 210");
                 return;
             }
 

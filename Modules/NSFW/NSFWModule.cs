@@ -1,4 +1,9 @@
-﻿using System;
+﻿/* WARNING
+ * THIS SECTION CONTAINS NSFW CONTENT
+ * THIS IS YOUR ONLY WARNING! 
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,24 +32,31 @@ namespace DiscordBot.Modules.NSFW
     {
         private readonly Random _random = new Random();
 
-        // Rule 34 Gamble for NSFW Server - WARNING! NSFW CONTENT!
+        // Rule 34 Gamble for NSFW Server - Contains NSFW Links
         private readonly WebClient _client = new WebClient();
         private readonly HtmlDocument _doc = new HtmlDocument();
         private string _html, _url;
-        private int _id, _errorCount = 0;
+        private int _id;
         [Command("rule34gamble"), Summary("Head to #nsfw-rule34gamble and read the description for more information.")]
-        [Alias("34gamble")]
-        public async Task Rule34Gamble()
+        [Alias("34gamble", "rule34")]
+        public async Task Rule34Gamble(int postId = 0)
         {
             if (GuildConfiguration.Load(Context.Guild.Id).EnableNsfwCommands && Context.Channel.Id == GuildConfiguration.Load(Context.Guild.Id).RuleGambleChannelId || Context.User.Id == Configuration.Load().Developer)
             {
                 if (((SocketTextChannel) Context.Channel).IsNsfw)
                 {
-                    var message = await ReplyAsync("Please wait while we draw your lucky number! (This shouldn't take long)");
+                    //var message = await ReplyAsync("Please wait while we draw your lucky number! (This shouldn't take long)");
 
                     try
                     {
-                        _id = _random.Next(1, Configuration.Load().MaxRuleXGamble);
+                        if (postId != 0 && Context.User.IsBotOwner())
+                        {
+                            _id = postId;
+                        }
+                        else
+                        {
+                            _id = _random.Next(1, Configuration.Load().MaxRuleXGamble);
+                        }
                         _url = "https://rule34.xxx/index.php?page=post&s=view&id=" + _id.ToString();
                         _html = _client.DownloadString(_url);
                         _doc.LoadHtml(_html);
@@ -65,31 +77,36 @@ namespace DiscordBot.Modules.NSFW
 						Console.Write("RULE34 GAMBLE");
 						Console.ResetColor();
 						Console.WriteLine("]: " + Context.User.Username + " got the Gamble Id: " + _id.ToString() + "\nThe following images were gathered using that Id:");
-						foreach (string s in images)
+                        
+                        foreach (string s in images)
 						{
 							Console.WriteLine(s);
+
+						    if (s.Contains("thumbnails") || s.Contains("samples"))
+						    {
+						        Rule34Gamble();
+						        return;
+						    }
 						}
-	                    
-						message.ModifyAfter(Context.User.Mention + ", congratulations, you won the following image: \n" + images[2].ToString(), 1);
-						_errorCount = 0;
+
+                        // 2.6 Fix for Link Issue
+                        string link = images[2].FindAndReplaceFirstInstance("//", "temp");
+                        link = link.FindAndReplaceFirstInstance("//", "/");
+                        link = link.FindAndReplaceFirstInstance("temp", "http://");
+                        Console.WriteLine("[Final] " + link);
+
+                        //message.ModifyAfter(Context.User.Mention + ", congratulations, you won the following image: \n" + images[2].ToString(), 1);
+                        await ReplyAsync(Context.User.Mention + ", congratulations, you won the following image: \n" + link);
 					}
                     catch (Exception ex)
                     {
-						_errorCount++;
                         Console.Write("[");
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.Write("Gamble Exception");
                         Console.ResetColor();
                         Console.WriteLine("]: " + ex.ToString());
 
-						if(_errorCount >= 3)
-						{
-							await ReplyAsync(Context.User.Mention + ", the random Id you got returned no image. Lucky you! Why not try again?");
-						}
-						else
-						{
-							await Rule34Gamble();
-						}
+						await ReplyAsync(Context.User.Mention + ", the random Id you got returned no image. Lucky you! Why not try again?");
                     }
                 }
                 else
@@ -98,5 +115,6 @@ namespace DiscordBot.Modules.NSFW
                 }
             }
         }
+        
     }
 }
