@@ -2,7 +2,6 @@
 
 ## Version 2.6.0.0
 Developed & Released by Melissa (MythicalCuddles)
-Many thanks to Marceline for getting MelissaNet added to MogiiBot in time for the update (Private Library)
 
 ### Added
 - Added MelissaNet.dll reference added due to the discontinue of MelissasCode.
@@ -35,11 +34,14 @@ Many thanks to Marceline for getting MelissaNet added to MogiiBot in time for th
 ### Backend Notes
 [General]
 - Cleaned up the Configuration File to make it look nice and new. (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧
+
 [Added]
 - Added the Bot token to the configuration file. It will now check for a token there before asking MelissasCode for it.
 - Added offlineList Tuple to log new users and the guild they joined whilst the bot was offline.
 - Added a console message to display if no new users were found whilst the bot was offline.
+
 [Removed]
 - Removed offlineUsersList due to offlineList Tuple being implemented.
+
 [Other]
 - Nothing here.
