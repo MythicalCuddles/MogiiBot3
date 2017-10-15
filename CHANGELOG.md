@@ -1,8 +1,8 @@
 # Changelog
 
 ## Version 2.6.0.0
-- Developed & Released by Melissa (MythicalCuddles)
-- Many thanks to Marceline for getting MelissaNet added to MogiiBot in time for the update (Private Library)
+Developed & Released by Melissa (MythicalCuddles)
+Many thanks to Marceline for getting MelissaNet added to MogiiBot in time for the update (Private Library)
 
 ### Added
 - Added MelissaNet.dll reference added due to the discontinue of MelissasCode.
