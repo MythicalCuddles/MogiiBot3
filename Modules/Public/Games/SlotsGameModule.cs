@@ -47,7 +47,7 @@ namespace DiscordBot.Modules.Public.Games
                 .Append("**[  :slot_machine: l SLOTS ]**\n")
                 .Append("------------------\n")
                 .Append(Extensions.Extensions.SlotEmotes[_random.Next(0, slotEmotesCount)] + " : " + Extensions.Extensions.SlotEmotes[_random.Next(0, slotEmotesCount)] + " : " + Extensions.Extensions.SlotEmotes[_random.Next(0, slotEmotesCount)] + "\n")
-                .Append(Extensions.Extensions.SlotEmotes[one] + " : " + Extensions.Extensions.SlotEmotes[two] + " : " + Extensions.Extensions.SlotEmotes[three] + " < \n")
+                .Append(Extensions.Extensions.SlotEmotes[one] + " : " + Extensions.Extensions.SlotEmotes[two] + " : " + Extensions.Extensions.SlotEmotes[three] + " :arrow_left: \n")
                 .Append(Extensions.Extensions.SlotEmotes[_random.Next(0, slotEmotesCount)] + " : " + Extensions.Extensions.SlotEmotes[_random.Next(0, slotEmotesCount)] + " : " + Extensions.Extensions.SlotEmotes[_random.Next(0, slotEmotesCount)] + "\n")
                 .Append("------------------\n");
 

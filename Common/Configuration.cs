@@ -39,6 +39,7 @@ namespace DiscordBot.Common
         /// Fun Variables
         public int Respects { get; set; } = 0;
 
+        public int MinLengthForCoin { get; set; } = 0; // Magic Number entered via Discord. (Not Shared for Reasons)
         
         public static void EnsureExists()
         {

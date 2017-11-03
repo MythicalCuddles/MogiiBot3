@@ -46,18 +46,18 @@ namespace DiscordBot
             Console.ResetColor();
             Console.WriteLine(")");
 
+            Console.Write("MelissasCode: [");
+			Console.ForegroundColor = ConsoleColor.Yellow;
+			Console.Write("Version " + MelissaCode.Version);
+			Console.ResetColor();
+			Console.WriteLine("]    : Discontinued.");
+
             Console.Write("MelissaNet: [");
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write("Version " + VersionInfo.Version);
             Console.ResetColor();
             Console.WriteLine("]    ");
 
-            Console.Write("MelissasCode: [");
-			Console.ForegroundColor = ConsoleColor.Yellow;
-			Console.Write("Version " + MelissaCode.Version);
-			Console.ResetColor();
-			Console.WriteLine("]    ");
-			
             Console.WriteLine("Web: www.mythicalcuddles.xyz");
             Console.WriteLine("Contact: melissa@mythicalcuddles.xyz" + "\n");
             Console.WriteLine("Copyright 2017 Melissa B. | Licensed under the MIT License.");

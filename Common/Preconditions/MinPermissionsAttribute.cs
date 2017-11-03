@@ -32,7 +32,7 @@ namespace DiscordBot.Common.Preconditions
         {
             var permission = GetPermission(context);
 
-            return Task.FromResult(permission >= _level ? PreconditionResult.FromSuccess() : PreconditionResult.FromError("Insufficient permissions."));
+            return Task.FromResult(permission >= _level ? PreconditionResult.FromSuccess() : PreconditionResult.FromError("you don't have permission to do that!"));
         }
 
         public PermissionLevel GetPermission(ICommandContext context)

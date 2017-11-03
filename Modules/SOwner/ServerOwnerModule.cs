@@ -61,7 +61,7 @@ namespace DiscordBot.Modules.SOwner
             }
 
             GuildConfiguration.UpdateJson(Context.Guild.Id, "WelcomeMessage", message);
-            await ReplyAsync("Welcome message has been changed successfully by " + Context.User.Mention + "\n\n**SAMPLE WELCOME MESSAGE**\n" + GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.FormatWelcomeMessage(Context.User as SocketGuildUser));
+            await ReplyAsync("Welcome message has been changed successfully by " + Context.User.Mention + "\n\n**SAMPLE WELCOME MESSAGE**\n" + GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.ModifyStringFlags(Context.User as SocketGuildUser));
         }
 
         [Command("welcomechannel"), Summary("Set the welcome channel for the server.")]

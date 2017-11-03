@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 
 using Discord;
+using Discord.Audio;
 using Discord.Commands;
 using Discord.Net.Providers.UDPClient;
 using Discord.Net.Providers.WS4Net;
@@ -31,7 +32,7 @@ namespace DiscordBot
         public static DiscordSocketClient Bot;
         public static CommandService CommandService;
 
-        private readonly Random _random = new Random();
+        //private readonly Random _random = new Random();
 
         public async Task RunBotAsync()
         {
@@ -101,9 +102,6 @@ namespace DiscordBot
 		
 		private static async Task Ready()
         {
-            DateTime nDateTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
-            Console.WriteLine(nDateTime);
-
             List<Tuple<SocketGuildUser, SocketGuild>> offlineList = new List<Tuple<SocketGuildUser, SocketGuild>>();
 
 		    if (Configuration.Load().TwitchLink == null) { await Bot.SetGameAsync(Configuration.Load().Playing); }
@@ -115,8 +113,9 @@ namespace DiscordBot
 			Console.WriteLine("-----------------------------------------------------------------");
 			foreach (SocketGuild g in Bot.Guilds)
 			{
+			    Console.ResetColor();
 				Console.Write("status: [");
-				Console.ForegroundColor = ConsoleColor.DarkYellow;
+				Console.ForegroundColor = ConsoleColor.Yellow;
 				Console.Write("find");
 				Console.ResetColor();
 				Console.WriteLine("]  " + g.Name + ": attempting to load.");
@@ -234,32 +233,57 @@ namespace DiscordBot
 
                 var eb = new EmbedBuilder()
                     .WithDescription("**" + message.Author.Username + "** has paid their respects.")
-                    .WithFooter("Total Respects: " + respects + " (since V2.6)")
+                    .WithFooter("Total Respects: " + respects)
                     .WithColor(User.Load(message.Author.Id).AboutR, User.Load(message.Author.Id).AboutG, User.Load(message.Author.Id).AboutB);
 
                 //await message.Channel.SendMessageAsync("Respects have been paid.");
                 await message.Channel.SendMessageAsync("", false, eb.Build());
                 return;
             }
-
-            // If the message does not contain the prefix or mentioning the bot
-            int argPos = 0;
-            if (!(message.HasStringPrefix(GuildConfiguration.Load(message.Channel.GetGuild().Id).Prefix, ref argPos) || message.HasMentionPrefix(Bot.CurrentUser, ref argPos) || message.HasStringPrefix(User.Load(message.Author.Id).CustomPrefix, ref argPos))) // Configuration.Load().Prefix
-            {
-                AwardCoinsToPlayer(message.Author);
-                return;
-            }
-
-            var context = new CommandContext(Bot, message);
-            var result = await CommandService.ExecuteAsync(context, argPos);
             
-            if (!result.IsSuccess && Configuration.Load().UnknownCommandEnabled)
+            int argPos = 0;
+            if (message.HasStringPrefix(GuildConfiguration.Load(message.Channel.GetGuild().Id).Prefix, ref argPos) ||
+                message.HasMentionPrefix(Bot.CurrentUser, ref argPos) ||
+                message.HasStringPrefix(User.Load(message.Author.Id).CustomPrefix, ref argPos))
             {
-                var errorMessage = await context.Channel.SendMessageAsync(messageParam.Author.Mention + ", " + result.ErrorReason);
+                var context = new CommandContext(Bot, message);
+                var result = await CommandService.ExecuteAsync(context, argPos);
 
-                Console.WriteLine("[ERROR] " + messageParam.Author.Mention + " - " + result.ErrorReason);
-                
-                errorMessage.DeleteAfter(20);
+                if (!result.IsSuccess && Configuration.Load().UnknownCommandEnabled)
+                {
+                    var errorMessage = await context.Channel.SendMessageAsync(messageParam.Author.Mention + ", " + result.ErrorReason);
+
+                    Console.Write("status: [");
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write("warning");
+                    Console.ResetColor();
+                    Console.WriteLine("]  " + message.Author.Username + " : " + result.ErrorReason);
+
+                    //Console.WriteLine("[ERROR] " + messageParam.Author.Mention + " - " + result.ErrorReason);
+
+                    errorMessage.DeleteAfter(20);
+                }
+            }
+            else
+            {
+                if (message.Content.Length >= Configuration.Load().MinLengthForCoin)
+                {
+                    AwardCoinsToPlayer(message.Author);
+
+                    Console.Write("status: [");
+                    Console.ForegroundColor = ConsoleColor.DarkCyan;
+                    Console.Write("info");
+                    Console.ResetColor();
+                    Console.WriteLine("]  " + message.Author.Username + " : sent a message and was awarded 1 coin(s).");
+                }
+                else
+                {
+                    Console.Write("status: [");
+                    Console.ForegroundColor = ConsoleColor.DarkCyan;
+                    Console.Write("info");
+                    Console.ResetColor();
+                    Console.WriteLine("]  " + message.Author.Username + " : sent a message and was awarded 0 coin(s) due to length (" + message.Content.Length + ").");
+                }
             }
         }
 
@@ -269,7 +293,10 @@ namespace DiscordBot
             {
                 User.UpdateJson(user.Id, "Coins", (user.GetCoins() + coinsToAward));
             }
-            catch (Exception e) { Console.WriteLine(e); }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
     }
 }

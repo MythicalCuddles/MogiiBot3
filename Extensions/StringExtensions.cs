@@ -21,9 +21,9 @@ namespace DiscordBot.Extensions
 {
     public static class StringExtensions
     {
-        public static String FormatWelcomeMessage(this string welcomeMessage, SocketGuildUser e)
+        public static String ModifyStringFlags(this string message, SocketGuildUser e)
         {
-            string msg = welcomeMessage;
+            string msg = message;
 
             msg = Regex.Replace(msg, "{USER.MENTION}", e.Mention, RegexOptions.IgnoreCase);
             msg = Regex.Replace(msg, "{USER.USERNAME}", e.Username, RegexOptions.IgnoreCase);

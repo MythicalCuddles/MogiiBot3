@@ -34,7 +34,7 @@ namespace DiscordBot.Modules.Admin
         [Command("welcome"), Summary("Send the welcome messages to the user specified.")]
         public async Task SendWelcomeMessage(SocketGuildUser user)
         {
-            await GuildConfiguration.Load(Context.Guild.Id).WelcomeChannelId.GetTextChannel().SendMessageAsync(GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.FormatWelcomeMessage(user));
+            await GuildConfiguration.Load(Context.Guild.Id).WelcomeChannelId.GetTextChannel().SendMessageAsync(GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.ModifyStringFlags(user));
             await GuildConfiguration.Load(Context.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("A welcome message for " + user.Mention + " has been posted. (Forced by: " + Context.User.Mention + ")");
         }
         
@@ -122,7 +122,7 @@ namespace DiscordBot.Modules.Admin
         [Command("listquotes"), Summary("Sends a list of all the quotes.")]
         public async Task ListQuotes()
         {
-            if(QuoteHandler.QuoteList.Count > 0)
+            if (QuoteHandler.QuoteList.Count > 0)
             {
                 StringBuilder sb = new StringBuilder()
                 .Append("**Quote List** : *Page 1*\n```");

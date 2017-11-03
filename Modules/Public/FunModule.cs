@@ -169,10 +169,16 @@ namespace DiscordBot.Modules.Public
 
         [Command("wallet"), Summary("")]
         [Alias("purse", "balance", "bal", "coins", "mogiicoins")]
-        public async Task LoadUserBalance()
+        public async Task LoadUserBalance(IUser user = null)
         {
-            var userCoins = Context.User.GetCoins();
-            await ReplyAsync(":moneybag: **" + Context.User.Username + "'s Balance** :moneybag:\n" + 
+            var usr = user;
+            if (user == null)
+            {
+                usr = Context.User;
+            }
+
+            var userCoins = usr.GetCoins();
+            await ReplyAsync(":moneybag: **" + usr.Username + "'s Balance** :moneybag:\n" + 
                 "\n" +
                 "**" + userCoins + "** coins\n");
         }
@@ -235,34 +241,41 @@ namespace DiscordBot.Modules.Public
         [Command("buyquote"), Summary("Request a quote to be added for a price.")]
         public async Task RequestToAddQuote([Remainder]string quote = null)
 		{
-			int userCoins = User.Load(Context.User.Id).Coins;
-			int quoteCost = Configuration.Load().QuoteCost;
+		    if (GuildConfiguration.Load(Context.Guild.Id).QuotesEnabled)
+		    {
+		        int userCoins = User.Load(Context.User.Id).Coins;
+		        int quoteCost = Configuration.Load().QuoteCost;
 
-			if (quote == null)
-			{
-				await ReplyAsync("**Syntax:** " +
-				  GuildConfiguration.Load(Context.Guild.Id).Prefix + "buyquote [quote]\n```" +
-				  "**Information:**\n" +
-				  "-----------------------------\n" +
-				  "• You can buy a quote for " + quoteCost + " coins.\n" +
-				  "• Your quote will not be added instantly to the list. A staff member must first verify that it is safe to put on the list.\n" +
-				  "```");
-				return;
-			}
+		        if (quote == null)
+		        {
+		            await ReplyAsync("**Syntax:** " +
+		                             GuildConfiguration.Load(Context.Guild.Id).Prefix + "buyquote [quote]\n```" +
+		                             "**Information:**\n" +
+		                             "-----------------------------\n" +
+		                             "• You can buy a quote for " + quoteCost + " coins.\n" +
+		                             "• Your quote will not be added instantly to the list. A staff member must first verify that it is safe to put on the list.\n" +
+		                             "```");
+		            return;
+		        }
 
-            if (userCoins < quoteCost)
-            {
-                await ReplyAsync(Context.User.Mention + ", you don't have enough coins! You need " + quoteCost + " coins to buy a quote request.");
-                return;
+		        if (userCoins < quoteCost)
+		        {
+		            await ReplyAsync(Context.User.Mention + ", you don't have enough coins! You need " + quoteCost + " coins to buy a quote request.");
+		            return;
+		        }
+
+		        QuoteHandler.AddAndUpdateRequestQuotes(quote);
+		        User.UpdateJson(Context.User.Id, "Coins", (userCoins - quoteCost));
+		        TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") paid " + quoteCost + " for a custom quote.");
+		        await ReplyAsync(Context.User.Mention + ", your quote has been added to the list, and should be verified by a staff member shortly.");
+
+		        await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**New Quote**\nQuote requested by: **" + Context.User.Mention + "**\nQuote: " + quote);
+		        await GuildConfiguration.Load(Context.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("**New Quote**\n" + quote + "\n\n*Do " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "listrequestquotes to view the ID and other quotes.*");
             }
-
-            QuoteHandler.AddAndUpdateRequestQuotes(quote);
-            User.UpdateJson(Context.User.Id, "Coins", (userCoins - quoteCost));
-            TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") paid " + quoteCost + " for a custom quote.");
-            await ReplyAsync(Context.User.Mention + ", your quote has been added to the list, and should be verified by a staff member shortly.");
-
-            await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**New Quote**\nQuote requested by: **" + Context.User.Mention + "**\nQuote: " + quote);
-            await GuildConfiguration.Load(Context.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("**New Quote**\n" + quote + "\n\n*Do " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "listrequestquotes to view the ID and other quotes.*");
+		    else
+		    {
+		        await ReplyAsync("Quotes are currently disabled. Try again later.");
+		    }
         }
 
         [Command("music"), Summary("Replies posting a music link which has been set by staff.")]

@@ -57,10 +57,10 @@ namespace DiscordBot.Extensions
 			LetterX = EmojiExtensions.FromText(":regional_indicator_x:"),
 			LetterY = EmojiExtensions.FromText(":regional_indicator_y:"),
 			LetterZ = EmojiExtensions.FromText(":regional_indicator_z:");
-		#endregion
-
-		#region Dictionaries
-		public static List<string> SlotEmotes = new List<string>()
+        #endregion
+        
+        #region Dictionaries
+        public static List<string> SlotEmotes = new List<string>()
         {
             ":green_apple:",
             ":apple:",
@@ -80,19 +80,19 @@ namespace DiscordBot.Extensions
             ":hot_pepper:",
             ":corn:",
             ":sweet_potato:",
-            ":carrot:"
-            //":honey_pot:",
-            //":bread:",
-            //":cheese:",
-            //":poultry_leg:",
-            //":meat_on_bone:",
-            //":fried_shrimp:",
-            //":cooking:",
-            //":hamburger:",
-            //":fries:",
-            //":hotdog:",
-            //":pizza:",
-            //":rice_ball:"
+            ":carrot:",
+            ":honey_pot:",
+            ":bread:",
+            ":cheese:",
+            ":poultry_leg:",
+            ":meat_on_bone:",
+            ":fried_shrimp:",
+            ":cooking:",
+            ":hamburger:",
+            ":fries:",
+            ":hotdog:",
+            ":pizza:",
+            ":rice_ball:"
         };
         public static Dictionary<int, string> ReactionUnicodes = new Dictionary<int, string>
         {

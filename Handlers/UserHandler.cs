@@ -31,7 +31,7 @@ namespace DiscordBot.Handlers
                 .WithCurrentTimestamp();
                 
             if(GuildConfiguration.Load(e.Guild.Id).WelcomeMessage != null || GuildConfiguration.Load(e.Guild.Id).WelcomeChannelId != 0)
-                await GuildConfiguration.Load(e.Guild.Id).WelcomeChannelId.GetTextChannel().SendMessageAsync(GuildConfiguration.Load(e.Guild.Id).WelcomeMessage.FormatWelcomeMessage(e));
+                await GuildConfiguration.Load(e.Guild.Id).WelcomeChannelId.GetTextChannel().SendMessageAsync(GuildConfiguration.Load(e.Guild.Id).WelcomeMessage.ModifyStringFlags(e));
 
             await GuildConfiguration.Load(e.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
 

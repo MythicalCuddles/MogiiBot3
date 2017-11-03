@@ -30,17 +30,16 @@ namespace DiscordBot.Modules.Owner
                              "-----------------------------\n" +
                              "Channel Message\n" +
                              "-> editconfig gameactivity [activity message] (twitch link)" +
-                             //"-> editconfig playing [message]\n" +
-                             //"-> editconfig twitch [twitch link] [message]\n" +
                              "-> editconfig status [status]\n" +
                              "• statuses: online, donotdisturb, idle, invisible\n" +
                              "-> editconfig toggleunknowncommand\n" +
                              "-> editconfig leaderboardamount [number of users to display]\n" +
                              "-> editconfig quoteprice [price to add quote]\n" +
                              "-> editconfig prefixprice [price to change custom prefix]\n" +
+                             "-> editconfig senpaichance [number 1-100]\n" +
                              "-> editconfig globallogchannel [channel mention / channel id]\n" +
                              "-> editconfig rule34 [max number for random to use]\n" +
-                             "-> editconfig senpaichance [number 1-100]\n" +
+                             "-> editconfig minlengthforcoins [string length for coins]\n" +
                              "```");
         }
 
@@ -188,6 +187,14 @@ namespace DiscordBot.Modules.Owner
             int oldValue = Configuration.Load().MaxRuleXGamble;
             Configuration.UpdateJson("MaxRuleXGamble", value);
             await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the Rule34 Max to: " + value + " (was: " + oldValue + ")");
+        }
+
+        [Command("minlengthforcoins"), Summary("Set the required length of a message for a user to receive (a) coin(s).")]
+        public async Task SetRequiredMessageLengthForCoins(int value)
+        {
+            int oldValue = Configuration.Load().MinLengthForCoin;
+            Configuration.UpdateJson("MinLengthForCoin", value);
+            await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the MinLengthForCoin amount to: " + value + " (was: " + oldValue + ")");
         }
     }
 }
