@@ -1,7 +1,37 @@
 # Changelog
 
+## Version 2.6.2.0
+
+### Added
+- Added more emotes to the slot machines.
+- Added an algorithm to judge if a user is awarded a coin or not.
+- Added minlengthforcoins for the Bot Owner to force change one of the algorithm's variables.
+
+### Changed
+- Changed the leaderboard to show the users current position on the board if they don't show within the top list.
+- Changed buyquote to check if quotes are enabled before allowing a user to buy a quote spot.
+- Changed the arrow in the slots from '<' to ':arrow_left:'
+
+- Fixed an issue with the leaderboard where it would show duplicates of users.
+- Fixed an issue with the leaderboard where it would still show bot users.
+
+### Removed
+- Removed 'F' version info.
+- Removed GUID from stats.
+
+### Backend Notes
+[Changed]
+- Changed the way commands and messages are read, ensuring that the AwardCoinsToPlayer method is called.
+
+
+## Version 2.6.1.0
+
+### Changed
+- Reverted to an older version of the leaderboard module due to issue with duplicates appearing in the list.
+
 ## Version 2.6.0.0
-Developed & Released by Melissa (MythicalCuddles)
+## Developed & Released by Melissa (MythicalCuddles)
+## Many thanks to Marceline for getting MelissaNet added to MogiiBot in time for the update (Private Library)
 
 ### Added
 - Added MelissaNet.dll reference added due to the discontinue of MelissasCode.
@@ -34,14 +64,11 @@ Developed & Released by Melissa (MythicalCuddles)
 ### Backend Notes
 [General]
 - Cleaned up the Configuration File to make it look nice and new. (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧
-
 [Added]
 - Added the Bot token to the configuration file. It will now check for a token there before asking MelissasCode for it.
 - Added offlineList Tuple to log new users and the guild they joined whilst the bot was offline.
 - Added a console message to display if no new users were found whilst the bot was offline.
-
 [Removed]
 - Removed offlineUsersList due to offlineList Tuple being implemented.
-
 [Other]
 - Nothing here.
