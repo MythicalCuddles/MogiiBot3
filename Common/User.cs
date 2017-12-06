@@ -101,7 +101,7 @@ namespace DiscordBot.Common
 
         private string ToJson()
             => JsonConvert.SerializeObject(this, Formatting.Indented);
-
+        
         public static void UpdateJson(ulong uId, string parameterName, string newValue)
         {
             string fileName = DirectoryPath + uId + Extension;
@@ -133,6 +133,17 @@ namespace DiscordBot.Common
             File.WriteAllText(fileName, output);
         }
 
+        public static void SetCoins(ulong uId, int coins)
+        {
+            string fileName = DirectoryPath + uId + Extension;
+            string json = File.ReadAllText(fileName);
+
+            dynamic jsonObj = JsonConvert.DeserializeObject(json);
+            jsonObj["Coins"] = coins;
+            string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
+            File.WriteAllText(fileName, output);
+        }
+
         internal static bool SetCoinsForAll(int newValue = 0)
         {
             string filePath = Path.Combine(AppContext.BaseDirectory, DirectoryPath);
@@ -158,6 +169,34 @@ namespace DiscordBot.Common
             Console.WriteLine("-----------------------------------------------------------------");
 
             return true;
+        }
+
+        public static void UpdateUser(ulong uId, int? coins = null, string name = null, string gender = null, string pronouns = null,
+            string about = null, string customPrefix = null,
+            byte? aboutR = null, byte? aboutG = null, byte? aboutB = null, bool? teamMember = null,
+            string embedAuthorBuilderIconUrl = null, string embedFooterBuilderIconUrl = null,
+            string footerText = null, string minecraftUsername = null, string snapchat = null, bool? isBotIgnoringUser = null)
+        {
+            var user = new User()
+            {
+                Coins = coins ?? Load(uId).Coins,
+                Name = name ?? Load(uId).Name,
+                Gender = gender ?? Load(uId).Gender,
+                Pronouns = pronouns ?? Load(uId).Pronouns,
+                About = about ?? Load(uId).About,
+                CustomPrefix = customPrefix ?? Load(uId).CustomPrefix,
+                AboutR = aboutR ?? Load(uId).AboutR,
+                AboutG = aboutG ?? Load(uId).AboutG,
+                AboutB = aboutB ?? Load(uId).AboutB,
+                TeamMember = teamMember ?? Load(uId).TeamMember,
+                EmbedAuthorBuilderIconUrl = embedAuthorBuilderIconUrl ?? Load(uId).EmbedAuthorBuilderIconUrl,
+                EmbedFooterBuilderIconUrl = embedFooterBuilderIconUrl ?? Load(uId).EmbedFooterBuilderIconUrl,
+                FooterText = footerText ?? Load(uId).FooterText,
+                MinecraftUsername = minecraftUsername ?? Load(uId).MinecraftUsername,
+                Snapchat = snapchat ?? Load(uId).Snapchat,
+                IsBotIgnoringUser = isBotIgnoringUser ?? Load(uId).IsBotIgnoringUser
+            };
+            user.SaveJson(uId);
         }
     }
 }

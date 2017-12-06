@@ -45,6 +45,8 @@ namespace DiscordBot.Handlers
 				Console.ResetColor();
 				Console.WriteLine("]    " + ": " + channel.Id + " type is unknown.");
 			}
+
+            Channel.EnsureExists(channel.Id);
 		}
 
 		public static async Task ChannelDestroyed(SocketChannel channel)

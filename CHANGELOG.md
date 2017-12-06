@@ -1,5 +1,15 @@
 # Changelog
 
+## Version 2.6.3.0 / 2.7.0.0
+
+### Added
+- Added toggleawardingcoins for server owners to toggle which channels receive coins and which don't.
+- Added channel check to startup to catch any channels created whilst the bot is offline.
+
+### Backend Notes
+- Added SetCoins to User Object to see if any changes are made.
+- Added Channel Object to keep track of channels awarding coins.
+
 ## Version 2.6.2.0
 
 ### Added
@@ -20,9 +30,7 @@
 - Removed GUID from stats.
 
 ### Backend Notes
-[Changed]
 - Changed the way commands and messages are read, ensuring that the AwardCoinsToPlayer method is called.
-
 
 ## Version 2.6.1.0
 
@@ -61,16 +69,8 @@ Many thanks to Marceline for getting MelissaNet added to MogiiBot in time for th
 - Removed an error message which contained sensitive information.
 
 ### Backend Notes
-[General]
 - Cleaned up the Configuration File to make it look nice and new. (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧
-
-[Added]
 - Added the Bot token to the configuration file. It will now check for a token there before asking MelissasCode for it.
 - Added offlineList Tuple to log new users and the guild they joined whilst the bot was offline.
 - Added a console message to display if no new users were found whilst the bot was offline.
-
-[Removed]
 - Removed offlineUsersList due to offlineList Tuple being implemented.
-
-[Other]
-- Nothing here.

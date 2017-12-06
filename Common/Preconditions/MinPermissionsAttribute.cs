@@ -28,7 +28,14 @@ namespace DiscordBot.Common.Preconditions
             _level = level;
         }
 
-        public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider service)
+        //public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider service)
+        //{
+        //    var permission = GetPermission(context);
+
+        //    return Task.FromResult(permission >= _level ? PreconditionResult.FromSuccess() : PreconditionResult.FromError("you don't have permission to do that!"));
+        //}
+
+        public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
         {
             var permission = GetPermission(context);
 

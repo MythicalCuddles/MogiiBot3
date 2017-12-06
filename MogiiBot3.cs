@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Runtime.Remoting;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Discord;
@@ -12,6 +16,7 @@ using Discord.Audio;
 using Discord.Commands;
 using Discord.Net.Providers.UDPClient;
 using Discord.Net.Providers.WS4Net;
+using Discord.Rest;
 using Discord.WebSocket;
 
 using DiscordBot.Common;
@@ -51,6 +56,7 @@ namespace DiscordBot
             Bot.UserLeft += UserHandler.UserLeft;
             Bot.ChannelCreated += ChannelHandler.ChannelCreated;
             Bot.ChannelDestroyed += ChannelHandler.ChannelDestroyed;
+            Bot.JoinedGuild += BotOnJoinedGuild;
 			Bot.ReactionAdded += ReactionHandler.ReactionAdded;
 			Bot.MessageReceived += MessageReceived;
 			Bot.MessageDeleted += MessageHandler.MessageDeleted;
@@ -133,6 +139,13 @@ namespace DiscordBot
 				}
 
 			    Console.WriteLine("-----------------------------------------------------------------");
+
+			    foreach (SocketChannel c in g.Channels)
+			    {
+			        Channel.EnsureExists(c.Id);
+			    }
+
+			    Console.WriteLine("-----------------------------------------------------------------");
             }
 
             Console.Write("status: [");
@@ -171,9 +184,62 @@ namespace DiscordBot
 		    {
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("[ALERT] While " + Bot.CurrentUser.Username + " was offline, " + tupleList.Item1.Mention + " (" + tupleList.Item1.Id + ") joined " + tupleList.Item2.Name + ". They have been added to the database.");
             }
-		}
 
-		private static Task Disconnected(Exception exception)
+            //await GetPlayerCount();
+        }
+
+        //TODO: Finsih this.
+        //private static string onlineCountUrl = "https://minecraft-api.com/api/ping/playeronline.php?ip=mogiicraft.ddns.net&port=25635";
+        //private static string onlineListUrl = "https://minecraft-api.com/api/query/playerlist.php?ip=mogiicraft.ddns.net&port=28069";
+        //private static WebClient client = new WebClient();
+
+        //private static async Task GetPlayerCount()
+        //{
+        //    while (true)
+        //    {
+        //        if (Configuration.Load().PlayerCountPlayingMessageEnabled)
+        //        {
+        //            using (var stream = client.OpenRead(onlineCountUrl))
+        //            {
+        //                using (var reader = new StreamReader(stream))
+        //                {
+        //                    string line;
+        //                    string message = Configuration.Load().PlayerCountPlayingMessage;
+        //                    while ((line = reader.ReadLine()) != null)
+        //                    {
+        //                        message = Regex.Replace(message, "{SERVER.PLAYERCOUNT}", line, RegexOptions.IgnoreCase);
+        //                        Bot.SetGameAsync(message);
+        //                    }
+        //                }
+        //            }
+        //        }
+
+        //        using (var stream = client.OpenRead(onlineListUrl))
+        //        {
+        //            using (var reader = new StreamReader(stream))
+        //            {
+        //                string line;
+        //                while ((line = reader.ReadLine()) != null)
+        //                {
+        //                    Console.WriteLine(line);
+        //                }
+        //            }
+        //        }
+
+        //        Console.WriteLine("Cooldown started.");
+        //        Thread.Sleep(300000);
+        //    }
+        //}
+
+        private async Task BotOnJoinedGuild(SocketGuild socketGuild)
+        {
+            foreach (SocketChannel c in socketGuild.Channels)
+                Channel.EnsureExists(c.Id);
+
+            await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(socketGuild.Name + " has been added to MogiiBot's guild list. \n" + socketGuild.Owner.Username + " is the owner (" + socketGuild.Owner.Id + ")");
+        }
+
+        private static Task Disconnected(Exception exception)
         {
 			Console.WriteLine(exception.ToString());
             Console.WriteLine("\n\n\n\n");
@@ -268,13 +334,24 @@ namespace DiscordBot
             {
                 if (message.Content.Length >= Configuration.Load().MinLengthForCoin)
                 {
-                    AwardCoinsToPlayer(message.Author);
+                    if (Channel.Load(message.Channel.Id).AwardingCoins)
+                    {
+                        AwardCoinsToPlayer(message.Author);
 
-                    Console.Write("status: [");
-                    Console.ForegroundColor = ConsoleColor.DarkCyan;
-                    Console.Write("info");
-                    Console.ResetColor();
-                    Console.WriteLine("]  " + message.Author.Username + " : sent a message and was awarded 1 coin(s).");
+                        Console.Write("status: [");
+                        Console.ForegroundColor = ConsoleColor.DarkCyan;
+                        Console.Write("info");
+                        Console.ResetColor();
+                        Console.WriteLine("]  " + message.Author.Username + " : sent a message and was awarded 1 coin(s).");
+                    }
+                    else
+                    {
+                        Console.Write("status: [");
+                        Console.ForegroundColor = ConsoleColor.DarkCyan;
+                        Console.Write("info");
+                        Console.ResetColor();
+                        Console.WriteLine("]  " + message.Author.Username + " : sent a message and was awarded 0 coin(s) due to the channel being set not to give coins.");
+                    }
                 }
                 else
                 {
@@ -291,7 +368,15 @@ namespace DiscordBot
         {
             try
             {
-                User.UpdateJson(user.Id, "Coins", (user.GetCoins() + coinsToAward));
+                //User.UpdateJson(user.Id, "Coins", (user.GetCoins() + coinsToAward));
+                //User.SetCoins(user.Id, (user.GetCoins() + coinsToAward));
+                User.UpdateUser(user.Id, (user.GetCoins() + coinsToAward));
+
+                Console.Write("status: [");
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                Console.Write("info");
+                Console.ResetColor();
+                Console.WriteLine("]  " + user.Username + " : coin method called.");
             }
             catch (Exception e)
             {

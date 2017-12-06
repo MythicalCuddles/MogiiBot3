@@ -31,16 +31,17 @@ namespace DiscordBot.Common
         public int PrefixCost { get; set; } = 2500;
         public int SenpaiChanceRate { get; set; } = 5;
 
-        public ulong LogChannelId { get; set; } = 313318109500932096;
+        public ulong LogChannelId { get; set; } = 349976716237602816;
+
+        public int Respects { get; set; } = 0;
+        public int MinLengthForCoin { get; set; } = 0; // Magic Number entered via Discord. (Not Shared for Reasons)
+
+        public bool PlayerCountPlayingMessageEnabled { get; set; } = true;
+        public string PlayerCountPlayingMessage { get; set; } = "MogiiCraft with {SERVER.PLAYERCOUNT} other players!";
 
         /// NSFW Variables
         public int MaxRuleXGamble { get; set; } = 2353312;
 
-        /// Fun Variables
-        public int Respects { get; set; } = 0;
-
-        public int MinLengthForCoin { get; set; } = 0; // Magic Number entered via Discord. (Not Shared for Reasons)
-        
         public static void EnsureExists()
         {
             string file = Path.Combine(AppContext.BaseDirectory, FileName);

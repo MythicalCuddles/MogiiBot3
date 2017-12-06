@@ -105,5 +105,27 @@ namespace DiscordBot.Modules.SOwner
             GuildConfiguration.UpdateJson(Context.Guild.Id, "RuleGambleChannelId", channel.Id);
             await ReplyAsync(Context.User.Mention + " has updated the Rule34 Gamble Channel to: " + channel.Mention);
         }
+
+        [Command("toggleawardingcoins"), Summary("Toggle if the channel awards coins for typing messages.")]
+        public async Task ToggleChannelCoinStatus(SocketTextChannel channel = null)
+        {
+            SocketTextChannel workingWithChannel = channel ?? Context.Channel as SocketTextChannel;
+            bool value = !Channel.Load(workingWithChannel.Id).AwardingCoins;
+
+            Channel.SetAwardingCoins(workingWithChannel.Id, value);
+
+            IUserMessage msg;
+            if (value)
+            {
+                msg = await ReplyAsync(Context.User.Mention + ", this channel is now awarding coins to the messages typed here.");
+            }
+            else
+            {
+                msg = await ReplyAsync(Context.User.Mention + ", this channel is no longer awarding coins to the messages typed here.");
+            }
+
+            Context.Message.DeleteAfter(15);
+            msg.DeleteAfter(15);
+        }
     }
 }
