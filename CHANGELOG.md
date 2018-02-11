@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 2.7.1.0
+
+- Updated Discord.Net
+
+
 ## Version 2.6.3.0 / 2.7.0.0
 
 ### Added
@@ -9,6 +14,7 @@
 ### Backend Notes
 - Added SetCoins to User Object to see if any changes are made.
 - Added Channel Object to keep track of channels awarding coins.
+
 
 ## Version 2.6.2.0
 
@@ -32,10 +38,12 @@
 ### Backend Notes
 - Changed the way commands and messages are read, ensuring that the AwardCoinsToPlayer method is called.
 
+
 ## Version 2.6.1.0
 
 ### Changed
 - Reverted to an older version of the leaderboard module due to issue with duplicates appearing in the list.
+
 
 ## Version 2.6.0.0
 Many thanks to Marceline for getting MelissaNet added to MogiiBot in time for the update (Private Library)

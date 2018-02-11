@@ -84,7 +84,7 @@ namespace DiscordBot.Modules.NSFW
 
 						    if (s.Contains("thumbnails") || s.Contains("samples"))
 						    {
-						        Rule34Gamble();
+						        await Rule34Gamble();
 						        return;
 						    }
 						}

@@ -46,7 +46,11 @@ namespace DiscordBot
                 LogLevel = LogSeverity.Debug,
                 MessageCacheSize = 50,
                 WebSocketProvider = WS4NetProvider.Instance,
-                UdpSocketProvider = UDPClientProvider.Instance
+                UdpSocketProvider = UDPClientProvider.Instance,
+                DefaultRetryMode = RetryMode.AlwaysRetry,
+                AlwaysDownloadUsers = true,
+                ConnectionTimeout = int.MaxValue,
+
             });
             CommandService = new CommandService();
 
@@ -111,7 +115,7 @@ namespace DiscordBot
             List<Tuple<SocketGuildUser, SocketGuild>> offlineList = new List<Tuple<SocketGuildUser, SocketGuild>>();
 
 		    if (Configuration.Load().TwitchLink == null) { await Bot.SetGameAsync(Configuration.Load().Playing); }
-            else { await Bot.SetGameAsync(Configuration.Load().Playing, Configuration.Load().TwitchLink, StreamType.Twitch); }
+            else { await Bot.SetGameAsync(Configuration.Load().Playing, Configuration.Load().TwitchLink, ActivityType.Streaming); }
 			await Bot.SetStatusAsync(Configuration.Load().Status);
 
 			ModeratorModule.ActiveForDateTime = DateTime.Now;
@@ -241,22 +245,24 @@ namespace DiscordBot
 
         private static Task Disconnected(Exception exception)
         {
-			Console.WriteLine(exception.ToString());
-            Console.WriteLine("\n\n\n\n");
+			Console.WriteLine(exception + "\n");
 
-            Task.Delay(5000);
+            // REMOVED AS DefaultRetryMode ADDED TO DISCORDSOCKETCONFIG
+            //Console.WriteLine("\n\n\n\n");
 
-            Process process = new Process
-            {
-                StartInfo =
-                {
-                    FileName = Path.Combine(AppContext.BaseDirectory, "DiscordBot.exe"),
-                    CreateNoWindow = false
-                }
-            };
-            process.Start();
+            //Task.Delay(5000);
 
-            Environment.Exit(0);
+            //Process process = new Process
+            //{
+            //    StartInfo =
+            //    {
+            //        FileName = Path.Combine(AppContext.BaseDirectory, "DiscordBot.exe"),
+            //        CreateNoWindow = false
+            //    }
+            //};
+            //process.Start();
+
+            //Environment.Exit(0);
             return Task.CompletedTask;
         }
 	    
@@ -325,8 +331,6 @@ namespace DiscordBot
                     Console.ResetColor();
                     Console.WriteLine("]  " + message.Author.Username + " : " + result.ErrorReason);
 
-                    //Console.WriteLine("[ERROR] " + messageParam.Author.Mention + " - " + result.ErrorReason);
-
                     errorMessage.DeleteAfter(20);
                 }
             }
@@ -368,9 +372,8 @@ namespace DiscordBot
         {
             try
             {
-                //User.UpdateJson(user.Id, "Coins", (user.GetCoins() + coinsToAward));
-                //User.SetCoins(user.Id, (user.GetCoins() + coinsToAward));
-                User.UpdateUser(user.Id, (user.GetCoins() + coinsToAward));
+                //User.UpdateUser(user.Id, (user.GetCoins() + coinsToAward));
+                User.SetCoins(user.Id, (user.GetCoins() + coinsToAward));
 
                 Console.Write("status: [");
                 Console.ForegroundColor = ConsoleColor.DarkCyan;

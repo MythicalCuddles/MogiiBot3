@@ -61,7 +61,7 @@ namespace DiscordBot.Modules.Owner
             }
             else
             {
-                await MogiiBot3.Bot.SetGameAsync(activityMessage, twitchLink, StreamType.Twitch);
+                await MogiiBot3.Bot.SetGameAsync(activityMessage, twitchLink, ActivityType.Streaming);
             }
 
             var eb = new EmbedBuilder()

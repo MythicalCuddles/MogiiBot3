@@ -135,13 +135,15 @@ namespace DiscordBot.Common
 
         public static void SetCoins(ulong uId, int coins)
         {
-            string fileName = DirectoryPath + uId + Extension;
-            string json = File.ReadAllText(fileName);
+            //string fileName = DirectoryPath + uId + Extension;
+            //string json = File.ReadAllText(fileName);
 
-            dynamic jsonObj = JsonConvert.DeserializeObject(json);
-            jsonObj["Coins"] = coins;
-            string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-            File.WriteAllText(fileName, output);
+            //dynamic jsonObj = JsonConvert.DeserializeObject(json);
+            //jsonObj["Coins"] = coins;
+            //string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
+            //File.WriteAllText(fileName, output);
+
+            UpdateUser(uId, coins);
         }
 
         internal static bool SetCoinsForAll(int newValue = 0)

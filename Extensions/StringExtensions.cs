@@ -39,7 +39,12 @@ namespace DiscordBot.Extensions
             msg = Regex.Replace(msg, "{GUILD.OWNER.ID}", e.Guild.Owner.Id.ToString(), RegexOptions.IgnoreCase);
 			msg = Regex.Replace(msg, "{GUILD.PREFIX}", GuildConfiguration.Load(e.Guild.Id).Prefix, RegexOptions.IgnoreCase);
 
-			return msg;
+            msg = Regex.Replace(msg, "{MELISSA.USERNAME}", Configuration.Load().Developer.GetUser().Username, RegexOptions.IgnoreCase);
+            msg = Regex.Replace(msg, "{MELISSA.MENTION}", Configuration.Load().Developer.GetUser().Mention, RegexOptions.IgnoreCase);
+            msg = Regex.Replace(msg, "{MELISSA.ID}", Configuration.Load().Developer.GetUser().Id.ToString(), RegexOptions.IgnoreCase);
+            msg = Regex.Replace(msg, "{MELISSA.NET.VERSION}", MelissaNet.VersionInfo.Version, RegexOptions.IgnoreCase);
+
+            return msg;
         }
     }
 }

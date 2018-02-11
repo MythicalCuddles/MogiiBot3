@@ -21,7 +21,7 @@ namespace DiscordBot.Extensions
 {
     public static class UserExtensions
     {
-        public static Int32 GetCoins(this IUser user)
+        public static int GetCoins(this IUser user)
         {
             return User.Load(user.Id).Coins;
         }
