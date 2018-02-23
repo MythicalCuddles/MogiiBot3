@@ -12,7 +12,6 @@ using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
 
-using MelissasCode;
 using System.Runtime.InteropServices;
 
 namespace DiscordBot.Modules.Mod
@@ -66,12 +65,12 @@ namespace DiscordBot.Modules.Mod
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
                 .WithName(MogiiBot3.Bot.CurrentUser.Username + " Version " + ProgramVersion.Major + "." + ProgramVersion.Minor + "." + ProgramVersion.Build + "." + ProgramVersion.Revision);
             EmbedFooterBuilder efb = new EmbedFooterBuilder()
-                .WithText("MelissasCode Version " + MelissaCode.Version + " | " + "MelissaNet Version " + MelissaNet.VersionInfo.Version);
+                .WithText("MelissaNet Version " + MelissaNet.VersionInfo.Version);
             EmbedBuilder eb = new EmbedBuilder()
                 .WithAuthor(eab)
 
                 .AddField("Bot Information", "**Name:** " + MogiiBot3.Bot.CurrentUser.Username + "\n**Discriminator:** #" + MogiiBot3.Bot.CurrentUser.Discriminator + "\n**Id:** " + MogiiBot3.Bot.CurrentUser.Id)
-                .AddField("Developer Information", "**Name:** " + DiscordWorker.getMelissaID.GetUser().Username + "\n**Discriminator:** #" + DiscordWorker.getMelissaID.GetUser().Discriminator + "\n**Id:** " + DiscordWorker.getMelissaID)
+                .AddField("Developer Information", "**Name:** " + MelissaNet.Discord.GetMelissaId().GetUser().Username + "\n**Discriminator:** #" + MelissaNet.Discord.GetMelissaId().GetUser().Discriminator + "\n**Id:** " + MelissaNet.Discord.GetMelissaId())
                 .AddField("Bot Statistics", "**Development for:** " + DevelopmentSince() + "\n" +
                 "**Active for:** " + CalculateUptime() + "\n" +
                 "**Latency:** " + MogiiBot3.Bot.Latency + "ms" + "\n" +
@@ -100,7 +99,7 @@ namespace DiscordBot.Modules.Mod
             TimeSpan uptime = DateTime.Now - ActiveForDateTime;
             return (uptime.Days.ToString() + " day(s), " + uptime.Hours.ToString() + " hour(s), " + uptime.Minutes.ToString() + " minute(s), " + uptime.Seconds.ToString() + " second(s)");
         }
-        private static readonly DateTime StartDevelopment = DiscordWorker.developmentTime(MogiiBot3.Bot.CurrentUser.Id);
+        private static readonly DateTime StartDevelopment = MelissaNet.Discord.MogiiBotDevelopmentSince();
         private static string DevelopmentSince()
         {
             TimeSpan developmentCounter = DateTime.Now - StartDevelopment;

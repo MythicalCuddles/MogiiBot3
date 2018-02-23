@@ -16,7 +16,7 @@ using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
 
-using MelissasCode;
+using MelissaNet;
 
 using System.Net;
 using HtmlAgilityPack;
@@ -90,9 +90,9 @@ namespace DiscordBot.Modules.NSFW
 						}
 
                         // 2.6 Fix for Link Issue
-                        string link = images[2].FindAndReplaceFirstInstance("//", "temp");
+                        string link = images[3].FindAndReplaceFirstInstance("//", "temp");
                         link = link.FindAndReplaceFirstInstance("//", "/");
-                        link = link.FindAndReplaceFirstInstance("temp", "http://");
+                        link = link.FindAndReplaceFirstInstance("temp", "//");
                         Console.WriteLine("[Final] " + link);
 
                         //message.ModifyAfter(Context.User.Mention + ", congratulations, you won the following image: \n" + images[2].ToString(), 1);

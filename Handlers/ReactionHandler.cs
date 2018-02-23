@@ -15,8 +15,6 @@ using DiscordBot.Extensions;
 using DiscordBot.Other;
 using DiscordBot.Logging;
 
-using MelissasCode;
-
 namespace DiscordBot.Handlers
 {
     public class ReactionHandler
@@ -41,12 +39,6 @@ namespace DiscordBot.Handlers
             if (TransactionLogger.TransactionMessages.Contains(message.Id))
             {
                 await HandleTransactionReactions(message, channel, reaction);
-                return;
-            }
-
-            if (MusicHandler.MusicMessages.Contains(message.Id))
-            {
-                await HandleMusicReactions(message, channel, reaction);
                 return;
             }
 
@@ -189,53 +181,6 @@ namespace DiscordBot.Handlers
                 await message.Value.AddReactionAsync(Extensions.Extensions.ArrowRight);
             }
             else if (TransactionLogger.PageNumber[TransactionLogger.TransactionMessages.IndexOf(message.Id)] == TransactionLogger.GetSplicedTransactonListCount)
-            {
-                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowLeft);
-            }
-            else
-            {
-                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowLeft);
-                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowRight);
-            }
-        }
-        private static async Task HandleMusicReactions(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
-        {
-            // Check to see if the next page or previous page was clicked.
-            if (reaction.Emote.Name == Extensions.Extensions.ArrowLeft.Name)
-            {
-                if (MusicHandler.PageNumber[MusicHandler.MusicMessages.IndexOf(message.Id)] == 1)
-                    return;
-
-                MusicHandler.PageNumber[MusicHandler.MusicMessages.IndexOf(message.Id)]--;
-            }
-            else if (reaction.Emote.Name == Extensions.Extensions.ArrowRight.Name)
-            {
-                if (MusicHandler.PageNumber[MusicHandler.MusicMessages.IndexOf(message.Id)] == MusicHandler.GetSplicedMusicListCount)
-                    return;
-
-                MusicHandler.PageNumber[MusicHandler.MusicMessages.IndexOf(message.Id)]++;
-            }
-
-            StringBuilder sb = new StringBuilder()
-                .Append("**Music Links**\n```");
-
-            List<string> musicLinks = MusicHandler.GetSplicedMusic(MusicHandler.PageNumber[MusicHandler.MusicMessages.IndexOf(message.Id)]);
-
-            for (int i = 0; i < musicLinks.Count; i++)
-            {
-                sb.Append(((i + 1) + ((MusicHandler.PageNumber[MusicHandler.MusicMessages.IndexOf(message.Id)] - 1) * 10)) + ": " + musicLinks[i] + "\n");
-            }
-
-            sb.Append("``` `Page " + MusicHandler.PageNumber[MusicHandler.MusicMessages.IndexOf(message.Id)] + "`");
-
-            await message.Value.ModifyAsync(msg => msg.Content = sb.ToString());
-            await message.Value.RemoveAllReactionsAsync();
-
-            if (MusicHandler.PageNumber[MusicHandler.MusicMessages.IndexOf(message.Id)] == 1)
-            {
-                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowRight);
-            }
-            else if (MusicHandler.PageNumber[MusicHandler.MusicMessages.IndexOf(message.Id)] == MusicHandler.GetSplicedMusicListCount)
             {
                 await message.Value.AddReactionAsync(Extensions.Extensions.ArrowLeft);
             }

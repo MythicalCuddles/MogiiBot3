@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,8 +13,6 @@ using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
 using DiscordBot.Logging;
-
-using MelissasCode;
 
 namespace DiscordBot.Modules.Public
 {
@@ -31,7 +30,7 @@ namespace DiscordBot.Modules.Public
         [Command("setabout"), Summary("Set your about message!")]
         public async Task SetUserAbout([Remainder]string aboutMessage)
         {
-            User.UpdateJson(Context.User.Id, "About", aboutMessage);
+            User.UpdateUser(Context.User.Id, about:aboutMessage);
             await ReplyAsync("Updated successfully, " + Context.User.Mention);
         }
 
@@ -45,9 +44,24 @@ namespace DiscordBot.Modules.Public
                 return;
             }
 
-            User.UpdateJson(Context.User.Id, "AboutR", r);
-            User.UpdateJson(Context.User.Id, "AboutG", g);
-            User.UpdateJson(Context.User.Id, "AboutB", b);
+            byte rValue, gValue, bValue;
+
+            try
+            {
+                byte.TryParse(r.ToString(), out rValue);
+                byte.TryParse(g.ToString(), out gValue);
+                byte.TryParse(b.ToString(), out bValue);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("ERROR\n" + e.ToString());
+                await ReplyAsync("An unexpected error has happened. Please ensure that you have passed through a byte value! (A number between 0 and 255)");
+                return;
+            }
+
+            User.UpdateUser(Context.User.Id, aboutR:rValue);
+            User.UpdateUser(Context.User.Id, aboutG:gValue);
+            User.UpdateUser(Context.User.Id, aboutB:bValue);
 
             Color aboutColor = new Color(User.Load(Context.User.Id).AboutR, User.Load(Context.User.Id).AboutG, User.Load(Context.User.Id).AboutB);
 
@@ -125,8 +139,8 @@ namespace DiscordBot.Modules.Public
 
             if (User.Load(Context.User.Id).Coins >= Configuration.Load().PrefixCost)
             {
-                User.UpdateJson(Context.User.Id, "CustomPrefix", prefix);
-                User.UpdateJson(Context.User.Id, "Coins", (User.Load(Context.User.Id).Coins - Configuration.Load().PrefixCost));
+                User.UpdateUser(Context.User.Id, customPrefix:prefix);
+                User.UpdateUser(Context.User.Id, coins: (User.Load(Context.User.Id).Coins - Configuration.Load().PrefixCost));
                 TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") paid " + Configuration.Load().PrefixCost + " for a custom prefix.");
                 await ReplyAsync(Context.User.Mention + ", you have set `" + prefix + "` as a custom prefix for yourself. Please do take note that the following prefixes will work for you:\n```KEY: [Prefix][Command]\n" + prefix + " - User Set Prefix\n" + GuildConfiguration.Load(Context.Guild.Id).Prefix + " - Guild Set Prefix\n@" + MogiiBot3.Bot.CurrentUser.Username + " - Global Prefix```");
             }
@@ -140,7 +154,7 @@ namespace DiscordBot.Modules.Public
         [Command("setpronouns"), Summary("Set your pronouns!")]
         public async Task SetUserPronouns([Remainder]string pronouns)
         {
-            User.UpdateJson(Context.User.Id, "Pronouns", pronouns);
+            User.UpdateUser(Context.User.Id, pronouns:pronouns);
             await ReplyAsync("Updated successfully, " + Context.User.Mention);
         }
 
@@ -148,28 +162,28 @@ namespace DiscordBot.Modules.Public
         [Alias("setminecraftusername", "mcreg", "mcregister")]
         public async Task SetMinecraftUsername([Remainder]string username)
         {
-            User.UpdateJson(Context.User.Id, "MinecraftUsername", username);
+            User.UpdateUser(Context.User.Id, minecraftUsername:username);
             await ReplyAsync("Updated successfully, " + Context.User.Mention);
         }
 
         [Command("setsnapchat"), Summary("")]
         public async Task SetSnapchatUsername([Remainder]string username)
         {
-            User.UpdateJson(Context.User.Id, "Snapchat", username);
+            User.UpdateUser(Context.User.Id, snapchat:username);
             await ReplyAsync("Updated successfully, " + Context.User.Mention);
         }
 
         [Command("setname"), Summary("")]
         public async Task SetName([Remainder]string name)
         {
-            User.UpdateJson(Context.User.Id, "Name", name);
+            User.UpdateUser(Context.User.Id, name:name);
             await ReplyAsync("Updated successfully, " + Context.User.Mention);
         }
 
         [Command("setgender"), Summary("")]
         public async Task SetGender([Remainder]string gender)
         {
-            User.UpdateJson(Context.User.Id, "Gender", gender);
+            User.UpdateUser(Context.User.Id, gender:gender);
             await ReplyAsync("Updated successfully, " + Context.User.Mention);
         }
     }

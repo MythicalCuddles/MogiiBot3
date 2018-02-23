@@ -8,14 +8,8 @@ using Discord.Commands;
 using Discord;
 using Discord.WebSocket;
 
-using DiscordBot;
-using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
-using DiscordBot.Other;
-using DiscordBot.Logging;
-
-using MelissasCode;
 
 namespace DiscordBot.Handlers
 {

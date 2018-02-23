@@ -14,8 +14,6 @@ using DiscordBot.Extensions;
 using DiscordBot.Other;
 using DiscordBot.Logging;
 
-using MelissasCode;
-
 namespace DiscordBot.Modules.Public
 {
     [Name("Fun Commands")]
@@ -210,9 +208,9 @@ namespace DiscordBot.Modules.Public
                 await ReplyAsync(Context.User.Mention + ", you don't have that amount of coins!");
                 return;
             }
-
-            User.UpdateJson(Context.User.Id, "Coins", (issuerCoins - coins));
-            User.UpdateJson(user.Id, "Coins", userCoins + coins);
+            
+            User.UpdateUser(Context.User.Id, coins:((issuerCoins - coins)));
+            User.UpdateUser(user.Id, coins:(userCoins + coins));
             TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") give " + user.Username + " (" + user.Id + ") " + coins + " coins.");
             await ReplyAsync(Context.User.Mention + " has given " + user.Mention + " " + coins + " coin(s)");
         }
@@ -265,7 +263,7 @@ namespace DiscordBot.Modules.Public
 		        }
 
 		        QuoteHandler.AddAndUpdateRequestQuotes(quote);
-		        User.UpdateJson(Context.User.Id, "Coins", (userCoins - quoteCost));
+                User.UpdateUser(Context.User.Id, coins: (userCoins - quoteCost));
 		        TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") paid " + quoteCost + " for a custom quote.");
 		        await ReplyAsync(Context.User.Mention + ", your quote has been added to the list, and should be verified by a staff member shortly.");
 
@@ -276,14 +274,6 @@ namespace DiscordBot.Modules.Public
 		    {
 		        await ReplyAsync("Quotes are currently disabled. Try again later.");
 		    }
-        }
-
-        [Command("music"), Summary("Replies posting a music link which has been set by staff.")]
-        public async Task FavouriteMusicLink()
-        {
-            int generatedNumber = _random.Next(0, MusicHandler.MusicLinkList.Count());
-
-            await ReplyAsync("Here's the music!\n" + MusicHandler.MusicLinkList[generatedNumber]);
         }
 
         [Command("image"), Summary("Replies posting a image link which has been set by staff.")]

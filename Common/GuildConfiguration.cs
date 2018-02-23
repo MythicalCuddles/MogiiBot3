@@ -1,23 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Newtonsoft.Json;
-
 using Discord;
-using Discord.Commands;
-using Discord.WebSocket;
-
-using DiscordBot.Common;
 using DiscordBot.Extensions;
-using DiscordBot.Handlers;
-using DiscordBot.Logging;
-using DiscordBot.Other;
-
-using MelissasCode;
+using Newtonsoft.Json;
 
 namespace DiscordBot.Common
 {
@@ -25,15 +10,15 @@ namespace DiscordBot.Common
     {
         public string Prefix { get; set; } = "$";
         public string WelcomeMessage { get; set; } = "";
-        public ulong WelcomeChannelId { get; set; } = 0;
-        public ulong LogChannelId { get; set; } = 0;
-		public ulong BotChannelId { get; set; } = 0;
+        public ulong WelcomeChannelId { get; set; } = 414197676364791808;
+        public ulong LogChannelId { get; set; } = 414197676364791808;
+        public ulong BotChannelId { get; set; } = 414197676364791808;
 
         public bool SenpaiEnabled { get; set; } = true;
         public bool QuotesEnabled { get; set; } = true;
 
         public bool EnableNsfwCommands { get; set; } = false;
-        public ulong RuleGambleChannelId { get; set; } = 0;
+        public ulong RuleGambleChannelId { get; set; } = 414197676364791808;
 
         public static void EnsureExists(ulong guildId)
         {
@@ -52,6 +37,41 @@ namespace DiscordBot.Common
                 Console.Write("ok");
                 Console.ResetColor();
                 Console.WriteLine("]    " + GetPath(guildId) + ": created.");
+
+
+                EmbedBuilder eb = new EmbedBuilder()
+                .WithTitle("Thank you for adding " + MogiiBot3.Bot.CurrentUser.Username + " to your guild!")
+                .WithDescription("Congratulations on adding " + MogiiBot3.Bot.CurrentUser.Username + " to " + guildId.GetGuild().Name + "! Please follow the steps below to configure me!" +
+                                 "```INI\n" +
+                                 "[1] Prefix: You can change the default prefix by typing \"" + GuildConfiguration.Load(guildId).Prefix + "guildprefix [prefix]\"\n" +
+                                 "[2] Welcome Message: Type \"" + GuildConfiguration.Load(guildId).Prefix + "setwelcomemessage\" to view flags and see how to set up the welcome message.\n" +
+                                 "[3] Welcome Channel: Set the channel the welcome message is posted by typing \"" + GuildConfiguration.Load(guildId).Prefix + "welcomechannel [channel mention]\"\n" +
+                                 "[4] Log Channel: We now need a channel where we can post things for your eyes only! Type \"" + GuildConfiguration.Load(guildId).Prefix + "logchannel [channel mention]\"\n" +
+                                 "-- Optional --\n" +
+                                 "[5] Senpai Command: You can toggle senpai by typing \"" + GuildConfiguration.Load(guildId).Prefix + "togglesenpai\"\n" +
+                                 "[6] Quote Command: You can toggle quotes by typing \"" + GuildConfiguration.Load(guildId).Prefix + "togglequotes\"\n" +
+                                 "\n[More] If you're interested in setting up NSFW commands and changing other settings, please visit the wiki.\n" +
+                                 "```")
+                .WithFooter("Warning: Server Owner's may only change the configuration for the guild.")
+                .WithThumbnailUrl(MogiiBot3.Bot.CurrentUser.GetAvatarUrl())
+                .WithColor(56, 226, 40);
+                guildId.GetGuild().DefaultChannel.SendMessageAsync("", false, eb.Build());
+
+                eb = new EmbedBuilder()
+                    .WithTitle("Seen this message before?")
+                    .WithDescription("We apologise for the inconvience. Seeing this message again means that your guild configuration files have been reset." +
+                                     "Due to this bot being constantly updated, this might happen more than we, or you, would like." +
+                                     "\n\n" +
+                                     "It's easy to fix however. Please follow the steps above or head to the wiki and follow the quick setup guide again and your server will be good to go once more!" +
+                                     "\n\n" +
+                                     "Sorry about that.\n- Melissa (@" + Configuration.Load().Developer.GetUser().Username + "#" + Configuration.Load().Developer.GetUser().Discriminator + ")\n" +
+                                     "\t& the rest of the MythicalCuddlesXYZ Team")
+                    .WithColor(244, 226, 66)
+                    .WithCurrentTimestamp()
+                    .WithFooter("This message was posted here as this is your guild's default channel.");
+                guildId.GetGuild().DefaultChannel.SendMessageAsync("", false, eb.Build());
+
+
             }
 
             Console.Write("status: [");
@@ -81,37 +101,57 @@ namespace DiscordBot.Common
         public string ToJson()
             => JsonConvert.SerializeObject(this, Formatting.Indented);
 
-        public static void UpdateJson(ulong guildId, string parameterName, string newValue)
+        //public static void UpdateJson(ulong guildId, string parameterName, string newValue)
+        //{
+        //    string json = File.ReadAllText(GetPath(guildId));
+        //    dynamic jsonObj = JsonConvert.DeserializeObject(json);
+        //    jsonObj[parameterName] = newValue;
+        //    string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
+        //    File.WriteAllText(GetPath(guildId), output);
+        //}
+        //public static void UpdateJson(ulong guildId, string parameterName, int newValue)
+        //{
+        //    string json = File.ReadAllText(GetPath(guildId));
+        //    dynamic jsonObj = JsonConvert.DeserializeObject(json);
+        //    jsonObj[parameterName] = newValue;
+        //    string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
+        //    File.WriteAllText(GetPath(guildId), output);
+        //}
+        //public static void UpdateJson(ulong guildId, string parameterName, bool newValue)
+        //{
+        //    string json = File.ReadAllText(GetPath(guildId));
+        //    dynamic jsonObj = JsonConvert.DeserializeObject(json);
+        //    jsonObj[parameterName] = newValue;
+        //    string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
+        //    File.WriteAllText(GetPath(guildId), output);
+        //}
+        //public static void UpdateJson(ulong guildId, string parameterName, ulong? newValue)
+        //{
+        //    string json = File.ReadAllText(GetPath(guildId));
+        //    dynamic jsonObj = JsonConvert.DeserializeObject(json);
+        //    jsonObj[parameterName] = newValue;
+        //    string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
+        //    File.WriteAllText(GetPath(guildId), output);
+        //}
+
+        public static void UpdateGuild(ulong guildId, string prefix = null, string welcomeMessage = null,
+            ulong? welcomeChannelId = null, ulong? logChannelId = null, ulong? botChannelId = null,
+            bool? senpaiEnabled = null, bool? quotesEnabled = false, bool? enableNsfwCommands = null, 
+            ulong? ruleGameChannelId = null)
         {
-            string json = File.ReadAllText(GetPath(guildId));
-            dynamic jsonObj = JsonConvert.DeserializeObject(json);
-            jsonObj[parameterName] = newValue;
-            string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-            File.WriteAllText(GetPath(guildId), output);
-        }
-        public static void UpdateJson(ulong guildId, string parameterName, int newValue)
-        {
-            string json = File.ReadAllText(GetPath(guildId));
-            dynamic jsonObj = JsonConvert.DeserializeObject(json);
-            jsonObj[parameterName] = newValue;
-            string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-            File.WriteAllText(GetPath(guildId), output);
-        }
-        public static void UpdateJson(ulong guildId, string parameterName, bool newValue)
-        {
-            string json = File.ReadAllText(GetPath(guildId));
-            dynamic jsonObj = JsonConvert.DeserializeObject(json);
-            jsonObj[parameterName] = newValue;
-            string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-            File.WriteAllText(GetPath(guildId), output);
-        }
-        public static void UpdateJson(ulong guildId, string parameterName, ulong newValue)
-        {
-            string json = File.ReadAllText(GetPath(guildId));
-            dynamic jsonObj = JsonConvert.DeserializeObject(json);
-            jsonObj[parameterName] = newValue;
-            string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-            File.WriteAllText(GetPath(guildId), output);
+            var guild = new GuildConfiguration()
+            {
+                Prefix = prefix ?? Load(guildId).Prefix,
+                WelcomeMessage = welcomeMessage ?? Load(guildId).WelcomeMessage,
+                WelcomeChannelId = welcomeChannelId ?? Load(guildId).WelcomeChannelId,
+                LogChannelId = logChannelId ?? Load(guildId).LogChannelId,
+                BotChannelId = botChannelId ?? Load(guildId).BotChannelId,
+                SenpaiEnabled = senpaiEnabled ?? Load(guildId).SenpaiEnabled,
+                QuotesEnabled = quotesEnabled ?? Load(guildId).QuotesEnabled,
+                EnableNsfwCommands = enableNsfwCommands ?? Load(guildId).EnableNsfwCommands,
+                RuleGambleChannelId = ruleGameChannelId ?? Load(guildId).RuleGambleChannelId
+            };
+            guild.SaveJson(guildId);
         }
     }
 }

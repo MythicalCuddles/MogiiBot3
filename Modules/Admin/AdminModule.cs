@@ -14,7 +14,6 @@ using DiscordBot.Extensions;
 using DiscordBot.Other;
 using DiscordBot.Logging;
 
-using MelissasCode;
 using MelissaNet;
 
 namespace DiscordBot.Modules.Admin
@@ -46,8 +45,8 @@ namespace DiscordBot.Modules.Admin
                 await ReplyAsync("You can not award that amount of coins!");
                 return;
             }
-
-            User.UpdateJson(mentionedUser.Id, "Coins", (mentionedUser.GetCoins() + awardValue));
+            
+            User.UpdateUser(mentionedUser.Id, coins: (mentionedUser.GetCoins()  + awardValue));
             await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has awarded " + mentionedUser.Mention + " " + awardValue + " coins!");
             await ReplyAsync(mentionedUser.Mention + " has been awarded " + awardValue + " coins from " + Context.User.Mention);
             TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") awarded " + mentionedUser.Username + "(" + mentionedUser.Id + ") " + awardValue + " coins.");
@@ -67,10 +66,9 @@ namespace DiscordBot.Modules.Admin
                 await ReplyAsync("You can not fine that amount of coins!");
                 return;
             }
-
-            User.UpdateJson(mentionedUser.Id, "Coins", (User.Load(mentionedUser.Id).Coins - fineValue));
+            
+            User.UpdateUser(mentionedUser.Id, coins: (User.Load(mentionedUser.Id).Coins - fineValue));
             await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has fined " + mentionedUser.Mention + " " + fineValue + " coins!");
-            //await GetHandler.getTextChannel(Configuration.Load().LogChannelID).SendMessageAsync(Context.User.Mention + " has fined " + mentionedUser.Mention + " " + fineValue + " coins!");
             await ReplyAsync(mentionedUser.Mention + " has been fined " + fineValue + " coins from " + Context.User.Mention);
             TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") fined " + mentionedUser.Username + "(" + mentionedUser.Id + ") " + fineValue + " coins.");
         }
@@ -286,83 +284,6 @@ namespace DiscordBot.Modules.Admin
 
 			await ListVotingLinks();
         }
-
-        [Command("addmusic"), Summary("Add a music link to the list.")]
-        public async Task AddMusicLink([Remainder]string link)
-        {
-            if (MusicHandler.MusicLinkList.Contains(link))
-            {
-                await ReplyAsync("\"Bitch no, it's already in the list\" - Flamesies.\nBut seriously... that link already is in the list, so you don't need to add it again.");
-            }
-            else
-            {
-                MusicHandler.AddAndUpdateLinks(link);
-
-				EmbedBuilder eb = new EmbedBuilder()
-				.WithDescription(Context.User.Mention + " Link Added")
-				.WithColor(33, 210, 47);
-
-				await ReplyAsync("", false, eb.Build());
-
-				//await ReplyAsync("Link successfully added to the list, " + Context.User.Mention);
-            }
-        }
-
-        [Command("listmusic"), Summary("Sends a list of all the music links.")]
-        public async Task ListMusicLinks()
-        {
-            if(MusicHandler.MusicLinkList.Count > 0)
-            {
-                StringBuilder sb = new StringBuilder()
-                .Append("**Music Links**\n```");
-
-                MusicHandler.SpliceMusicIntoList();
-                List<string> music = MusicHandler.GetSplicedMusic(1);
-
-                for (int i = 0; i < music.Count; i++)
-                {
-                    sb.Append((i + 1) + ": " + music[i] + "\n");
-                }
-
-                sb.Append("``` `Page 1`");
-
-                IUserMessage msg = await ReplyAsync(sb.ToString());
-                MusicHandler.MusicMessages.Add(msg.Id);
-                MusicHandler.PageNumber.Add(1);
-
-                if (MusicHandler.MusicLinkList.Count() > 10)
-                    await msg.AddReactionAsync(Extensions.Extensions.ArrowRight);
-            }
-            else
-            {
-                await ReplyAsync("There are no music links in the database.");
-            }
-        }
-        
-        [Command("editmusic"), Summary("Edit a music link from the list.")]
-        public async Task EditMusicLink(int linkId, [Remainder]string link)
-        {
-            string oldLink = MusicHandler.MusicLinkList[linkId];
-            MusicHandler.UpdateLink(linkId, link);
-            await ReplyAsync(Context.User.Mention + " updated music link id: " + linkId + "\nOld link: `" + oldLink + "`\nUpdated: `" + link + "`");
-        }
-
-        [Command("deletemusic"), Summary("Delete a music link from the list. Make sure to `listmusic` to get the ID for the link being removed!")]
-        public async Task RemoveMusicLink(int linkId)
-        {
-            string link = MusicHandler.MusicLinkList[linkId];
-            MusicHandler.RemoveAndUpdateLinks(linkId);
-
-			EmbedBuilder eb = new EmbedBuilder()
-					.WithDescription(Context.User.Mention + " Link Removed\nLink: " + link)
-					.WithColor(210, 47, 33);
-
-			await ReplyAsync("", false, eb.Build());
-
-			//await ReplyAsync("Link " + linkID + " removed successfully, " + Context.User.Mention + "\n**Link:** " + link);
-
-            await ListMusicLinks();
-        }
         
         [Command("addimage"), Summary("Add a image link to the list.")]
         public async Task AddImageLink([Remainder]string link)
@@ -412,7 +333,7 @@ namespace DiscordBot.Modules.Admin
             }
             else
             {
-                await ReplyAsync("There are no music links in the database.");
+                await ReplyAsync("There are no image links in the database.");
             }
         }
 

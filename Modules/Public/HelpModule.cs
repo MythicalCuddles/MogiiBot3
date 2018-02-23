@@ -7,12 +7,7 @@ using System.Threading.Tasks;
 using Discord.Commands;
 using Discord;
 
-using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
-using DiscordBot.Extensions;
-
-using MelissasCode;
-using Discord.WebSocket;
 
 namespace DiscordBot.Modules.Public
 {

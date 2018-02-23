@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.Remoting;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,18 +27,15 @@ using DiscordBot.Logging;
 using DiscordBot.Modules.Mod;
 
 using MelissaNet;
-using MelissasCode;
 
 namespace DiscordBot
 {
 	public class MogiiBot3
     {
-        protected static readonly string BotToken = Configuration.Load().BotToken ?? DiscordToken.MogiiBot;
+        protected static readonly string BotToken = Configuration.Load().BotToken;
 
         public static DiscordSocketClient Bot;
         public static CommandService CommandService;
-
-        //private readonly Random _random = new Random();
 
         public async Task RunBotAsync()
         {
@@ -69,14 +67,59 @@ namespace DiscordBot
             Bot.Disconnected += Disconnected;
 
             await CommandService.AddModulesAsync(Assembly.GetEntryAssembly());
-			
-			// Add token from config
-			await Bot.LoginAsync(TokenType.Bot, BotToken); // Connect to Discord with Bot Login Details
-			await Bot.StartAsync();
+
+            await LoginAndStart();
 
             // Keep the program running.
             await Task.Delay(-1);
 		}
+
+        private static async Task LoginAndStart()
+        {
+            try
+            {
+                await Bot.LoginAsync(TokenType.Bot, Cryptography.DecryptString(Configuration.Load().BotToken));
+                await Bot.StartAsync();
+            }
+            catch (CryptographicException exception)
+            {
+                Console.WriteLine("Exception caught: " + exception.Source + "\n\n");
+                ReEnterToken();
+            }
+            catch (Discord.Net.HttpException exception)
+            {
+                if (exception.HttpCode == HttpStatusCode.Unauthorized || exception.HttpCode == HttpStatusCode.Forbidden)
+                {
+                    ReEnterToken();
+                }
+            }
+            catch (FormatException)
+            {
+                ReEnterToken();
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("An error has occurred.");
+                throw;
+            }
+        }
+
+        private static void ReEnterToken(string reasoning = "The token stored on file doesn't seem to be working. Please re-enter the bot token.")
+        {
+            //TODO: Clean Up
+            Console.WriteLine(reasoning);
+
+            Console.Write("Token: ");
+            //Configuration.UpdateJson("BotToken", MelissaNet.Cryptography.EncryptString(Console.ReadLine()));
+            Configuration.UpdateConfiguration(botToken:Cryptography.EncryptString(Console.ReadLine()));
+
+            Console.WriteLine(
+                "Token saved successfully. Console will now be cleared for security reasons. Press the 'enter' key to continue.");
+            Console.ReadLine();
+            Console.Clear();
+
+            new MogiiBot3().RunBotAsync().GetAwaiter().GetResult();
+        }
 
         private static Task Log(LogMessage logMessage)
 		{
@@ -114,8 +157,10 @@ namespace DiscordBot
         {
             List<Tuple<SocketGuildUser, SocketGuild>> offlineList = new List<Tuple<SocketGuildUser, SocketGuild>>();
 
-		    if (Configuration.Load().TwitchLink == null) { await Bot.SetGameAsync(Configuration.Load().Playing); }
-            else { await Bot.SetGameAsync(Configuration.Load().Playing, Configuration.Load().TwitchLink, ActivityType.Streaming); }
+            //TODO: REDO due to introduction of ActivityType 
+            await Bot.SetGameAsync(Configuration.Load().StatusText, Configuration.Load().StatusLink,
+                (ActivityType) Configuration.Load().StatusActivity);
+
 			await Bot.SetStatusAsync(Configuration.Load().Status);
 
 			ModeratorModule.ActiveForDateTime = DateTime.Now;
@@ -171,72 +216,30 @@ namespace DiscordBot
 			// Send message to log channel to announce bot is up and running.
 			Version v = Assembly.GetExecutingAssembly().GetName().Version;
 			EmbedBuilder eb = new EmbedBuilder()
-					.WithTitle("Startup Log")
+					.WithTitle("Startup Notification")
 					.WithColor(59, 212, 50)
 					.WithThumbnailUrl(Bot.CurrentUser.GetAvatarUrl())
-					.WithDescription("**" + Bot.CurrentUser.Username + "** : status [ok] : If there was any new users, they will be shown below.")
+					.WithDescription("**" + Bot.CurrentUser.Username + "** : ready event executed.")
                     .AddField("Version", v.Major + "." + v.Minor + "." + v.Build + "." + v.Revision, true)
                     .AddField("Latest Version", MythicalCuddlesXYZ.CheckForNewVersion("MogiiBot3").Item1, true)
-					.AddField("MelissasCode", MelissaCode.Version, true)
                     .AddField("MelissaNet", VersionInfo.Version, true)
-					.AddField("Database Status", MelissaCode.GetDatabaseStatus(), true)
 					.AddField("Latency", Bot.Latency + "ms", true)
                     .WithCurrentTimestamp();
 				await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
-            
-            foreach (Tuple<SocketGuildUser, SocketGuild> tupleList in offlineList)
-		    {
-                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("[ALERT] While " + Bot.CurrentUser.Username + " was offline, " + tupleList.Item1.Mention + " (" + tupleList.Item1.Id + ") joined " + tupleList.Item2.Name + ". They have been added to the database.");
+
+            if (offlineList.Any())
+            {
+                foreach (Tuple<SocketGuildUser, SocketGuild> tupleList in offlineList)
+                {
+                    await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("[ALERT] While " + Bot.CurrentUser.Username + " was offline, " + tupleList.Item1.Mention + " (" + tupleList.Item1.Id + ") joined " + tupleList.Item2.Name + ". They have been added to the database.");
+                }
             }
-
-            //await GetPlayerCount();
         }
-
-        //TODO: Finsih this.
-        //private static string onlineCountUrl = "https://minecraft-api.com/api/ping/playeronline.php?ip=mogiicraft.ddns.net&port=25635";
-        //private static string onlineListUrl = "https://minecraft-api.com/api/query/playerlist.php?ip=mogiicraft.ddns.net&port=28069";
-        //private static WebClient client = new WebClient();
-
-        //private static async Task GetPlayerCount()
-        //{
-        //    while (true)
-        //    {
-        //        if (Configuration.Load().PlayerCountPlayingMessageEnabled)
-        //        {
-        //            using (var stream = client.OpenRead(onlineCountUrl))
-        //            {
-        //                using (var reader = new StreamReader(stream))
-        //                {
-        //                    string line;
-        //                    string message = Configuration.Load().PlayerCountPlayingMessage;
-        //                    while ((line = reader.ReadLine()) != null)
-        //                    {
-        //                        message = Regex.Replace(message, "{SERVER.PLAYERCOUNT}", line, RegexOptions.IgnoreCase);
-        //                        Bot.SetGameAsync(message);
-        //                    }
-        //                }
-        //            }
-        //        }
-
-        //        using (var stream = client.OpenRead(onlineListUrl))
-        //        {
-        //            using (var reader = new StreamReader(stream))
-        //            {
-        //                string line;
-        //                while ((line = reader.ReadLine()) != null)
-        //                {
-        //                    Console.WriteLine(line);
-        //                }
-        //            }
-        //        }
-
-        //        Console.WriteLine("Cooldown started.");
-        //        Thread.Sleep(300000);
-        //    }
-        //}
 
         private async Task BotOnJoinedGuild(SocketGuild socketGuild)
         {
+            GuildConfiguration.EnsureExists(socketGuild.Id);
+
             foreach (SocketChannel c in socketGuild.Channels)
                 Channel.EnsureExists(c.Id);
 
@@ -276,7 +279,7 @@ namespace DiscordBot
             if (message.Author.IsBot) return;
 
             // Is the bot told to ignore the user? If so, is the user NOT Melissa? Iff => escape Task
-            if (User.Load(message.Author.Id).IsBotIgnoringUser && message.Author.Id != DiscordWorker.getMelissaID) return;
+            if (User.Load(message.Author.Id).IsBotIgnoringUser && message.Author.Id != MelissaNet.Discord.GetMelissaId()) return;
             
             // If the message came from somewhere that is not a text channel -> Private Message
             if (!(messageParam.Channel is ITextChannel))
@@ -285,7 +288,7 @@ namespace DiscordBot
                 EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
                     .WithName("Private Message");
                 EmbedFooterBuilder efb = new EmbedFooterBuilder()
-                    .WithText("PRIVATE MESSAGE | UID: " + message.Author.Id + " | MID: " + message.Id + " | STATUS: [ok]");
+                    .WithText("PRIVATE MESSAGE | UID: " + message.Author.Id + " | MID: " + message.Id);
                 EmbedBuilder eb = new EmbedBuilder()
                     .WithAuthor(eab)
                     .WithTitle("from: @" + message.Author.Username)
@@ -301,14 +304,14 @@ namespace DiscordBot
             if (message.Content.ToUpper() == "F")
             {
                 var respects = Configuration.Load().Respects + 1;
-                Configuration.UpdateJson("Respects", respects);
+                //Configuration.UpdateJson("Respects", respects);
+                Configuration.UpdateConfiguration(respects:respects);
 
                 var eb = new EmbedBuilder()
                     .WithDescription("**" + message.Author.Username + "** has paid their respects.")
                     .WithFooter("Total Respects: " + respects)
                     .WithColor(User.Load(message.Author.Id).AboutR, User.Load(message.Author.Id).AboutG, User.Load(message.Author.Id).AboutB);
-
-                //await message.Channel.SendMessageAsync("Respects have been paid.");
+                
                 await message.Channel.SendMessageAsync("", false, eb.Build());
                 return;
             }
@@ -372,8 +375,7 @@ namespace DiscordBot
         {
             try
             {
-                //User.UpdateUser(user.Id, (user.GetCoins() + coinsToAward));
-                User.SetCoins(user.Id, (user.GetCoins() + coinsToAward));
+                User.UpdateUser(user.Id, (user.GetCoins() + coinsToAward));
 
                 Console.Write("status: [");
                 Console.ForegroundColor = ConsoleColor.DarkCyan;

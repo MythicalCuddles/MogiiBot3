@@ -1,19 +1,13 @@
 ﻿using Discord;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-using Discord.Net;
 using Discord.WebSocket;
-using Discord.Commands;
 
 using Discord.Addons.EmojiTools;
 
 using DiscordBot.Common;
-
-using MelissasCode;
 
 namespace DiscordBot.Extensions
 {
@@ -281,9 +275,16 @@ namespace DiscordBot.Extensions
         #region SocketChannel Gets
         public static SocketTextChannel GetTextChannel(this ulong id)
         {
-            var channel = MogiiBot3.Bot.GetChannel(id) as SocketTextChannel;
-            if (channel == null) return null;
-            return channel;
+            try
+            {
+                var channel = MogiiBot3.Bot.GetChannel(id) as SocketTextChannel;
+                if (channel == null) return null;
+                return channel;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
         public static SocketVoiceChannel GetVoiceChannel(this ulong id)
         {

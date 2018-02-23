@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Discord;
-using MelissasCode;
 using System.IO;
 using Discord.WebSocket;
 using DiscordBot.Extensions;
@@ -81,15 +80,23 @@ namespace DiscordBot.Logging
 
         public static void LogDeleteMessage(SocketUserMessage message)
         {
-            if (!(message.Channel is ITextChannel))
+            try
             {
-                _logFile = Directory + "0#PRIVATE MESSAGE" + Extension;
+                if (!(message.Channel is ITextChannel))
+                {
+                    _logFile = Directory + "0#PRIVATE MESSAGE" + Extension;
+                }
+                else
+                {
+                    IGuild g = message.Channel.GetGuild();
+                    _serverDirectory = g.Id + "#" + g.Name + "/";
+                    _logFile = Directory + _serverDirectory + message.Channel.Id + "#" + message.Channel.Name + Extension;
+                }
             }
-            else
+            catch (NullReferenceException e)
             {
-                IGuild g = message.Channel.GetGuild();
-                _serverDirectory = g.Id + "#" + g.Name + "/";
-                _logFile = Directory + _serverDirectory + message.Channel.Id + "#" + message.Channel.Name + Extension;
+                Console.WriteLine(e.ToString() + "\n");
+                return;
             }
 
             try

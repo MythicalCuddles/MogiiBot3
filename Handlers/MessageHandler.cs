@@ -15,8 +15,6 @@ using DiscordBot.Extensions;
 using DiscordBot.Other;
 using DiscordBot.Logging;
 
-using MelissasCode;
-
 namespace DiscordBot.Handlers
 {
 	public class MessageHandler
@@ -30,8 +28,8 @@ namespace DiscordBot.Handlers
 
 		public static Task MessageDeleted(Cacheable<IMessage, ulong> cachedMessage, ISocketMessageChannel channel)
 		{
-			var message = cachedMessage.Value as SocketUserMessage;
-			MessageLogger.LogDeleteMessage(message);
+			var msg = cachedMessage.Value as SocketUserMessage;
+			MessageLogger.LogDeleteMessage(msg);
 			return Task.CompletedTask;
 		}
 	}

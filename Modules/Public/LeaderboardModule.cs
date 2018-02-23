@@ -10,10 +10,6 @@ using Discord.WebSocket;
 
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
-using DiscordBot.Extensions;
-using DiscordBot.Other;
-
-using MelissasCode;
 
 namespace DiscordBot.Modules.Public
 {

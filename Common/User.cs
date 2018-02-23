@@ -1,23 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Newtonsoft.Json;
-
-using Discord;
-using Discord.Commands;
-using Discord.WebSocket;
-
-using DiscordBot.Common.Preconditions;
-using DiscordBot.Common;
-using DiscordBot.Extensions;
-using DiscordBot.Other;
-using DiscordBot.Logging;
-
-using MelissasCode;
 
 namespace DiscordBot.Common
 {
@@ -102,49 +86,36 @@ namespace DiscordBot.Common
         private string ToJson()
             => JsonConvert.SerializeObject(this, Formatting.Indented);
         
-        public static void UpdateJson(ulong uId, string parameterName, string newValue)
-        {
-            string fileName = DirectoryPath + uId + Extension;
+        //public static void UpdateJson(ulong uId, string parameterName, string newValue)
+        //{
+        //    string fileName = DirectoryPath + uId + Extension;
 
-            string json = File.ReadAllText(fileName);
-            dynamic jsonObj = JsonConvert.DeserializeObject(json);
-            jsonObj[parameterName] = newValue;
-            string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-            File.WriteAllText(fileName, output);
-        }
-        public static void UpdateJson(ulong uId, string parameterName, int newValue)
-        {
-            string fileName = DirectoryPath + uId + Extension;
+        //    string json = File.ReadAllText(fileName);
+        //    dynamic jsonObj = JsonConvert.DeserializeObject(json);
+        //    jsonObj[parameterName] = newValue;
+        //    string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
+        //    File.WriteAllText(fileName, output);
+        //}
+        //public static void UpdateJson(ulong uId, string parameterName, int newValue)
+        //{
+        //    string fileName = DirectoryPath + uId + Extension;
 
-            string json = File.ReadAllText(fileName);
-            dynamic jsonObj = JsonConvert.DeserializeObject(json);
-            jsonObj[parameterName] = newValue;
-            string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-            File.WriteAllText(fileName, output);
-        }
-        public static void UpdateJson(ulong uId, string parameterName, bool newValue)
-        {
-            string fileName = DirectoryPath + uId + Extension;
+        //    string json = File.ReadAllText(fileName);
+        //    dynamic jsonObj = JsonConvert.DeserializeObject(json);
+        //    jsonObj[parameterName] = newValue;
+        //    string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
+        //    File.WriteAllText(fileName, output);
+        //}
+        //public static void UpdateJson(ulong uId, string parameterName, bool newValue)
+        //{
+        //    string fileName = DirectoryPath + uId + Extension;
 
-            string json = File.ReadAllText(fileName);
-            dynamic jsonObj = JsonConvert.DeserializeObject(json);
-            jsonObj[parameterName] = newValue;
-            string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-            File.WriteAllText(fileName, output);
-        }
-
-        public static void SetCoins(ulong uId, int coins)
-        {
-            //string fileName = DirectoryPath + uId + Extension;
-            //string json = File.ReadAllText(fileName);
-
-            //dynamic jsonObj = JsonConvert.DeserializeObject(json);
-            //jsonObj["Coins"] = coins;
-            //string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-            //File.WriteAllText(fileName, output);
-
-            UpdateUser(uId, coins);
-        }
+        //    string json = File.ReadAllText(fileName);
+        //    dynamic jsonObj = JsonConvert.DeserializeObject(json);
+        //    jsonObj[parameterName] = newValue;
+        //    string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
+        //    File.WriteAllText(fileName, output);
+        //}
 
         internal static bool SetCoinsForAll(int newValue = 0)
         {
@@ -159,7 +130,7 @@ namespace DiscordBot.Common
                 string[] fileName = file.ToString().Split('.');
 
                 Console.WriteLine("[Info] " + file + " - " + Load(Convert.ToUInt64(fileName[0])).Coins + " coins has been set to " + newValue + "!");
-                UpdateJson(Convert.ToUInt64(fileName[0]), "Coins", newValue);
+                UpdateUser(Convert.ToUInt64(fileName[0]), newValue);
             }
 
             Console.WriteLine("-----------------------------------------------------------------");

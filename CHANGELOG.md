@@ -1,5 +1,42 @@
 # Changelog
 
+## Version 2.8.0.0
+
+### Added
+- Added Project URL to console on startup.
+- Added a die command for the Bot Owner to log the Bot out and terminate the application.
+- Added EmbedModule for Moderators+ to create and send custom embeds to specified channels.
+- EmbedModule - Added command "embed" which will display the available commands for the embed prefix.
+- EmbedModule - Added subcommand "new" which will create a new embed in memory for the user.
+- EmbedModule - Added subcommand "withtitle" which will add the title passed to the stored embed.
+- EmbedModule - Added subcommand "withdescription" which will add the description passed to the stored embed.
+- EmbedModule - Added subcommand "withfooter" which will add the footer text and URL passed to the stored embed.
+- EmbedModule - Added subcommand "withcolor" which accepts RGB values to assign to the stored embed.
+- EmbedModule - Added subcommand "send" which will send the stored embed either to the channel where the command was issued or to the channel specified.
+- EmbedModule - [Future Development to include more commands and embed configuration options.]
+- Added ShowConfigModule for Guild Moderators, Administrators, Owners and the Bot Owners to see the configuration of the Bot and Guild.
+- ShowConfigModule - Added command "showconfig" which will display both Guild and Bot Configuration Information Embeds.
+- ShowConfigModule - Added subcommand "bot" to only send the Bot Configuration Information Embed.
+- ShowConfigModule - Added subcommand "guild" to only send the Guild Configuration Information Embed.
+- Added a message to display once the Bot is added to a new guild, instructing how to configure the Bot to the guild.
+
+### Changed
+- Changed the way the bot token is read by saving it in the configuration file instead of using MelissasCode.
+- Changed gameactivity to activity to amend for the change in Discord.Net.
+- Fixed a formatting issue in "editconfig" where "status" would appear on the same line as "gameactivity" (now activity).
+- Fixed an issue with Rule34Gamble that prevented images from being sent properly.
+- Fixed an issues where new guild configurations would assign the ID 0 to channels.
+- Fixed an issue where a guild configuration wouldn't be created once the Bot joined the guild for the first time.
+- Replaced UpdateJson to UpdateUser in User.cs, changing the method in which a User is updated.
+- Replaced UpdateJson to UpdateChannel in Channel.cs, changing the method in which a Channel Configuration is updated.
+- Replaced UpdateJson to UpdateGuild in GuildConfiguration.cs, changing the method in which a Guild Configuration is updated.
+- Replaced UpdateJson to UpdateConfiguration in Configuration.cs, changing the method in which the Bot Configuration is updated.
+
+### Removed
+- MelissasCode has been completely removed!! 🎉🎉
+- Removed music commands and features where the user would issue a command to have a random* link posted in the chat. (*Links were added to the database by a Guild Member with the required permissions.)
+
+
 ## Version 2.7.1.0
 
 - Updated Discord.Net

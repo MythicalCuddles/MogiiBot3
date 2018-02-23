@@ -13,8 +13,6 @@ using DiscordBot.Extensions;
 using DiscordBot.Other;
 using DiscordBot.Logging;
 
-using MelissasCode;
-
 namespace DiscordBot.Modules.Public.Games
 {
     [Name("Slot Game Commands")]
@@ -50,16 +48,16 @@ namespace DiscordBot.Modules.Public.Games
                 .Append(Extensions.Extensions.SlotEmotes[one] + " : " + Extensions.Extensions.SlotEmotes[two] + " : " + Extensions.Extensions.SlotEmotes[three] + " :arrow_left: \n")
                 .Append(Extensions.Extensions.SlotEmotes[_random.Next(0, slotEmotesCount)] + " : " + Extensions.Extensions.SlotEmotes[_random.Next(0, slotEmotesCount)] + " : " + Extensions.Extensions.SlotEmotes[_random.Next(0, slotEmotesCount)] + "\n")
                 .Append("------------------\n");
-
-            User.UpdateJson(Context.User.Id, "Coins", (User.Load(Context.User.Id).Coins - inputCoins));
+            
+            User.UpdateUser(Context.User.Id, coins: (User.Load(Context.User.Id).Coins - inputCoins));
 
             if (one == two && two == three)
             {
                 sb.Append("| : : : : **WIN** : : : : |\n\n");
                 int coinsWon = (inputCoins * 2) + inputCoins;
                 sb.Append("**" + Context.User.Username + "** bet **" + inputCoins + "** coin(s) and won **" + coinsWon + "** coin(s).");
-
-                User.UpdateJson(Context.User.Id, "Coins", (User.Load(Context.User.Id).Coins + coinsWon));
+                
+                User.UpdateUser(Context.User.Id, coins: (User.Load(Context.User.Id).Coins + coinsWon));
                 TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") bet " + inputCoins + " coins on the slots and won " + coinsWon + " coins. [ALL]");
             }
             else if (one == two || two == three || one == three)
@@ -67,8 +65,8 @@ namespace DiscordBot.Modules.Public.Games
                 sb.Append("| : : : : **WIN** : : : : |\n\n");
                 int coinsWon = (inputCoins) + inputCoins;
                 sb.Append("**" + Context.User.Username + "** bet **" + inputCoins + "** coin(s) and won **" + coinsWon + "** coin(s).");
-
-                User.UpdateJson(Context.User.Id, "Coins", (User.Load(Context.User.Id).Coins + coinsWon));
+                
+                User.UpdateUser(Context.User.Id, coins: (User.Load(Context.User.Id).Coins + coinsWon));
                 TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") bet " + inputCoins + " coins on the slots and won " + coinsWon + " coins. [TWO]");
             }
             else

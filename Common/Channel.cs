@@ -1,23 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Newtonsoft.Json;
-
-using Discord;
-using Discord.Commands;
-using Discord.WebSocket;
-
-using DiscordBot.Common.Preconditions;
-using DiscordBot.Common;
-using DiscordBot.Extensions;
-using DiscordBot.Other;
-using DiscordBot.Logging;
-
-using MelissasCode;
 
 namespace DiscordBot.Common
 {
@@ -74,15 +58,24 @@ namespace DiscordBot.Common
         private string ToJson()
             => JsonConvert.SerializeObject(this, Formatting.Indented);
 
-        public static void SetAwardingCoins(ulong cId, bool value)
-        {
-            string fileName = DirectoryPath + cId + Extension;
-            string json = File.ReadAllText(fileName);
+        //public static void SetAwardingCoins(ulong cId, bool value)
+        //{
+        //    string fileName = DirectoryPath + cId + Extension;
+        //    string json = File.ReadAllText(fileName);
 
-            dynamic jsonObj = JsonConvert.DeserializeObject(json);
-            jsonObj["AwardingCoins"] = value;
-            string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-            File.WriteAllText(fileName, output);
+        //    dynamic jsonObj = JsonConvert.DeserializeObject(json);
+        //    jsonObj["AwardingCoins"] = value;
+        //    string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
+        //    File.WriteAllText(fileName, output);
+        //}
+
+        public static void UpdateChannel(ulong cId, bool? awardingCoins)
+        {
+            var channel = new Channel()
+            {
+                AwardingCoins = awardingCoins ?? Load(cId).AwardingCoins
+            };
+            channel.SaveJson(cId);
         }
     }
 }

@@ -1,21 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
-using Discord.Commands;
-using Discord;
 using Discord.WebSocket;
 
-using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
-using DiscordBot.Extensions;
-using DiscordBot.Other;
-using DiscordBot.Logging;
-
-using MelissasCode;
 
 namespace DiscordBot.Extensions
 {

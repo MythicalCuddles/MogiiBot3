@@ -12,10 +12,6 @@ using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Other;
 
-using MelissasCode;
-using Discord.WebSocket;
-using System.Diagnostics;
-
 namespace DiscordBot.Modules.Public
 {
     [Name("Info Commands")]

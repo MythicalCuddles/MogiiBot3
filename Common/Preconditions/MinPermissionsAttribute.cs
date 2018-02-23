@@ -1,20 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
-using DiscordBot.Common;
-using DiscordBot.Common.Preconditions;
 using DiscordBot.Extensions;
-using DiscordBot.Logging;
-using DiscordBot.Other;
-
-using MelissasCode;
 
 namespace DiscordBot.Common.Preconditions
 {
@@ -27,13 +17,6 @@ namespace DiscordBot.Common.Preconditions
         {
             _level = level;
         }
-
-        //public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider service)
-        //{
-        //    var permission = GetPermission(context);
-
-        //    return Task.FromResult(permission >= _level ? PreconditionResult.FromSuccess() : PreconditionResult.FromError("you don't have permission to do that!"));
-        //}
 
         public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
         {

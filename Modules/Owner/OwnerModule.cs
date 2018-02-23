@@ -13,8 +13,7 @@ using Discord.WebSocket;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
-
-using MelissasCode;
+using MelissaNet;
 
 namespace DiscordBot.Modules.Owner
 {
@@ -27,7 +26,7 @@ namespace DiscordBot.Modules.Owner
         {
             if (!User.Load(user.Id).TeamMember)
             {
-                User.UpdateJson(user.Id, "TeamMember", true);
+                User.UpdateUser(user.Id, teamMember:true);
                 await ReplyAsync(user.Mention + " has been added to the team by " + Context.User.Mention);
             }
             else
@@ -41,7 +40,7 @@ namespace DiscordBot.Modules.Owner
         {
             if (User.Load(user.Id).TeamMember)
             {
-                User.UpdateJson(user.Id, "TeamMember", false);
+                User.UpdateUser(user.Id, teamMember:false);
                 await ReplyAsync(user.Mention + " has been removed from the team by " + Context.User.Mention);
             }
             else
@@ -58,8 +57,8 @@ namespace DiscordBot.Modules.Owner
                 await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "editfooter [@User] [Footer]");
                 return;
             }
-
-            User.UpdateJson(user.Id, "FooterText", footer);
+            
+            User.UpdateUser(user.Id, footerText:footer);
 
             var eb = new EmbedBuilder()
                 .WithDescription(Context.User.Username + " updated " + user.Mention + "'s footer successfully.")
@@ -92,7 +91,7 @@ namespace DiscordBot.Modules.Owner
             {
                 case "AUTHOR":
                     oldLink = User.Load(user.Id).EmbedAuthorBuilderIconUrl;
-                    User.UpdateJson(user.Id, "EmbedAuthorBuilderIconUrl", newLink);
+                    User.UpdateUser(user.Id, embedAuthorBuilderIconUrl:newLink);
                     eb.WithColor(Color.DarkGreen);
                     eb.WithDescription(Context.User.Username + " successfully updated " + user.Mention + "'s Author Icon to: " + url);
                     eb.WithFooter("Old Link: " + oldLink);
@@ -100,7 +99,7 @@ namespace DiscordBot.Modules.Owner
                     break;
                 case "FOOTER":
                     oldLink = User.Load(user.Id).EmbedAuthorBuilderIconUrl;
-                    User.UpdateJson(user.Id, "EmbedFooterBuilderIconUrl", newLink);
+                    User.UpdateUser(user.Id, embedFooterBuilderIconUrl:newLink);
                     eb.WithColor(Color.DarkGreen);
                     eb.WithDescription(Context.User.Username + " successfully updated " + user.Mention + "'s Footer Icon to: " + url);
                     eb.WithFooter("Old Link: " + oldLink);
@@ -117,7 +116,7 @@ namespace DiscordBot.Modules.Owner
         [Command("botignore"), Summary("Make the bot ignore a user.")]
         public async Task BotIgnore(IUser user)
         {
-            User.UpdateJson(user.Id, "IsBotIgnoringUser", !User.Load(user.Id).IsBotIgnoringUser);
+            User.UpdateUser(user.Id, isBotIgnoringUser:!User.Load(user.Id).IsBotIgnoringUser);
 
             if(User.Load(user.Id).IsBotIgnoringUser)
             {
@@ -153,6 +152,21 @@ namespace DiscordBot.Modules.Owner
                 var message = await ReplyAsync("**Warning**\nIssuing this command will **reset all users coins**. This action is irreversible and any data not backed-up will be lost. Please ensure that you create a backup of the data if you wish to roll-back to the current state. If you wish to issue this command, please type `" + GuildConfiguration.Load(Context.Guild.Id).Prefix + "resetallcoins confirm`");
                 message.DeleteAfter(60);
             }
+        }
+
+        [Command("die")]
+        public async Task KillProgram(string confirmation = null)
+        {
+            EmbedBuilder eb = new EmbedBuilder()
+            {
+                Color = new Color(User.Load(Context.User.Id).AboutR, User.Load(Context.User.Id).AboutG, User.Load(Context.User.Id).AboutB),
+                Description = "Executing Die Command."
+            }.AddField("Exit Code", "0");
+
+            await ReplyAsync("", false, eb.Build());
+
+            await MogiiBot3.Bot.LogoutAsync();
+            Environment.Exit(0);
         }
     }
 }
