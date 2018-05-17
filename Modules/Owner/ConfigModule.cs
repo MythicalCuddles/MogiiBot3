@@ -28,8 +28,9 @@ namespace DiscordBot.Modules.Owner
                              "-----------------------------\n" +
                              "Channel Message\n" +
                              "-> editconfig activity [activity type no] [activity message] [activity link]\n" +
+                             "• activity type no: -1 - Disabled, 0 - Playing, 1 - Streaming, 2 - Listening, 3 - Watching\n" +
                              "-> editconfig status [status]\n" +
-                             "• statuses: online, donotdisturb, idle, invisible\n" +
+                             "• status: online, donotdisturb, idle, invisible\n" +
                              "-> editconfig toggleunknowncommand\n" +
                              "-> editconfig leaderboardamount [number of users to display]\n" +
                              "-> editconfig quoteprice [price to add quote]\n" +
@@ -187,6 +188,8 @@ namespace DiscordBot.Modules.Owner
             int oldValue = Configuration.Load().MinLengthForCoin;
             //Configuration.UpdateJson("MinLengthForCoin", value);
             Configuration.UpdateConfiguration(minLengthForCoin:value);
+            MogiiBot3.MinLengthForCoin = value;
+
             await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the MinLengthForCoin amount to: " + value + " (was: " + oldValue + ")");
         }
     }

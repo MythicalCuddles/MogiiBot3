@@ -10,6 +10,7 @@ using Discord.WebSocket;
 
 using DiscordBot.Common;
 using DiscordBot.Extensions;
+using MelissaNet;
 
 namespace DiscordBot.Handlers
 {
@@ -37,24 +38,42 @@ namespace DiscordBot.Handlers
 
         public static async Task UserLeft(SocketGuildUser e)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("**Username:** @" + e.Username + "\n");
-            if (e.Nickname != null)
-            {
-                sb.Append("**Nickname:** " + e.Nickname + "\n");
-            }
-            sb.Append("**Id: **" + e.Id + "\n");
-            sb.Append("**Joined: **" + e.GuildJoinDate() + "\n");
-            sb.Append("\n");
-            sb.Append("**Coins: **" + User.Load(e.Id).Coins + "\n");
-
             EmbedBuilder eb = new EmbedBuilder()
                 .WithTitle(e.Guild.Name + " - User Left")
-                .WithDescription(sb.ToString())
-                .WithColor(new Color(255, 28, 28))
+                .WithDescription("")
+                .WithCurrentTimestamp()
                 .WithThumbnailUrl(e.GetAvatarUrl())
-                .WithCurrentTimestamp();
-            
+                .WithColor(new Color(255, 28, 28))
+                .WithFooter("ID: " + e.Id);
+
+            if (e.GetAbout() != null)
+                eb.AddField("About " + e.Username, e.GetAbout());
+
+            eb.AddField("Full Username", "@" + e.Username + "#" + e.DiscriminatorValue);
+
+            if (e.GetName() != null)
+                eb.AddField("Name", e.GetName(), true);
+
+            if (e.GetGender() != null)
+                eb.AddField("Gender", e.GetGender(), true);
+
+            if (e.GetPronouns() != null)
+                eb.AddField("Pronouns", e.GetPronouns(), true);
+
+            eb.AddField("Coins", e.GetCoins(), true);
+            eb.AddField("Account Created", e.UserCreateDate(), true);
+            eb.AddField("Joined Guild", e.GuildJoinDate(), true);
+            eb.AddField("Team Member", e.IsTeamMember().ToYesNo(), true);
+
+            if (e.GetMinecraftUser() != null)
+                eb.AddField("Minecraft Username", e.GetMinecraftUser(), true);
+
+            if (e.GetSnapchatUsername() != null)
+                eb.AddField("Snapchat", "[" + e.GetSnapchatUsername() + "](https://www.snapchat.com/add/" + e.GetSnapchatUsername() + "/)", true);
+
+            if (e.GetCustomPrefix() != null)
+                eb.AddField("Custom Prefix", e.GetCustomPrefix(), true);
+
             await GuildConfiguration.Load(e.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
         }
     }

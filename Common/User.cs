@@ -18,7 +18,7 @@ namespace DiscordBot.Common
         public string Gender { get; set; } = null;
         public string Pronouns { get; set; } = null;
         public string About { get; set; } = null;
-        public string CustomPrefix { get; set; }
+        public string CustomPrefix { get; set; } = null;
 
         public byte AboutR { get; set; } = 140;
         public byte AboutG { get; set; } = 90;

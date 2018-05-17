@@ -109,7 +109,6 @@ namespace DiscordBot.Modules.Public
                 eb.AddField("Pronouns", userSpecified.GetPronouns(), true);
             
             eb.AddField("Coins", userSpecified.GetCoins(), true);
-			//eb.AddInlineField("Score", userSpecified.GetScore());
 			eb.AddField("Account Created", userSpecified.UserCreateDate(), true);
             eb.AddField("Joined Guild", userSpecified.GuildJoinDate(), true);
             

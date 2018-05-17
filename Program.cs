@@ -55,7 +55,7 @@ namespace DiscordBot
             ImageHandler.EnsureExists();
             TransactionLogger.EnsureExists();
             Console.WriteLine("-----------------------------------------------------------------");
-
+            
             try
             {
                 new MogiiBot3().RunBotAsync().GetAwaiter().GetResult();

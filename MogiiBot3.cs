@@ -30,12 +30,14 @@ using MelissaNet;
 
 namespace DiscordBot
 {
-	public class MogiiBot3
+    public class MogiiBot3
     {
         protected static readonly string BotToken = Configuration.Load().BotToken;
 
         public static DiscordSocketClient Bot;
         public static CommandService CommandService;
+
+        public static int MinLengthForCoin;
 
         public async Task RunBotAsync()
         {
@@ -59,10 +61,8 @@ namespace DiscordBot
             Bot.ChannelCreated += ChannelHandler.ChannelCreated;
             Bot.ChannelDestroyed += ChannelHandler.ChannelDestroyed;
             Bot.JoinedGuild += BotOnJoinedGuild;
-			Bot.ReactionAdded += ReactionHandler.ReactionAdded;
-			Bot.MessageReceived += MessageReceived;
-			Bot.MessageDeleted += MessageHandler.MessageDeleted;
-            Bot.MessageUpdated += MessageHandler.MessageUpdated;
+            Bot.ReactionAdded += ReactionHandler.ReactionAdded;
+            Bot.MessageReceived += MessageReceived;
             Bot.Ready += Ready;
             Bot.Disconnected += Disconnected;
 
@@ -72,7 +72,7 @@ namespace DiscordBot
 
             // Keep the program running.
             await Task.Delay(-1);
-		}
+        }
 
         private static async Task LoginAndStart()
         {
@@ -122,42 +122,43 @@ namespace DiscordBot
         }
 
         private static Task Log(LogMessage logMessage)
-		{
-			var cc = Console.ForegroundColor;
-			switch (logMessage.Severity)
-			{
-				case LogSeverity.Critical:
-				case LogSeverity.Error:
-					Console.ForegroundColor = ConsoleColor.Red;
-					break;
+        {
+	        var cc = Console.ForegroundColor;
+	        switch (logMessage.Severity)
+	        {
+		        case LogSeverity.Critical:
+		        case LogSeverity.Error:
+			        Console.ForegroundColor = ConsoleColor.Red;
+			        break;
 
-                case LogSeverity.Warning:
-					Console.ForegroundColor = ConsoleColor.Yellow;
-					break;
+	            case LogSeverity.Warning:
+			        Console.ForegroundColor = ConsoleColor.Yellow;
+			        break;
 
-                case LogSeverity.Info:
-					Console.ForegroundColor = ConsoleColor.White;
-					break;
+	            case LogSeverity.Info:
+			        Console.ForegroundColor = ConsoleColor.White;
+			        break;
 
-                case LogSeverity.Verbose:
-				case LogSeverity.Debug:
-					Console.ForegroundColor = ConsoleColor.DarkGray;
-					break;
+	            case LogSeverity.Verbose:
+	            case LogSeverity.Debug:
+			        Console.ForegroundColor = ConsoleColor.DarkGray;
+			        break;
 
-                default:
+	            default:
 			        Console.ForegroundColor = ConsoleColor.Blue;
 			        break;
-			}
-			Console.WriteLine($"{DateTime.Now,-19} [{logMessage.Severity,8}] {logMessage.Source}: {logMessage.ToString()}");
-			Console.ForegroundColor = cc;
-			return Task.CompletedTask;
-		}
-		
-		private static async Task Ready()
+	        }
+	        Console.WriteLine($"{DateTime.Now,-19} [{logMessage.Severity,8}] {logMessage.Source}: {logMessage.ToString()}");
+            Console.ForegroundColor = cc;
+	        return Task.CompletedTask;
+        }
+
+        private static async Task Ready()
         {
             List<Tuple<SocketGuildUser, SocketGuild>> offlineList = new List<Tuple<SocketGuildUser, SocketGuild>>();
 
-            //TODO: REDO due to introduction of ActivityType 
+            MinLengthForCoin = Configuration.Load().MinLengthForCoin;
+
             await Bot.SetGameAsync(Configuration.Load().StatusText, Configuration.Load().StatusLink,
                 (ActivityType) Configuration.Load().StatusActivity);
 
@@ -183,7 +184,7 @@ namespace DiscordBot
 				{
 					if (User.CreateUserFile(u.Id))
 					{
-                        offlineList.Add(new Tuple<SocketGuildUser, SocketGuild>(u, g));
+					    offlineList.Add(new Tuple<SocketGuildUser, SocketGuild>(u, g));
 					}
 				}
 
@@ -236,7 +237,7 @@ namespace DiscordBot
             }
         }
 
-        private async Task BotOnJoinedGuild(SocketGuild socketGuild)
+        private static async Task BotOnJoinedGuild(SocketGuild socketGuild)
         {
             GuildConfiguration.EnsureExists(socketGuild.Id);
 
@@ -269,58 +270,36 @@ namespace DiscordBot
             return Task.CompletedTask;
         }
 	    
-        private async Task MessageReceived(SocketMessage messageParam)
+        private static async Task MessageReceived(SocketMessage messageParam)
         {
-            var message = messageParam as SocketUserMessage;
-            // Adds the message to the log file
-            MessageLogger.LogNewMessage(message);
+            if (!(messageParam is SocketUserMessage message)) return; // If the message is null, return.
+            if (message.Author.IsBot) return; // If the message was posted by a BOT account, return.
+            //if (!(messageParam.Channel is ITextChannel)) { return; } // If the message came from somewhere that is not a text channel.
+            if (User.Load(message.Author.Id).IsBotIgnoringUser && message.Author.Id != MelissaNet.Discord.GetMelissaId()) { return; } // If the bot is ignoring the user AND the user NOT Melissa.
 
-            if (message == null) return;
-            if (message.Author.IsBot) return;
-
-            // Is the bot told to ignore the user? If so, is the user NOT Melissa? Iff => escape Task
-            if (User.Load(message.Author.Id).IsBotIgnoringUser && message.Author.Id != MelissaNet.Discord.GetMelissaId()) return;
-            
             // If the message came from somewhere that is not a text channel -> Private Message
             if (!(messageParam.Channel is ITextChannel))
             {
-                Color color = new Color(255, 116, 140);
-                EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
-                    .WithName("Private Message");
                 EmbedFooterBuilder efb = new EmbedFooterBuilder()
-                    .WithText("PRIVATE MESSAGE | UID: " + message.Author.Id + " | MID: " + message.Id);
+                    .WithText("UID: " + message.Author.Id + " | MID: " + message.Id);
                 EmbedBuilder eb = new EmbedBuilder()
-                    .WithAuthor(eab)
-                    .WithTitle("from: @" + message.Author.Username)
-                    .WithDescription(message.Content + "\n\n---------------------------------------------")
-                    .WithColor(color)
+                    .WithTitle("Private Message - Posted By: @" + message.Author.Username + "#" + message.Author.Discriminator)
+                    .WithDescription(message.Content)
                     .WithFooter(efb)
                     .WithCurrentTimestamp();
 
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
-            }
 
-            // If the message is just "F", pay respects.
-            if (message.Content.ToUpper() == "F")
-            {
-                var respects = Configuration.Load().Respects + 1;
-                //Configuration.UpdateJson("Respects", respects);
-                Configuration.UpdateConfiguration(respects:respects);
-
-                var eb = new EmbedBuilder()
-                    .WithDescription("**" + message.Author.Username + "** has paid their respects.")
-                    .WithFooter("Total Respects: " + respects)
-                    .WithColor(User.Load(message.Author.Id).AboutR, User.Load(message.Author.Id).AboutG, User.Load(message.Author.Id).AboutB);
-                
-                await message.Channel.SendMessageAsync("", false, eb.Build());
                 return;
             }
-            
-            int argPos = 0;
-            if (message.HasStringPrefix(GuildConfiguration.Load(message.Channel.GetGuild().Id).Prefix, ref argPos) ||
-                message.HasMentionPrefix(Bot.CurrentUser, ref argPos) ||
-                message.HasStringPrefix(User.Load(message.Author.Id).CustomPrefix, ref argPos))
-            {
+
+            var uPrefix = User.Load(message.Author.Id).CustomPrefix;
+            var gPrefix = GuildConfiguration.Load(message.Channel.GetGuild().Id).Prefix;
+            if (uPrefix == null) { uPrefix = gPrefix; } // Fixes an issue with users not receiving coins due to null prefix.
+            var argPos = 0;
+            if (message.HasStringPrefix(gPrefix, ref argPos) || 
+                message.HasMentionPrefix(Bot.CurrentUser, ref argPos) || 
+                message.HasStringPrefix(uPrefix, ref argPos)) {
                 var context = new CommandContext(Bot, message);
                 var result = await CommandService.ExecuteAsync(context, argPos);
 
@@ -337,36 +316,26 @@ namespace DiscordBot
                     errorMessage.DeleteAfter(20);
                 }
             }
+            else if (message.Content.ToUpper() == "F") // If the message is just "F", pay respects.
+            {
+                var respects = Configuration.Load().Respects + 1;
+                Configuration.UpdateConfiguration(respects: respects);
+
+                var eb = new EmbedBuilder()
+                    .WithDescription("**" + message.Author.Username + "** has paid their respects.")
+                    .WithFooter("Total Respects: " + respects)
+                    .WithColor(User.Load(message.Author.Id).AboutR, User.Load(message.Author.Id).AboutG, User.Load(message.Author.Id).AboutB);
+
+                await message.Channel.SendMessageAsync("", false, eb.Build());
+            }
             else
             {
-                if (message.Content.Length >= Configuration.Load().MinLengthForCoin)
+                if (message.Content.Length >= MinLengthForCoin)
                 {
                     if (Channel.Load(message.Channel.Id).AwardingCoins)
                     {
                         AwardCoinsToPlayer(message.Author);
-
-                        Console.Write("status: [");
-                        Console.ForegroundColor = ConsoleColor.DarkCyan;
-                        Console.Write("info");
-                        Console.ResetColor();
-                        Console.WriteLine("]  " + message.Author.Username + " : sent a message and was awarded 1 coin(s).");
                     }
-                    else
-                    {
-                        Console.Write("status: [");
-                        Console.ForegroundColor = ConsoleColor.DarkCyan;
-                        Console.Write("info");
-                        Console.ResetColor();
-                        Console.WriteLine("]  " + message.Author.Username + " : sent a message and was awarded 0 coin(s) due to the channel being set not to give coins.");
-                    }
-                }
-                else
-                {
-                    Console.Write("status: [");
-                    Console.ForegroundColor = ConsoleColor.DarkCyan;
-                    Console.Write("info");
-                    Console.ResetColor();
-                    Console.WriteLine("]  " + message.Author.Username + " : sent a message and was awarded 0 coin(s) due to length (" + message.Content.Length + ").");
                 }
             }
         }
@@ -376,12 +345,6 @@ namespace DiscordBot
             try
             {
                 User.UpdateUser(user.Id, (user.GetCoins() + coinsToAward));
-
-                Console.Write("status: [");
-                Console.ForegroundColor = ConsoleColor.DarkCyan;
-                Console.Write("info");
-                Console.ResetColor();
-                Console.WriteLine("]  " + user.Username + " : coin method called.");
             }
             catch (Exception e)
             {

@@ -340,5 +340,24 @@ namespace DiscordBot.Extensions
             return null;
         }
         #endregion
+
+        public static ActivityType? ToActivityType(this int no)
+        {
+            switch (no)
+            {
+                case -1:
+                    return null;
+                case 0:
+                    return ActivityType.Playing;
+                case 1:
+                    return ActivityType.Streaming;
+                case 2:
+                    return ActivityType.Listening;
+                case 3:
+                    return ActivityType.Watching;
+                default:
+                    return null;
+            }
+        }
     }
 }

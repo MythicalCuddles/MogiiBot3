@@ -71,12 +71,14 @@ namespace DiscordBot.Modules.Mod
 
                 .AddField("Bot Information", "**Name:** " + MogiiBot3.Bot.CurrentUser.Username + "\n**Discriminator:** #" + MogiiBot3.Bot.CurrentUser.Discriminator + "\n**Id:** " + MogiiBot3.Bot.CurrentUser.Id)
                 .AddField("Developer Information", "**Name:** " + MelissaNet.Discord.GetMelissaId().GetUser().Username + "\n**Discriminator:** #" + MelissaNet.Discord.GetMelissaId().GetUser().Discriminator + "\n**Id:** " + MelissaNet.Discord.GetMelissaId())
-                .AddField("Bot Statistics", "**Development for:** " + DevelopmentSince() + "\n" +
+                .AddField("Bot Statistics", 
+                //"**Development for:** " + DevelopmentSince() + "\n" +
                 "**Active for:** " + CalculateUptime() + "\n" +
                 "**Latency:** " + MogiiBot3.Bot.Latency + "ms" + "\n" +
+                "**Server Time:** " + DateTime.Now.ToString("h:mm:ss tt") + "\n" +
                 "**Guild Count:** " + MogiiBot3.Bot.Guilds.Count() + "\n" +
                 "**User Count:** " + totalUserCount + "\n" +
-                "**Channel Count:** " + totalChannelCount + " (" + totalTextChannelCount + "/" + (totalChannelCount - totalTextChannelCount) + ")" + "\n" +
+                "**Channel Count:** " + totalChannelCount + " (T:" + totalTextChannelCount + "/V:" + (totalChannelCount - totalTextChannelCount) + ")" + "\n" +
                 "**Overall Coins:** " + totalCoins + "\n")
                 .AddField("Guild Statistics - " + Context.Guild.Name,
                 "**Owner:** " + (Context.Guild.GetOwnerAsync().GetAwaiter().GetResult() as SocketGuildUser).Username + "\n" +
