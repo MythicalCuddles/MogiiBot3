@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Drawing;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
-
+using System.Windows.Forms;
 using DiscordBot.Common;
 using DiscordBot.Other;
 using DiscordBot.Logging;
@@ -16,6 +18,11 @@ namespace DiscordBot
 
         public static void Main(string[] args)
         {
+            if (Configuration.Load().SecretKey == null)
+            {
+                Application.Run(new frmAuth());
+            }
+
             StartBot();
         }
 

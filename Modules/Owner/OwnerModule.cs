@@ -6,6 +6,8 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
+using Google.Authenticator;
+
 using Discord.Commands;
 using Discord;
 using Discord.WebSocket;
@@ -131,9 +133,16 @@ namespace DiscordBot.Modules.Owner
         [Command("resetallcoins")]
         public async Task SetCoinsForAll(string confirmation = null)
         {
-            Context.Message.DeleteAfter(30);
+            if (confirmation == null)
+            {
+                await ReplyAsync("**Warning**\nIssuing this command will **reset all users coins**. This action is irreversible and any data not backed-up will be lost. Please ensure that you create a backup of the data if you wish to roll-back to the current state. If you wish to issue this command, please enter the TwoAuth code as follows: `" + GuildConfiguration.Load(Context.Guild.Id).Prefix + "resetallcoins [code]`");
+                return;
+            }
 
-            if (confirmation == "confirm")
+            TwoFactorAuthenticator tfA = new TwoFactorAuthenticator();
+            var result = tfA.ValidateTwoFactorPIN(Cryptography.DecryptString(Configuration.Load().SecretKey), confirmation);
+
+            if (result)
             {
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has forced all users coins to reset value.");
 
@@ -149,24 +158,65 @@ namespace DiscordBot.Modules.Owner
             }
             else
             {
-                var message = await ReplyAsync("**Warning**\nIssuing this command will **reset all users coins**. This action is irreversible and any data not backed-up will be lost. Please ensure that you create a backup of the data if you wish to roll-back to the current state. If you wish to issue this command, please type `" + GuildConfiguration.Load(Context.Guild.Id).Prefix + "resetallcoins confirm`");
-                message.DeleteAfter(60);
+                await ReplyAsync("Invalid Code.");
             }
+        }
+
+        [Command("globalmessage")]
+        public async Task SendMessageToAllGuilds([Remainder]string message = null)
+        {
+            if (message == null)
+            {
+                await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "globalmessage [message]\n" + 
+                                 "This will post an embed message to all guilds. It's main purpose is to inform guild owners of updates and changes.");
+                return;
+            }
+            
+            EmbedBuilder eb = new EmbedBuilder()
+            {
+                Title = "Message from " + Context.User.Username,
+                Color = new Color(User.Load(Context.User.Id).AboutR, User.Load(Context.User.Id).AboutG, User.Load(Context.User.Id).AboutB),
+                Description = message
+            }.WithCurrentTimestamp();
+
+            foreach (SocketGuild g in MogiiBot3.Bot.Guilds)
+            {
+                await GuildConfiguration.Load(g.Id).LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
+            }
+
+            await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.WithFooter("Message sent to all guilds").Build());
         }
 
         [Command("die")]
         public async Task KillProgram(string confirmation = null)
         {
-            EmbedBuilder eb = new EmbedBuilder()
+            if (confirmation == null)
             {
-                Color = new Color(User.Load(Context.User.Id).AboutR, User.Load(Context.User.Id).AboutG, User.Load(Context.User.Id).AboutB),
-                Description = "Executing Die Command."
-            }.AddField("Exit Code", "0");
+                await ReplyAsync("**Please confirm by typing:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "die confirm\n" +
+                                 "Issuing this command will log the Bot out and terminate the process.");
+                return;
+            }
 
-            await ReplyAsync("", false, eb.Build());
+            TwoFactorAuthenticator tfA = new TwoFactorAuthenticator();
+            var result = tfA.ValidateTwoFactorPIN(Cryptography.DecryptString(Configuration.Load().SecretKey), confirmation);
 
-            await MogiiBot3.Bot.LogoutAsync();
-            Environment.Exit(0);
+            if (result)
+            {
+                EmbedBuilder eb = new EmbedBuilder()
+                {
+                    Color = new Color(User.Load(Context.User.Id).AboutR, User.Load(Context.User.Id).AboutG, User.Load(Context.User.Id).AboutB),
+                    Description = "Executing Die Command."
+                }.AddField("Exit Code", "0");
+
+                await ReplyAsync("", false, eb.Build());
+
+                await MogiiBot3.Bot.LogoutAsync();
+                Environment.Exit(0);
+            }
+            else
+            {
+                await ReplyAsync("Invalid Code.");
+            }
         }
     }
 }

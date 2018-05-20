@@ -1,5 +1,32 @@
 # Changelog
 
+## Version 2.9.0.0
+
+### Added
+    - Added command "globalmessage" for the Bot Owner to send a message to all the guilds connected to the Bot.
+    - Added confirmation to command "die" for the Bot Owner.
+    - Added TwoFactorAuthentication for commands "die" and "resetallcoins".
+    - Added a one-time QRCode generator for the TwoFactorAuthentication, saving the secret key to be used for commands.
+
+### Fixed
+    - Fixed an issue with command "showconfig guild".
+
+### Removed
+    - Removed BotChannelID.
+
+### Other
+    - Added GoogleAuthenticator v1.2.1
+    - Updated Discord.Net to v2.0.0-beta2-00940
+    - Updated Discord.Net.Commands to v2.0.0-beta2-00940
+    - Updated Discord.Net.Core to v2.0.0-beta2-00940
+    - Updated Discord.Net.Providers.WS4Net to v2.0.0-beta2-00940
+    - Updated Discord.Net.Rest to v2.0.0-beta2-00940
+    - Updated Discord.Net.Webhook to v2.0.0-beta2-00940
+    - Updated Discord.Net.Websocket to v2.0.0-beta2-00940
+    - Updated HtmlAgilityPack to v1.8.2
+    - Updated Newtonsoft.Json to v11.0.2
+
+
 ## Version 2.8.1.0
 
 ### Added

@@ -14,6 +14,7 @@ namespace DiscordBot.Common
         public static string FileName { get; } = "config/configuration.json";
 
         public string BotToken { get; set; }
+        public string SecretKey { get; set; }
         
         public ulong Developer { get; set; } = 149991092337639424;
         public string StatusText { get; set; } = null;
@@ -27,7 +28,7 @@ namespace DiscordBot.Common
         public int PrefixCost { get; set; } = 2500;
         public int SenpaiChanceRate { get; set; } = 5;
 
-        public ulong LogChannelId { get; set; } = 349976716237602816;
+        public ulong LogChannelId { get; set; } = 447769497344933900;
 
         public int Respects { get; set; } = 0;
         public int MinLengthForCoin { get; set; } = 0;
@@ -107,41 +108,8 @@ namespace DiscordBot.Common
         
         public string ToJson()
             => JsonConvert.SerializeObject(this, Formatting.Indented);
-
-        //public static void UpdateJson(string parameterName, string newValue)
-        //{
-        //    string json = File.ReadAllText(FileName);
-        //    dynamic jsonObj = JsonConvert.DeserializeObject(json);
-        //    jsonObj[parameterName] = newValue;
-        //    string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-        //    File.WriteAllText(FileName, output);
-        //}
-        //public static void UpdateJson(string parameterName, int newValue)
-        //{
-        //    string json = File.ReadAllText(FileName);
-        //    dynamic jsonObj = JsonConvert.DeserializeObject(json);
-        //    jsonObj[parameterName] = newValue;
-        //    string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-        //    File.WriteAllText(FileName, output);
-        //}
-        //public static void UpdateJson(string parameterName, bool newValue)
-        //{
-        //    string json = File.ReadAllText(FileName);
-        //    dynamic jsonObj = JsonConvert.DeserializeObject(json);
-        //    jsonObj[parameterName] = newValue;
-        //    string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-        //    File.WriteAllText(FileName, output);
-        //}
-        //public static void UpdateJson(string parameterName, ulong newValue)
-        //{
-        //    string json = File.ReadAllText(FileName);
-        //    dynamic jsonObj = JsonConvert.DeserializeObject(json);
-        //    jsonObj[parameterName] = newValue;
-        //    string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-        //    File.WriteAllText(FileName, output);
-        //}
-
-        public static void UpdateConfiguration(string botToken = null, ulong? developer = null, string statusText = null, string statusLink = null,
+        
+        public static void UpdateConfiguration(string botToken = null, string secretKey = null, ulong? developer = null, string statusText = null, string statusLink = null,
             int? statusActivity = null, UserStatus? status = null, bool? unknownCommandEnabled = null,
             int? leaderboardAmount = null, int? quoteCost = null, int? prefixCost = null, int? senpaiChanceRate = null,
             ulong? logChannelId = null, int? respects = null, int? minLengthForCoin = null, int? maxRuleXGamble = null)
@@ -149,6 +117,7 @@ namespace DiscordBot.Common
             var config = new Configuration()
             {
                 BotToken = botToken ?? Load().BotToken,
+                SecretKey = secretKey ?? Load().SecretKey,
                 Developer = developer ?? Load().Developer,
 
                 StatusText = statusText ?? Load().StatusText,

@@ -10,15 +10,14 @@ namespace DiscordBot.Common
     {
         public string Prefix { get; set; } = "$";
         public string WelcomeMessage { get; set; } = "";
-        public ulong WelcomeChannelId { get; set; } = 414197676364791808;
-        public ulong LogChannelId { get; set; } = 414197676364791808;
-        public ulong BotChannelId { get; set; } = 414197676364791808;
+        public ulong WelcomeChannelId { get; set; } = 447769497344933900;
+        public ulong LogChannelId { get; set; } = 447769497344933900;
 
         public bool SenpaiEnabled { get; set; } = true;
         public bool QuotesEnabled { get; set; } = true;
 
-        public bool EnableNsfwCommands { get; set; } = false;
-        public ulong RuleGambleChannelId { get; set; } = 414197676364791808;
+        public bool EnableNsfwCommands { get; set; }
+        public ulong RuleGambleChannelId { get; set; } = 447769497344933900;
 
         public static void EnsureExists(ulong guildId)
         {
@@ -101,41 +100,8 @@ namespace DiscordBot.Common
         public string ToJson()
             => JsonConvert.SerializeObject(this, Formatting.Indented);
 
-        //public static void UpdateJson(ulong guildId, string parameterName, string newValue)
-        //{
-        //    string json = File.ReadAllText(GetPath(guildId));
-        //    dynamic jsonObj = JsonConvert.DeserializeObject(json);
-        //    jsonObj[parameterName] = newValue;
-        //    string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-        //    File.WriteAllText(GetPath(guildId), output);
-        //}
-        //public static void UpdateJson(ulong guildId, string parameterName, int newValue)
-        //{
-        //    string json = File.ReadAllText(GetPath(guildId));
-        //    dynamic jsonObj = JsonConvert.DeserializeObject(json);
-        //    jsonObj[parameterName] = newValue;
-        //    string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-        //    File.WriteAllText(GetPath(guildId), output);
-        //}
-        //public static void UpdateJson(ulong guildId, string parameterName, bool newValue)
-        //{
-        //    string json = File.ReadAllText(GetPath(guildId));
-        //    dynamic jsonObj = JsonConvert.DeserializeObject(json);
-        //    jsonObj[parameterName] = newValue;
-        //    string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-        //    File.WriteAllText(GetPath(guildId), output);
-        //}
-        //public static void UpdateJson(ulong guildId, string parameterName, ulong? newValue)
-        //{
-        //    string json = File.ReadAllText(GetPath(guildId));
-        //    dynamic jsonObj = JsonConvert.DeserializeObject(json);
-        //    jsonObj[parameterName] = newValue;
-        //    string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-        //    File.WriteAllText(GetPath(guildId), output);
-        //}
-
         public static void UpdateGuild(ulong guildId, string prefix = null, string welcomeMessage = null,
-            ulong? welcomeChannelId = null, ulong? logChannelId = null, ulong? botChannelId = null,
+            ulong? welcomeChannelId = null, ulong? logChannelId = null,
             bool? senpaiEnabled = null, bool? quotesEnabled = false, bool? enableNsfwCommands = null, 
             ulong? ruleGameChannelId = null)
         {
@@ -145,7 +111,6 @@ namespace DiscordBot.Common
                 WelcomeMessage = welcomeMessage ?? Load(guildId).WelcomeMessage,
                 WelcomeChannelId = welcomeChannelId ?? Load(guildId).WelcomeChannelId,
                 LogChannelId = logChannelId ?? Load(guildId).LogChannelId,
-                BotChannelId = botChannelId ?? Load(guildId).BotChannelId,
                 SenpaiEnabled = senpaiEnabled ?? Load(guildId).SenpaiEnabled,
                 QuotesEnabled = quotesEnabled ?? Load(guildId).QuotesEnabled,
                 EnableNsfwCommands = enableNsfwCommands ?? Load(guildId).EnableNsfwCommands,

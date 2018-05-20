@@ -36,6 +36,7 @@ namespace DiscordBot
 
         public static DiscordSocketClient Bot;
         public static CommandService CommandService;
+        public static IServiceProvider ServiceProvider;
 
         public static int MinLengthForCoin;
 
@@ -66,7 +67,7 @@ namespace DiscordBot
             Bot.Ready += Ready;
             Bot.Disconnected += Disconnected;
 
-            await CommandService.AddModulesAsync(Assembly.GetEntryAssembly());
+            await CommandService.AddModulesAsync(Assembly.GetEntryAssembly(), ServiceProvider);
 
             await LoginAndStart();
 
@@ -301,7 +302,7 @@ namespace DiscordBot
                 message.HasMentionPrefix(Bot.CurrentUser, ref argPos) || 
                 message.HasStringPrefix(uPrefix, ref argPos)) {
                 var context = new CommandContext(Bot, message);
-                var result = await CommandService.ExecuteAsync(context, argPos);
+                var result = await CommandService.ExecuteAsync(context, argPos, ServiceProvider);
 
                 if (!result.IsSuccess && Configuration.Load().UnknownCommandEnabled)
                 {

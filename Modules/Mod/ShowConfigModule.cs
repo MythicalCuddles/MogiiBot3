@@ -68,16 +68,14 @@ namespace DiscordBot.Modules.Mod
                 eb.WithDescription("```INI\n" +
                                    "[ 1] Prefix [ " + (GuildConfiguration.Load(Context.Guild.Id).Prefix ?? "UNDEFINED") + " ]\n" +
                                    "[ 2] Welcome Channel [ #" + (GuildConfiguration.Load(Context.Guild.Id).WelcomeChannelId.GetTextChannel().Name ?? "UNDEFINED") + " ]\n" +
-                                   "[ 3] Welcome Channel ID [ " + GuildConfiguration.Load(Context.Guild.Id).WelcomeChannelId + " ]\n" +
+                                   "[ 3] Welcome Channel ID [ " + (GuildConfiguration.Load(Context.Guild.Id).WelcomeChannelId.ToString() ?? "UNDEFINED") + " ]\n" +
                                    "[ 4] Log Channel [ #" + (GuildConfiguration.Load(Context.Guild.Id).LogChannelId.GetTextChannel().Name ?? "UNDEFINED") + " ]\n" +
-                                   "[ 5] Log Channel ID [ " + GuildConfiguration.Load(Context.Guild.Id).LogChannelId + " ]\n" +
-                                   "[ 6] Bot Channel [ #" + (GuildConfiguration.Load(Context.Guild.Id).BotChannelId.GetTextChannel().Name ?? "UNDEFINED") + " ]\n" +
-                                   "[ 7] Bot Channel ID [ " + GuildConfiguration.Load(Context.Guild.Id).BotChannelId + " ]\n" +
-                                   "[ 8] Senpai Enabled [ " + GuildConfiguration.Load(Context.Guild.Id).SenpaiEnabled.ToYesNo() + " ]\n" +
-                                   "[ 9] Quotes Enabled [ " + GuildConfiguration.Load(Context.Guild.Id).QuotesEnabled.ToYesNo() + " ]\n" +
-                                   "[10] NSFW Commands Enabled [ " + GuildConfiguration.Load(Context.Guild.Id).EnableNsfwCommands.ToYesNo() + " ]\n" +
-                                   "[11] Rule34 Gamble Channel [ #" + (GuildConfiguration.Load(Context.Guild.Id).RuleGambleChannelId.GetTextChannel().Name ?? "UNDEFINED") + " ]\n" +
-                                   "[12] Rule34 Gamble Channel ID [ " + GuildConfiguration.Load(Context.Guild.Id).RuleGambleChannelId + " ]\n" +
+                                   "[ 5] Log Channel ID [ " + (GuildConfiguration.Load(Context.Guild.Id).LogChannelId.ToString() ?? "UNDEFINED") + " ]\n" +
+                                   "[ 6] Senpai Enabled [ " + GuildConfiguration.Load(Context.Guild.Id).SenpaiEnabled.ToYesNo() + " ]\n" +
+                                   "[ 7] Quotes Enabled [ " + GuildConfiguration.Load(Context.Guild.Id).QuotesEnabled.ToYesNo() + " ]\n" +
+                                   "[ 8] NSFW Commands Enabled [ " + GuildConfiguration.Load(Context.Guild.Id).EnableNsfwCommands.ToYesNo() + " ]\n" +
+                                   "[ 9] Rule34 Gamble Channel [ #" + (GuildConfiguration.Load(Context.Guild.Id).RuleGambleChannelId.GetTextChannel().Name ?? "UNDEFINED") + " ]\n" +
+                                   "[10] Rule34 Gamble Channel ID [ " + (GuildConfiguration.Load(Context.Guild.Id).RuleGambleChannelId.ToString() ?? "UNDEFINED") + " ]\n" +
                                    "```");
 
                 await ReplyAsync("", false, eb.Build());
@@ -87,6 +85,7 @@ namespace DiscordBot.Modules.Mod
                 await ReplyAsync(
                     "It appears that your Guild Configuration has not been set-up completely. Please complete all the steps before using this command.");
                 Console.WriteLine(e);
+                Console.WriteLine(e.Message);
             }
         }
     }
