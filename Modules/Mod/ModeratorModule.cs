@@ -69,24 +69,29 @@ namespace DiscordBot.Modules.Mod
             EmbedBuilder eb = new EmbedBuilder()
                 .WithAuthor(eab)
 
-                .AddField("Bot Information", "**Name:** " + MogiiBot3.Bot.CurrentUser.Username + "\n**Discriminator:** #" + MogiiBot3.Bot.CurrentUser.Discriminator + "\n**Id:** " + MogiiBot3.Bot.CurrentUser.Id)
-                .AddField("Developer Information", "**Name:** " + MelissaNet.Discord.GetMelissaId().GetUser().Username + "\n**Discriminator:** #" + MelissaNet.Discord.GetMelissaId().GetUser().Discriminator + "\n**Id:** " + MelissaNet.Discord.GetMelissaId())
+                .AddField("Bot Information", 
+                    "**Name:** " + MogiiBot3.Bot.CurrentUser.Username + "\n" +
+                    "**Discriminator:** #" + MogiiBot3.Bot.CurrentUser.Discriminator + "\n" +
+                    "**Id:** " + MogiiBot3.Bot.CurrentUser.Id)
+                .AddField("Developer Information", 
+                    "**Name:** " + MelissaNet.Discord.GetMelissaId().GetUser().Username + "\n" +
+                    "**Discriminator:** #" + MelissaNet.Discord.GetMelissaId().GetUser().Discriminator + "\n" +
+                    "**Id:** " + MelissaNet.Discord.GetMelissaId())
                 .AddField("Bot Statistics", 
-                //"**Development for:** " + DevelopmentSince() + "\n" +
-                "**Active for:** " + CalculateUptime() + "\n" +
-                "**Latency:** " + MogiiBot3.Bot.Latency + "ms" + "\n" +
-                "**Server Time:** " + DateTime.Now.ToString("h:mm:ss tt") + "\n" +
-                "**Guild Count:** " + MogiiBot3.Bot.Guilds.Count() + "\n" +
-                "**User Count:** " + totalUserCount + "\n" +
-                "**Channel Count:** " + totalChannelCount + " (T:" + totalTextChannelCount + "/V:" + (totalChannelCount - totalTextChannelCount) + ")" + "\n" +
-                "**Overall Coins:** " + totalCoins + "\n")
+                    "**Active for:** " + CalculateUptime() + "\n" +
+                    "**Latency:** " + MogiiBot3.Bot.Latency + "ms" + "\n" +
+                    "**Server Time:** " + DateTime.Now.ToString("h:mm:ss tt") + "\n" +
+                    "**Guild Count:** " + MogiiBot3.Bot.Guilds.Count() + "\n" +
+                    "**User Count:** " + totalUserCount + "\n" +
+                    "**Channel Count:** " + totalChannelCount + " (T:" + totalTextChannelCount + "/V:" + (totalChannelCount - totalTextChannelCount) + ")" + "\n" +
+                    "**Overall Coins:** " + totalCoins + "\n")
                 .AddField("Guild Statistics - " + Context.Guild.Name,
-                "**Owner:** " + (Context.Guild.GetOwnerAsync().GetAwaiter().GetResult() as SocketGuildUser).Username + "\n" +
-                "**Owner Discriminator:** #" + (Context.Guild.GetOwnerAsync().GetAwaiter().GetResult() as SocketGuildUser).Discriminator + "\n" +
-                "**Owner Id:** " + (Context.Guild.GetOwnerAsync().GetAwaiter().GetResult() as SocketGuildUser).Id + "\n" +
-                "**Channel Count:** " + totalGuildChannelCount + " (" + totalGuildTextChannelCount + "/" + (totalGuildChannelCount - totalGuildTextChannelCount) + ")" + "\n" +
-                "**User Count:** " + totalGuildUserCount + "\n" +
-                "**Coins:** " + totalGuildCoins)
+                    "**Owner:** " + (Context.Guild.GetOwnerAsync().GetAwaiter().GetResult() as SocketGuildUser).Username + "\n" +
+                    "**Owner Discriminator:** #" + (Context.Guild.GetOwnerAsync().GetAwaiter().GetResult() as SocketGuildUser).Discriminator + "\n" +
+                    "**Owner Id:** " + (Context.Guild.GetOwnerAsync().GetAwaiter().GetResult() as SocketGuildUser).Id + "\n" +
+                    "**Channel Count:** " + totalGuildChannelCount + " (" + totalGuildTextChannelCount + "/" + (totalGuildChannelCount - totalGuildTextChannelCount) + ")" + "\n" +
+                    "**User Count:** " + totalGuildUserCount + "\n" +
+                    "**Coins:** " + totalGuildCoins)
 
                 .WithFooter(efb)
                 .WithThumbnailUrl(MogiiBot3.Bot.CurrentUser.GetAvatarUrl())
@@ -100,12 +105,6 @@ namespace DiscordBot.Modules.Mod
         {
             TimeSpan uptime = DateTime.Now - ActiveForDateTime;
             return (uptime.Days.ToString() + " day(s), " + uptime.Hours.ToString() + " hour(s), " + uptime.Minutes.ToString() + " minute(s), " + uptime.Seconds.ToString() + " second(s)");
-        }
-        private static readonly DateTime StartDevelopment = MelissaNet.Discord.MogiiBotDevelopmentSince();
-        private static string DevelopmentSince()
-        {
-            TimeSpan developmentCounter = DateTime.Now - StartDevelopment;
-            return (developmentCounter.Days.ToString() + " day(s), " + developmentCounter.Hours.ToString() + " hour(s), " + developmentCounter.Minutes.ToString() + " minute(s), " + developmentCounter.Seconds.ToString() + " second(s)");
         }
     }
 }

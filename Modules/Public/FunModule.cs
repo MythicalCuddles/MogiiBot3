@@ -84,6 +84,7 @@ namespace DiscordBot.Modules.Public
             }
         }
 
+        #region Images & Randoms
         [Command("approve"), Summary("Sends a picture stating \"Harold Likes This\".")]
         public async Task HaroldApproves()
         {
@@ -144,6 +145,7 @@ namespace DiscordBot.Modules.Public
         {
             await ReplyAsync("42");
         }
+        #endregion 
 
         [Command("noticeme"), Summary("Will Senpai notice you?")]
         public async Task Senpai()
@@ -165,8 +167,8 @@ namespace DiscordBot.Modules.Public
             }
         }
 
-        [Command("wallet"), Summary("")]
-        [Alias("purse", "balance", "bal", "coins", "mogiicoins")]
+        [Command("balance"), Summary("")]
+        [Alias("purse", "wallet", "bal", "coins")]
         public async Task LoadUserBalance(IUser user = null)
         {
             var usr = user;
@@ -211,11 +213,10 @@ namespace DiscordBot.Modules.Public
             
             User.UpdateUser(Context.User.Id, coins:((issuerCoins - coins)));
             User.UpdateUser(user.Id, coins:(userCoins + coins));
-            TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") give " + user.Username + " (" + user.Id + ") " + coins + " coins.");
+            TransactionLogger.AddTransaction(Context.User.Username + " [" + Context.User.Id + "] give " + user.Username + " [" + user.Id + "] " + coins + " coins.");
             await ReplyAsync(Context.User.Mention + " has given " + user.Mention + " " + coins + " coin(s)");
         }
 
-        //int lastQuote;
         [Command("quote"), Summary("Get a random quote from the list.")]
         public async Task GenerateQuote()
         {
@@ -223,12 +224,7 @@ namespace DiscordBot.Modules.Public
             {
                 int generatedNumber = _random.Next(0, QuoteHandler.QuoteList.Count());
 
-               // while (generatedNumber == lastQuote)
-                    //generatedNumber = _r.Next(0, QuoteHandler.quoteList.Count());
-
-                await ReplyAsync(QuoteHandler.QuoteList[generatedNumber]); // Context.User.Mention + ", here's your generated quote: \n" + 
-
-                //lastQuote = generatedNumber;
+                await ReplyAsync(QuoteHandler.QuoteList[generatedNumber]);
             }
             else
             {
@@ -243,8 +239,14 @@ namespace DiscordBot.Modules.Public
 		    {
 		        int userCoins = User.Load(Context.User.Id).Coins;
 		        int quoteCost = Configuration.Load().QuoteCost;
+                
+		        if (userCoins < quoteCost)
+		        {
+		            await ReplyAsync(Context.User.Mention + ", you don't have enough coins! You need " + quoteCost + " coins to buy a quote request.");
+		            return;
+		        }
 
-		        if (quote == null)
+                if (quote == null)
 		        {
 		            await ReplyAsync("**Syntax:** " +
 		                             GuildConfiguration.Load(Context.Guild.Id).Prefix + "buyquote [quote]\n```" +
@@ -256,15 +258,9 @@ namespace DiscordBot.Modules.Public
 		            return;
 		        }
 
-		        if (userCoins < quoteCost)
-		        {
-		            await ReplyAsync(Context.User.Mention + ", you don't have enough coins! You need " + quoteCost + " coins to buy a quote request.");
-		            return;
-		        }
-
 		        QuoteHandler.AddAndUpdateRequestQuotes(quote);
                 User.UpdateUser(Context.User.Id, coins: (userCoins - quoteCost));
-		        TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") paid " + quoteCost + " for a custom quote.");
+		        TransactionLogger.AddTransaction(Context.User.Username + " [" + Context.User.Id + "] paid " + quoteCost + " for a custom quote.");
 		        await ReplyAsync(Context.User.Mention + ", your quote has been added to the list, and should be verified by a staff member shortly.");
 
 		        await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**New Quote**\nQuote requested by: **" + Context.User.Mention + "**\nQuote: " + quote);
@@ -274,14 +270,6 @@ namespace DiscordBot.Modules.Public
 		    {
 		        await ReplyAsync("Quotes are currently disabled. Try again later.");
 		    }
-        }
-
-        [Command("image"), Summary("Replies posting a image link which has been set by staff.")]
-        public async Task PostImageLink()
-        {
-            int generatedNumber = _random.Next(0, ImageHandler.ImageLinkList.Count());
-
-            await ReplyAsync("Here's the image!\n" + ImageHandler.ImageLinkList[generatedNumber]);
         }
     }
 }

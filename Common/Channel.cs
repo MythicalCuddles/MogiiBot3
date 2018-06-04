@@ -8,7 +8,7 @@ namespace DiscordBot.Common
     public class Channel
     {
         [JsonIgnore]
-        private static string DirectoryPath { get; } = "channels/";
+        private static string DirectoryPath { get; } = "MythicalCuddles/DiscordBot/channels/";
         [JsonIgnore]
         private static string Extension { get; } = ".json";
 
@@ -17,7 +17,7 @@ namespace DiscordBot.Common
         public static void EnsureExists(ulong cId)
         {
             string fileName = DirectoryPath + cId + Extension;
-            string file = Path.Combine(AppContext.BaseDirectory, fileName);
+            string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), fileName);
             if (!File.Exists(file))
             {
                 string path = Path.GetDirectoryName(file);
@@ -44,14 +44,14 @@ namespace DiscordBot.Common
         private void SaveJson(ulong cId)
         {
             string fileName = DirectoryPath + cId + Extension;
-            string file = Path.Combine(AppContext.BaseDirectory, fileName);
+            string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), fileName);
             File.WriteAllText(file, ToJson());
         }
 
         public static Channel Load(ulong cId)
         {
             string fileName = DirectoryPath + cId + Extension;
-            string file = Path.Combine(AppContext.BaseDirectory, fileName);
+            string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), fileName);
             return JsonConvert.DeserializeObject<Channel>(File.ReadAllText(file));
         }
 

@@ -12,7 +12,10 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Microsoft.Extensions.DependencyInjection;
+
 using Discord;
+using Discord.Addons.Interactive;
 using Discord.Audio;
 using Discord.Commands;
 using Discord.Net.Providers.UDPClient;
@@ -38,14 +41,12 @@ namespace DiscordBot
         public static CommandService CommandService;
         public static IServiceProvider ServiceProvider;
 
-        public static int MinLengthForCoin;
-
         public async Task RunBotAsync()
         {
             Bot = new DiscordSocketClient(new DiscordSocketConfig
             {
                 LogLevel = LogSeverity.Debug,
-                MessageCacheSize = 50,
+                MessageCacheSize = 1000,
                 WebSocketProvider = WS4NetProvider.Instance,
                 UdpSocketProvider = UDPClientProvider.Instance,
                 DefaultRetryMode = RetryMode.AlwaysRetry,
@@ -54,6 +55,7 @@ namespace DiscordBot
 
             });
             CommandService = new CommandService();
+            ServiceProvider = ConfigureServices();
 
             // Create Tasks for Bot Events
             Bot.Log += Log;
@@ -73,6 +75,14 @@ namespace DiscordBot
 
             // Keep the program running.
             await Task.Delay(-1);
+        }
+
+        private IServiceProvider ConfigureServices()
+        {
+            var services = new ServiceCollection()
+                .AddSingleton(Bot)
+                .AddSingleton<InteractiveService>();
+            return services.BuildServiceProvider();
         }
 
         private static async Task LoginAndStart()
@@ -158,8 +168,6 @@ namespace DiscordBot
         {
             List<Tuple<SocketGuildUser, SocketGuild>> offlineList = new List<Tuple<SocketGuildUser, SocketGuild>>();
 
-            MinLengthForCoin = Configuration.Load().MinLengthForCoin;
-
             await Bot.SetGameAsync(Configuration.Load().StatusText, Configuration.Load().StatusLink,
                 (ActivityType) Configuration.Load().StatusActivity);
 
@@ -205,7 +213,13 @@ namespace DiscordBot
             Console.ResetColor();
             Console.Write("]  " + Bot.CurrentUser.Username + " : ");
             if (offlineList.Any())
+            {
                 Console.WriteLine(offlineList.Count + " new users added.");
+                foreach (Tuple<SocketGuildUser, SocketGuild> tupleList in offlineList)
+                {
+                    Console.WriteLine("[ALERT] While " + Bot.CurrentUser.Username + " was offline, " + tupleList.Item1.Mention + " (" + tupleList.Item1.Id + ") joined " + tupleList.Item2.Name + ". They have been added to the database.");
+                }
+            }
             else
                 Console.WriteLine("no new users added.");
 
@@ -251,23 +265,6 @@ namespace DiscordBot
         private static Task Disconnected(Exception exception)
         {
 			Console.WriteLine(exception + "\n");
-
-            // REMOVED AS DefaultRetryMode ADDED TO DISCORDSOCKETCONFIG
-            //Console.WriteLine("\n\n\n\n");
-
-            //Task.Delay(5000);
-
-            //Process process = new Process
-            //{
-            //    StartInfo =
-            //    {
-            //        FileName = Path.Combine(AppContext.BaseDirectory, "DiscordBot.exe"),
-            //        CreateNoWindow = false
-            //    }
-            //};
-            //process.Start();
-
-            //Environment.Exit(0);
             return Task.CompletedTask;
         }
 	    
@@ -301,7 +298,7 @@ namespace DiscordBot
             if (message.HasStringPrefix(gPrefix, ref argPos) || 
                 message.HasMentionPrefix(Bot.CurrentUser, ref argPos) || 
                 message.HasStringPrefix(uPrefix, ref argPos)) {
-                var context = new CommandContext(Bot, message);
+                var context = new SocketCommandContext(Bot, message);
                 var result = await CommandService.ExecuteAsync(context, argPos, ServiceProvider);
 
                 if (!result.IsSuccess && Configuration.Load().UnknownCommandEnabled)
@@ -331,7 +328,7 @@ namespace DiscordBot
             }
             else
             {
-                if (message.Content.Length >= MinLengthForCoin)
+                if (message.Content.Length >= Configuration.Load().MinLengthForCoin)
                 {
                     if (Channel.Load(message.Channel.Id).AwardingCoins)
                     {

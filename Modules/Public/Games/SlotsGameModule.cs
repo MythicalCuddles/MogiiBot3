@@ -58,7 +58,7 @@ namespace DiscordBot.Modules.Public.Games
                 sb.Append("**" + Context.User.Username + "** bet **" + inputCoins + "** coin(s) and won **" + coinsWon + "** coin(s).");
                 
                 User.UpdateUser(Context.User.Id, coins: (User.Load(Context.User.Id).Coins + coinsWon));
-                TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") bet " + inputCoins + " coins on the slots and won " + coinsWon + " coins. [ALL]");
+                TransactionLogger.AddTransaction(Context.User.Username + " [" + Context.User.Id + "] bet " + inputCoins + " coins on the slots and won " + coinsWon + " coins. [ALL]");
             }
             else if (one == two || two == three || one == three)
             {
@@ -67,13 +67,13 @@ namespace DiscordBot.Modules.Public.Games
                 sb.Append("**" + Context.User.Username + "** bet **" + inputCoins + "** coin(s) and won **" + coinsWon + "** coin(s).");
                 
                 User.UpdateUser(Context.User.Id, coins: (User.Load(Context.User.Id).Coins + coinsWon));
-                TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") bet " + inputCoins + " coins on the slots and won " + coinsWon + " coins. [TWO]");
+                TransactionLogger.AddTransaction(Context.User.Username + " [" + Context.User.Id + "] bet " + inputCoins + " coins on the slots and won " + coinsWon + " coins. [TWO]");
             }
             else
             {
                 sb.Append("| : : :  **LOST**  : : : |\n\n");
                 sb.Append("**" + Context.User.Username + "** bet **" + inputCoins + "** coin(s) and lost.");
-                TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") bet " + inputCoins + " coins on the slots and lost. [NONE]");
+                TransactionLogger.AddTransaction(Context.User.Username + " [" + Context.User.Id + "] bet " + inputCoins + " coins on the slots and lost. [NONE]");
             }
 
             await ReplyAsync(sb.ToString());

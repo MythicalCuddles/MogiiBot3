@@ -1,5 +1,78 @@
 # Changelog
 
+## Version 2.10.0.0
+
+### Added
+    - Added InteractiveService to ServiceProvider.
+    - Added commands to do with the MogiiCraft Discord Guild into the command prefix "MogiiCraft".
+    - Re-added BotChannelId to the Guild Configuration for future games and chat.
+    - Re-added BotChannelId to command "showconfig" for future games and chat.
+    - Added new configuration file "StringConfiguration" to allow strings to be altered whilst the bot is running.
+    - Added command "showconfig strings" to display all the values in the StringConfiguration.
+    - Added "WebsiteName" for Users to add the name of their website to their about.
+    - Added "WebsiteUrl" for Users to add the URL to their website to their about.
+    - Added Website section to command "about".
+    - Added command "setwebsitename".
+    - Added command "setwebsiteurl".
+    - Added command "force websitename" for guild administrators to force change a users website name.
+    - Added command "force websiteurl" for guild administrators to force change a users website URL.
+    - Added "MythicalTokens" to the Users for future development.
+    - Added MythicalTokens section to command "about".
+    - Added command "force mythicaltokens" for guild administrators to force change how many Mythical Tokens the specified user has.
+    - Added logging to commands "force coins" and "force mythicaltokens" to send a message to the global log channel of any changes.
+    - Added GetPermissionLevel() and HasHigherPermissionLevel() to compare permission levels and restrict users with lower permissions from changing values for users with higher permissions.
+    - Added a check in the "force" commands to see if the user issuing the command has a higher or equal permission level to the user specified.
+    - Added GetWebsiteName(), GetWebsiteUrl() and ... to User Extensions to easily load users information.
+    - Added ShowLeaderboard() method to handle the leaderboard code.
+    - Added command "leaderboard global" and "leaderboard guild" with "leaderboard" automatically showing the global leaderboard. (See Changed - "Altered command "leaderboard" ...")
+    - Added command "editstring" to ConfigModule to edit the StringsConfiguration.
+    - Added command "editstring defaultwebsitename" to change the default name for websites in the users about.
+    - Added "MogiiBot is typing..." to the command "about" (trial).
+
+### Changed
+    - Changed the User Leave message to show more information about the user.
+    - Changed the User Join message to show more information if the user file exists.
+    - Changed the storage location for the Configuration file(s).
+    - Changed the storage location for the Channel Configuration file(s).
+    - Changed the storage location for the User file(s).
+    - Changed the storage location for the Guild Configuration file(s).
+    - Changed the command "listquotes" to use the Paginator Service (trial).
+    - Changed up command "balance" to be the main command and "wallet" as an alias.
+    - Changed command "showconfig" to show a syntax for which config instead of loading all the available configs.
+    - Updated command "about" to use UserExtensions.
+    - Changed command "buyquote" to tell users if they don't have enough coins first to prevent the syntax from being shown if the user didn't have enough coins to buy a quote.
+    - Altered command "leaderboard" to "leaderboard global" to show the global leaderboard. Command "leaderboard" will automatically post the global leaderboard.
+    - Updated ChannelHandler to display new and deleted channels in embeds.
+   
+### Fixed
+    - Fixed the syntax in the command "die".
+    - Fixed an issue where the program would try to load the configuration file that doesn't exist to setup the authenticator.
+
+### Removed
+    - Removed "mogiicoin" as a balance alias from FunModule.
+    - Removed command "info coins" from InfoModule.
+    - Removed "Channel Message" from "editconfig".
+    - Removed command "image" from FunModule.
+    - Removed commands "addimage", "listimages", "editimage" and "deleteimage" from AdminModule.
+    - Removed ImageHandler.cs from the project.
+    - Removed ImageHandler from ReactionHandler.
+    - Removed Image EnsureExists() from Program.
+    - Removed MusicHandler.cs from the project. (Don't know why this wasn't removed earlier...)
+
+### Other
+    - Cleaned up command "stats".
+    - Cleaned up some users from the old "No Information Provided".
+    - Added Discord.Addons.Interactive v1.0.1
+    - Updated Discord.Net to v2.0.0-beta2-00964
+    - Updated Discord.Net.Commands to v2.0.0-beta2-00964
+    - Updated Discord.Net.Core to v2.0.0-beta2-00964
+    - Updated Discord.Net.Rest to v2.0.0-beta2-00964
+    - Updated Discord.Net.Webhook to v2.0.0-beta2-00964
+    - Updated Discord.Net.Websocket to v2.0.0-beta2-00964
+    - Updated Discord.Net.Providers.WS4Net to v2.0.0-beta2-00964
+    - Updated HtmlAgilityPack to v1.8.4
+
+
 ## Version 2.9.0.0
 
 ### Added
@@ -7,6 +80,7 @@
     - Added confirmation to command "die" for the Bot Owner.
     - Added TwoFactorAuthentication for commands "die" and "resetallcoins".
     - Added a one-time QRCode generator for the TwoFactorAuthentication, saving the secret key to be used for commands.
+    - Added User Extension GetFooterText()
 
 ### Fixed
     - Fixed an issue with command "showconfig guild".

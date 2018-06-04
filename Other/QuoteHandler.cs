@@ -10,8 +10,8 @@ namespace DiscordBot.Other
 {
     public class QuoteHandler
     {
-        private const string FileName = "common/quotes.txt";
-        private const string RequestQuotesFileName = "common/requestquotes.txt";
+        private const string FileName = "MythicalCuddles/DiscordBot/common/quotes.txt";
+        private const string RequestQuotesFileName = "MythicalCuddles/DiscordBot/common/requestquotes.txt";
 
         public static List<string> QuoteList = new List<string>();
         public static List<string> RequestQuoteList = new List<string>();
@@ -27,7 +27,7 @@ namespace DiscordBot.Other
 
         private static void LoadAllQuotes()
         {
-            string file = Path.Combine(AppContext.BaseDirectory, FileName);
+            string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), FileName);
             QuoteList = File.ReadAllLines(file).ToList();
 
             Console.Write("status: [");
@@ -36,7 +36,7 @@ namespace DiscordBot.Other
             Console.ResetColor();
             Console.WriteLine("]    " + FileName + ": loaded.");
             
-            file = Path.Combine(AppContext.BaseDirectory, RequestQuotesFileName);
+            file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), RequestQuotesFileName);
             RequestQuoteList = File.ReadAllLines(file).ToList();
 
             Console.Write("status: [");
@@ -48,7 +48,7 @@ namespace DiscordBot.Other
 
         public static void EnsureExists()
         {
-            string file = Path.Combine(AppContext.BaseDirectory, FileName);
+            string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), FileName);
             if (!File.Exists(file))
             {
                 string path = Path.GetDirectoryName(file);
@@ -64,7 +64,7 @@ namespace DiscordBot.Other
                 Console.WriteLine("]    " + FileName + ": created.");
             }
             
-            file = Path.Combine(AppContext.BaseDirectory, RequestQuotesFileName);
+            file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), RequestQuotesFileName);
             if (!File.Exists(file))
             {
                 string path = Path.GetDirectoryName(file);
@@ -85,13 +85,13 @@ namespace DiscordBot.Other
 
         private static void SaveQuotes()
         {
-            string file = Path.Combine(AppContext.BaseDirectory, FileName);
+            string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), FileName);
             File.WriteAllLines(file, QuoteList);
         }
 
         private static void SaveRequestQuotes()
         {
-            string file = Path.Combine(AppContext.BaseDirectory, RequestQuotesFileName);
+            string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), RequestQuotesFileName);
             File.WriteAllLines(file, RequestQuoteList);
         }
 

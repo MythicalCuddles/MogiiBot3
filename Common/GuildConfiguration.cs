@@ -12,6 +12,7 @@ namespace DiscordBot.Common
         public string WelcomeMessage { get; set; } = "";
         public ulong WelcomeChannelId { get; set; } = 447769497344933900;
         public ulong LogChannelId { get; set; } = 447769497344933900;
+        public ulong BotChannelId { get; set; } = 447769497344933900;
 
         public bool SenpaiEnabled { get; set; } = true;
         public bool QuotesEnabled { get; set; } = true;
@@ -21,7 +22,7 @@ namespace DiscordBot.Common
 
         public static void EnsureExists(ulong guildId)
         {
-            string file = Path.Combine(AppContext.BaseDirectory, GetPath(guildId));
+            string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), GetPath(guildId));
             if (!File.Exists(file))
             {
                 string path = Path.GetDirectoryName(file);
@@ -82,18 +83,18 @@ namespace DiscordBot.Common
 
         private static string GetPath(ulong guildId)
         {
-            return ("config/guilds/" + guildId + ".json");
+            return ("MythicalCuddles/DiscordBot/config/guilds/" + guildId + ".json");
         }
 
         public void SaveJson(ulong guildId)
         {
-            string file = Path.Combine(AppContext.BaseDirectory, GetPath(guildId));
+            string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), GetPath(guildId));
             File.WriteAllText(file, ToJson());
         }
 
         public static GuildConfiguration Load(ulong guildId)
         {
-            string file = Path.Combine(AppContext.BaseDirectory, GetPath(guildId));
+            string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), GetPath(guildId));
             return JsonConvert.DeserializeObject<GuildConfiguration>(File.ReadAllText(file));
         }
 

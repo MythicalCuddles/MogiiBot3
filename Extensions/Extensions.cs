@@ -262,7 +262,42 @@ namespace DiscordBot.Extensions
             return u.JoinedAt.Value.Day + " " + u.JoinedAt.Value.Month.GetMonthText() + " " + u.JoinedAt.Value.Year;
         }
         #endregion
-        
+
+        public static int GetUserPermissionLevel(this SocketGuildUser user)
+        {
+            if (user.IsBotOwner())
+                return 10;
+
+            if (user.IsTeamMember())
+                return 9;
+
+            if (user.IsTeamMember())
+                return 8;
+
+            if (user.IsGuildOwner(user.Guild))
+                return 7;
+
+            if (user.IsGuildAdministrator())
+                return 6;
+
+            if (user.IsGuildModerator())
+                return 5;
+
+            if (user.IsBot)
+                return 8;
+
+            return 1;
+        }
+
+        public static Boolean HasHigherPermissionLevel(this IUser contextUser, IUser userMentioned)
+        {
+            if ((contextUser as SocketGuildUser).GetUserPermissionLevel() >=
+                (userMentioned as SocketGuildUser).GetUserPermissionLevel())
+                return true;
+
+            return false;
+        }
+
         #region SocketUser Gets
         public static SocketUser GetUser(this ulong id)
         {

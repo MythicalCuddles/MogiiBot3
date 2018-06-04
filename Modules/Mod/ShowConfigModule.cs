@@ -22,8 +22,14 @@ namespace DiscordBot.Modules.Mod
         [Command("")]
         public async Task ShowConfig()
         {
-            await ShowBotConfig();
-            await ShowGuildConfig();
+            await ReplyAsync("**Syntax:** " +
+                             GuildConfiguration.Load(Context.Guild.Id).Prefix + "showconfig [config]\n```" +
+                             "Available Commands\n" +
+                             "-----------------------------\n" +
+                             "-> showconfig bot\n" +
+                             "-> showconfig strings\n" +
+                             "-> showconfig guild\n" +
+                             "```");
         }
 
         [Command("bot")]
@@ -53,7 +59,31 @@ namespace DiscordBot.Modules.Mod
                                "```");
 
             await ReplyAsync("", false, eb.Build());
-            
+
+        }
+
+        [Command("strings")]
+        public async Task ShowStringConfiguration()
+        {
+            try
+            {
+                EmbedBuilder eb = new EmbedBuilder()
+                    .WithTitle("String Configuration")
+                    .WithFooter("Bot Owner permissions required to change these variables!");
+
+                eb.WithDescription("```INI\n" +
+                                   "[ 1] Default Website Name [ " + (StringConfiguration.Load().DefaultWebsiteName ?? "UNDEFINED") + " ]\n" +
+                                   "```");
+
+                await ReplyAsync("", false, eb.Build());
+            }
+            catch (Exception e)
+            {
+                await ReplyAsync(
+                    "It appears that your Guild Configuration has not been set-up completely. Please complete all the steps before using this command.");
+                Console.WriteLine(e);
+                Console.WriteLine(e.Message);
+            }
         }
 
         [Command("guild")]
@@ -71,11 +101,13 @@ namespace DiscordBot.Modules.Mod
                                    "[ 3] Welcome Channel ID [ " + (GuildConfiguration.Load(Context.Guild.Id).WelcomeChannelId.ToString() ?? "UNDEFINED") + " ]\n" +
                                    "[ 4] Log Channel [ #" + (GuildConfiguration.Load(Context.Guild.Id).LogChannelId.GetTextChannel().Name ?? "UNDEFINED") + " ]\n" +
                                    "[ 5] Log Channel ID [ " + (GuildConfiguration.Load(Context.Guild.Id).LogChannelId.ToString() ?? "UNDEFINED") + " ]\n" +
-                                   "[ 6] Senpai Enabled [ " + GuildConfiguration.Load(Context.Guild.Id).SenpaiEnabled.ToYesNo() + " ]\n" +
-                                   "[ 7] Quotes Enabled [ " + GuildConfiguration.Load(Context.Guild.Id).QuotesEnabled.ToYesNo() + " ]\n" +
-                                   "[ 8] NSFW Commands Enabled [ " + GuildConfiguration.Load(Context.Guild.Id).EnableNsfwCommands.ToYesNo() + " ]\n" +
-                                   "[ 9] Rule34 Gamble Channel [ #" + (GuildConfiguration.Load(Context.Guild.Id).RuleGambleChannelId.GetTextChannel().Name ?? "UNDEFINED") + " ]\n" +
-                                   "[10] Rule34 Gamble Channel ID [ " + (GuildConfiguration.Load(Context.Guild.Id).RuleGambleChannelId.ToString() ?? "UNDEFINED") + " ]\n" +
+                                   "[ 6] Bot Channel [ #" + (GuildConfiguration.Load(Context.Guild.Id).BotChannelId.GetTextChannel().Name ?? "UNDEFINED") + " ]\n" +
+                                   "[ 7] Bot Channel ID [ " + (GuildConfiguration.Load(Context.Guild.Id).BotChannelId.ToString() ?? "UNDEFINED") + " ]\n" +
+                                   "[ 8] Senpai Enabled [ " + GuildConfiguration.Load(Context.Guild.Id).SenpaiEnabled.ToYesNo() + " ]\n" +
+                                   "[ 9] Quotes Enabled [ " + GuildConfiguration.Load(Context.Guild.Id).QuotesEnabled.ToYesNo() + " ]\n" +
+                                   "[10] NSFW Commands Enabled [ " + GuildConfiguration.Load(Context.Guild.Id).EnableNsfwCommands.ToYesNo() + " ]\n" +
+                                   "[11] Rule34 Gamble Channel [ #" + (GuildConfiguration.Load(Context.Guild.Id).RuleGambleChannelId.GetTextChannel().Name ?? "UNDEFINED") + " ]\n" +
+                                   "[12] Rule34 Gamble Channel ID [ " + (GuildConfiguration.Load(Context.Guild.Id).RuleGambleChannelId.ToString() ?? "UNDEFINED") + " ]\n" +
                                    "```");
 
                 await ReplyAsync("", false, eb.Build());

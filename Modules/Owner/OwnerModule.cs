@@ -15,6 +15,7 @@ using Discord.WebSocket;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
+using DiscordBot.Modules.Public;
 using MelissaNet;
 
 namespace DiscordBot.Modules.Owner
@@ -192,7 +193,7 @@ namespace DiscordBot.Modules.Owner
         {
             if (confirmation == null)
             {
-                await ReplyAsync("**Please confirm by typing:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "die confirm\n" +
+                await ReplyAsync("**Please confirm by entering the TwoAuth code as follows:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "die [code]\n" +
                                  "Issuing this command will log the Bot out and terminate the process.");
                 return;
             }

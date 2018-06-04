@@ -11,7 +11,7 @@ namespace DiscordBot.Logging
 {
     public class TransactionLogger
     {
-        private const string FileName = "common/transactions.txt";
+        private const string FileName = "MythicalCuddles/DiscordBot/common/transactions.txt";
         public static List<string> TransactionsList = new List<string>();
         public static List<List<string>> SplicedTransactionsList = new List<List<string>>();
         public static List<ulong> TransactionMessages = new List<ulong>();
@@ -19,7 +19,7 @@ namespace DiscordBot.Logging
 
         private static void LoadTransactions()
         {
-            string file = Path.Combine(AppContext.BaseDirectory, FileName);
+            string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), FileName);
             TransactionsList = File.ReadAllLines(file).ToList();
 
             Console.Write("status: [");
@@ -31,7 +31,7 @@ namespace DiscordBot.Logging
 
         public static void EnsureExists()
         {
-            string file = Path.Combine(AppContext.BaseDirectory, FileName);
+            string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), FileName);
             if (!File.Exists(file))
             {
                 string path = Path.GetDirectoryName(file);
@@ -51,7 +51,7 @@ namespace DiscordBot.Logging
 
         private static void SaveTransactionsToFile()
         {
-            string file = Path.Combine(AppContext.BaseDirectory, FileName);
+            string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), FileName);
             File.WriteAllLines(file, TransactionsList);
         }
 

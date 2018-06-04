@@ -18,11 +18,6 @@ namespace DiscordBot
 
         public static void Main(string[] args)
         {
-            if (Configuration.Load().SecretKey == null)
-            {
-                Application.Run(new frmAuth());
-            }
-
             StartBot();
         }
 
@@ -59,10 +54,16 @@ namespace DiscordBot
 
             QuoteHandler.EnsureExists();
             VoteLinkHandler.EnsureExists();
-            ImageHandler.EnsureExists();
             TransactionLogger.EnsureExists();
             Console.WriteLine("-----------------------------------------------------------------");
             
+            if (Configuration.Load().SecretKey == null)
+            {
+                Console.WriteLine("Two Factor Authentication Running - Please save the QR Code in your authenticator app!");
+                Console.WriteLine("-----------------------------------------------------------------");
+                Application.Run(new frmAuth());
+            }
+
             try
             {
                 new MogiiBot3().RunBotAsync().GetAwaiter().GetResult();

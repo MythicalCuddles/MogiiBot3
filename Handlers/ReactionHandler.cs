@@ -41,12 +41,6 @@ namespace DiscordBot.Handlers
                 await HandleTransactionReactions(message, channel, reaction);
                 return;
             }
-
-            if (ImageHandler.ImageMessages.Contains(message.Id))
-            {
-                await HandleImageReactions(message, channel, reaction);
-                return;
-            }
         }
 
         private static async Task HandleQuoteReactions(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
@@ -96,6 +90,7 @@ namespace DiscordBot.Handlers
                 await message.Value.AddReactionAsync(Extensions.Extensions.ArrowRight);
             }
         }
+
         private static async Task HandleRequestQuoteReactions(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
         {
             // Check to see if the next page or previous page was clicked.
@@ -143,6 +138,7 @@ namespace DiscordBot.Handlers
                 await message.Value.AddReactionAsync(Extensions.Extensions.ArrowRight);
             }
         }
+
         private static async Task HandleTransactionReactions(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
         {
             // Check to see if the next page or previous page was clicked.
@@ -181,53 +177,6 @@ namespace DiscordBot.Handlers
                 await message.Value.AddReactionAsync(Extensions.Extensions.ArrowRight);
             }
             else if (TransactionLogger.PageNumber[TransactionLogger.TransactionMessages.IndexOf(message.Id)] == TransactionLogger.GetSplicedTransactonListCount)
-            {
-                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowLeft);
-            }
-            else
-            {
-                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowLeft);
-                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowRight);
-            }
-        }
-        private static async Task HandleImageReactions(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
-        {
-            // Check to see if the next page or previous page was clicked.
-            if (reaction.Emote.Name == Extensions.Extensions.ArrowLeft.Name)
-            {
-                if (ImageHandler.PageNumber[ImageHandler.ImageMessages.IndexOf(message.Id)] == 1)
-                    return;
-
-                ImageHandler.PageNumber[ImageHandler.ImageMessages.IndexOf(message.Id)]--;
-            }
-            else if (reaction.Emote.Name == Extensions.Extensions.ArrowRight.Name)
-            {
-                if (ImageHandler.PageNumber[ImageHandler.ImageMessages.IndexOf(message.Id)] == ImageHandler.GetSplicedListCount)
-                    return;
-
-                ImageHandler.PageNumber[ImageHandler.ImageMessages.IndexOf(message.Id)]++;
-            }
-
-            StringBuilder sb = new StringBuilder()
-                .Append("**Image Links**\n```");
-
-            List<string> imageLinks = ImageHandler.GetSplicedList(ImageHandler.PageNumber[ImageHandler.ImageMessages.IndexOf(message.Id)]);
-
-            for (int i = 0; i < imageLinks.Count; i++)
-            {
-                sb.Append(((i + 1) + ((ImageHandler.PageNumber[ImageHandler.ImageMessages.IndexOf(message.Id)] - 1) * 10)) + ": " + imageLinks[i] + "\n");
-            }
-
-            sb.Append("``` `Page " + ImageHandler.PageNumber[ImageHandler.ImageMessages.IndexOf(message.Id)] + "`");
-
-            await message.Value.ModifyAsync(msg => msg.Content = sb.ToString());
-            await message.Value.RemoveAllReactionsAsync();
-
-            if (ImageHandler.PageNumber[ImageHandler.ImageMessages.IndexOf(message.Id)] == 1)
-            {
-                await message.Value.AddReactionAsync(Extensions.Extensions.ArrowRight);
-            }
-            else if (ImageHandler.PageNumber[ImageHandler.ImageMessages.IndexOf(message.Id)] == ImageHandler.GetSplicedListCount)
             {
                 await message.Value.AddReactionAsync(Extensions.Extensions.ArrowLeft);
             }

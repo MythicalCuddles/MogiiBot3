@@ -17,21 +17,65 @@ namespace DiscordBot.Handlers
 	{
 		public static async Task ChannelCreated(SocketChannel channel)
 		{
+
 			if (channel is ITextChannel)
 			{
 				var channelParam = channel as ITextChannel;
-				await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**New Text Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
-					+ "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
-					+ "\nTopic: " + channelParam.Topic + "```");
-			}
+
+			    EmbedBuilder eb = new EmbedBuilder()
+			    {
+                    Title = "New Text Channel",
+                    Description = channelParam.Mention,
+                    Color = new Color(0x52cf35)
+			    }
+			    .AddField("Channel ID", channelParam.Id)
+			    .AddField("Channel Name", channelParam.Name)
+			    .AddField("Channel Topic", channelParam.Topic)
+                .AddField("Guild ID", channelParam.GuildId)
+			    .AddField("Guild Name", channelParam.Guild.Name);
+
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
+            }
 			else if (channel is IVoiceChannel)
 			{
-				var channelParam = channel as IVoiceChannel;
-				await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**New Voice Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
-					+ "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
-					+ "\nUser Limit: " + channelParam.UserLimit + "```");
+			    var channelParam = channel as IVoiceChannel;
+
+			    EmbedBuilder eb = new EmbedBuilder()
+			    {
+			        Title = "New Voice Channel",
+			        Description = channelParam.Name,
+			        Color = new Color(0x52cf35)
+			    }
+			    .AddField("Channel ID", channelParam.Id)
+			    .AddField("Channel Name", channelParam.Name)
+			    .AddField("User Limit", channelParam.UserLimit)
+			    .AddField("Guild ID", channelParam.GuildId)
+			    .AddField("Guild Name", channelParam.Guild.Name);
+
+			    await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
 			}
-			else
+            else if (channel is IPrivateChannel)
+			{
+			    var channelParam = channel as IPrivateChannel;
+
+			    EmbedBuilder eb = new EmbedBuilder()
+			    {
+			        Title = "New Private Channel",
+			        Description = channelParam.Name,
+			        Color = new Color(0x52cf35)
+			    }
+			    .AddField("Channel ID", channelParam.Id)
+			    .AddField("Channel Name", channelParam.Name);
+
+			    foreach (var u in channelParam.Recipients)
+			    {
+			        eb.AddField("Recipient", u.Mention, true);
+			    }
+
+			    await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
+			    return;
+			}
+            else 
 			{
 				Console.Write("status: [");
 				Console.ForegroundColor = ConsoleColor.DarkRed;
@@ -47,19 +91,61 @@ namespace DiscordBot.Handlers
 		{
 			if (channel is ITextChannel)
 			{
-				var channelParam = channel as ITextChannel;
-				await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**Removed Text Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
-					+ "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
-					+ "\nTopic: " + channelParam.Topic + "```");
-			}
+			    var channelParam = channel as ITextChannel;
+
+			    EmbedBuilder eb = new EmbedBuilder()
+			    {
+			        Title = "Removed Text Channel",
+			        Description = channelParam.Mention,
+			        Color = new Color(0xff003c)
+                }
+			    .AddField("Channel ID", channelParam.Id)
+			    .AddField("Channel Name", channelParam.Name)
+			    .AddField("Channel Topic", channelParam.Topic)
+			    .AddField("Guild ID", channelParam.GuildId)
+			    .AddField("Guild Name", channelParam.Guild.Name);
+
+			    await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
+            }
 			else if (channel is IVoiceChannel)
 			{
-				var channelParam = channel as IVoiceChannel;
-				await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**Removed Voice Channel**\n```ID: " + channelParam.Id + "\nName: " + channelParam.Name
-					+ "\nGuild ID: " + channelParam.GuildId + "\nGuild: " + channelParam.Guild.Name
-					+ "\nUser Limit: " + channelParam.UserLimit + "```");
+			    var channelParam = channel as IVoiceChannel;
+
+			    EmbedBuilder eb = new EmbedBuilder()
+			    {
+			        Title = "Removed Text Channel",
+			        Description = channelParam.Name,
+			        Color = new Color(0xff003c)
+			    }
+			    .AddField("Channel ID", channelParam.Id)
+			    .AddField("Channel Name", channelParam.Name)
+			    .AddField("User Limit", channelParam.UserLimit)
+			    .AddField("Guild ID", channelParam.GuildId)
+			    .AddField("Guild Name", channelParam.Guild.Name);
+
+			    await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
 			}
-			else
+			else if (channel is IPrivateChannel)
+			{
+			    var channelParam = channel as IPrivateChannel;
+
+			    EmbedBuilder eb = new EmbedBuilder()
+			        {
+			            Title = "Removed Private Channel",
+			            Description = channelParam.Name,
+			            Color = new Color(0x52cf35)
+			        }
+			        .AddField("Channel ID", channelParam.Id)
+			        .AddField("Channel Name", channelParam.Name);
+
+			    foreach (var u in channelParam.Recipients)
+			    {
+			        eb.AddField("Recipient", u.Mention, true);
+			    }
+
+			    await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
+			}
+            else
 			{
 				Console.Write("status: [");
 				Console.ForegroundColor = ConsoleColor.DarkRed;

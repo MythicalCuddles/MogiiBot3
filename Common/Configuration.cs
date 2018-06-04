@@ -11,7 +11,9 @@ namespace DiscordBot.Common
     public class Configuration
     {
         [JsonIgnore]
-        public static string FileName { get; } = "config/configuration.json";
+        private static string FileName { get; } = "MythicalCuddles/DiscordBot/config/configuration.json";
+        [JsonIgnore]
+        private static string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), FileName);
 
         public string BotToken { get; set; }
         public string SecretKey { get; set; }
@@ -38,7 +40,6 @@ namespace DiscordBot.Common
 
         public static void EnsureExists()
         {
-            string file = Path.Combine(AppContext.BaseDirectory, FileName);
             if (!File.Exists(file))
             {
                 string path = Path.GetDirectoryName(file);
@@ -96,13 +97,11 @@ namespace DiscordBot.Common
         
         public void SaveJson()
         {
-            string file = Path.Combine(AppContext.BaseDirectory, FileName);
             File.WriteAllText(file, ToJson());
         }
         
         public static Configuration Load()
         {
-            string file = Path.Combine(AppContext.BaseDirectory, FileName);
             return JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(file));
         }
         

@@ -12,6 +12,10 @@ namespace DiscordBot.Extensions
         {
             return User.Load(user.Id).Coins;
         }
+        public static int GetMythicalTokens(this IUser user)
+        {
+            return User.Load(user.Id).MythicalTokens;
+        }
 
         public static String GetName(this IUser user)
         {
@@ -46,6 +50,32 @@ namespace DiscordBot.Extensions
         public static String GetSnapchatUsername(this IUser user)
         {
             return User.Load(user.Id).Snapchat;
+        }
+
+        public static String GetFooterText(this IUser user)
+        {
+            return User.Load(user.Id).FooterText;
+        }
+
+        public static String GetWebsiteName(this IUser user)
+        {
+            return User.Load(user.Id).WebsiteName;
+        }
+
+        public static String GetWebsiteUrl(this IUser user)
+        {
+            return User.Load(user.Id).WebsiteUrl;
+        }
+
+
+        public static String GetEmbedAuthorBuilderIconUrl(this IUser user)
+        {
+            return User.Load(user.Id).EmbedAuthorBuilderIconUrl;
+        }
+
+        public static String GetEmbedFooterBuilderIconUrl(this IUser user)
+        {
+            return User.Load(user.Id).EmbedFooterBuilderIconUrl;
         }
     }
 }

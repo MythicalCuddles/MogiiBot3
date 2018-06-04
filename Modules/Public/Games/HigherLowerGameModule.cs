@@ -61,19 +61,19 @@ namespace DiscordBot.Modules.Public.Games
             if (botTotal > userTotal)
             {
                 eb.AddField(MogiiBot3.Bot.CurrentUser.Username + " Won!", Context.User.Username + " bet " + coinsBet + " coin(s) and lost.");
-                TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") bet " + coinsBet + " on higher and lost.");
+                TransactionLogger.AddTransaction(Context.User.Username + " [" + Context.User.Id + "] bet " + coinsBet + " on higher and lost.");
             }
             else if (botTotal == userTotal)
             {
                 eb.AddField("No-one Won!", Context.User.Username + " bet " + coinsBet + " coin(s) and drew with " + MogiiBot3.Bot.CurrentUser.Username + ".");
-                TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") bet " + coinsBet + " on higher and didn't win nor lose.");
+                TransactionLogger.AddTransaction(Context.User.Username + " [" + Context.User.Id + "] bet " + coinsBet + " on higher and didn't win nor lose.");
                 User.UpdateUser(Context.User.Id, coins: (userCoins + coinsBet));
             }
             else
             {
                 int coinsWon = (coinsBet * 2);
                 eb.AddField(Context.User.Username + " Won!", Context.User.Username + " bet " + coinsBet + " coin(s) and won " + coinsWon + ".");
-                TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") bet " + coinsBet + " on higher and won " + coinsWon + " coins.");
+                TransactionLogger.AddTransaction(Context.User.Username + " [" + Context.User.Id + "] bet " + coinsBet + " on higher and won " + coinsWon + " coins.");
                 User.UpdateUser(Context.User.Id, coins: (userCoins + coinsWon));
             }
             
@@ -107,19 +107,19 @@ namespace DiscordBot.Modules.Public.Games
             if (botTotal < userTotal)
             {
                 eb.AddField(MogiiBot3.Bot.CurrentUser.Username + " Won!", Context.User.Username + " bet " + coinsBet + " coin(s) and lost.");
-                TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") bet " + coinsBet + " on lower and lost.");
+                TransactionLogger.AddTransaction(Context.User.Username + " [" + Context.User.Id + "] bet " + coinsBet + " on lower and lost.");
             }
             else if (botTotal == userTotal)
             {
                 eb.AddField("No-one Won!", Context.User.Username + " bet " + coinsBet + " coin(s) and drew with " + MogiiBot3.Bot.CurrentUser.Username + ".");
-                TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") bet " + coinsBet + " on lower and didn't win nor lose.");
+                TransactionLogger.AddTransaction(Context.User.Username + " [" + Context.User.Id + "] bet " + coinsBet + " on lower and didn't win nor lose.");
                 User.UpdateUser(Context.User.Id, coins: (userCoins + coinsBet));
             }
             else
             {
                 int coinsWon = (coinsBet * 2);
                 eb.AddField(Context.User.Username + " Won!", Context.User.Username + " bet " + coinsBet + " coin(s) and won " + coinsWon + ".");
-                TransactionLogger.AddTransaction(Context.User.Username + " (" + Context.User.Id + ") bet " + coinsBet + " on lower and won " + coinsWon + " coins.");
+                TransactionLogger.AddTransaction(Context.User.Username + " [" + Context.User.Id + "] bet " + coinsBet + " on lower and won " + coinsWon + " coins.");
                 User.UpdateUser(Context.User.Id, coins: (userCoins + coinsBet));
             }
             

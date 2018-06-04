@@ -9,13 +9,13 @@ namespace DiscordBot.Other
 {
     public class VoteLinkHandler
     {
-        private const string FileName = "common/voteLinks.txt";
+        private const string FileName = "MythicalCuddles/DiscordBot/common/voteLinks.txt";
         
         public static List<string> VoteLinkList = new List<string>();
 
         private static void LoadQuotes()
         {
-            string file = Path.Combine(AppContext.BaseDirectory, FileName);
+            string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), FileName);
             VoteLinkList = File.ReadAllLines(file).ToList();
 
             Console.Write("status: [");
@@ -27,7 +27,7 @@ namespace DiscordBot.Other
 
         public static void EnsureExists()
         {
-            string file = Path.Combine(AppContext.BaseDirectory, FileName);
+            string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), FileName);
             if (!File.Exists(file))
             {
                 string path = Path.GetDirectoryName(file);
@@ -47,7 +47,7 @@ namespace DiscordBot.Other
 
         private static void SaveLinks()
         {
-            string file = Path.Combine(AppContext.BaseDirectory, FileName);
+            string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), FileName);
             File.WriteAllLines(file, VoteLinkList);
         }
 
