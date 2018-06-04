@@ -129,7 +129,7 @@ namespace DiscordBot.Modules.Public
             }
             else if(isGlobal)
             {
-                sb.Append("**Gloabl Leaderboard - Top " + listAmount + "**\n```");
+                sb.Append("**Global Leaderboard - Top " + listAmount + "**\n```");
             }
 
             List<Tuple<int, SocketGuildUser>> shownList = new List<Tuple<int, SocketGuildUser>>();
