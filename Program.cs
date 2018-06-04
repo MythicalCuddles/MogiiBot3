@@ -51,7 +51,7 @@ namespace DiscordBot
             Console.WriteLine("-----------------------------------------------------------------");
 
             Configuration.EnsureExists();
-
+            StringConfiguration.EnsureExists();
             QuoteHandler.EnsureExists();
             VoteLinkHandler.EnsureExists();
             TransactionLogger.EnsureExists();
