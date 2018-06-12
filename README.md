@@ -1,6 +1,6 @@
-﻿[![mogiibot0](http://i.imgur.com/ghsLKmU.png)](https://github.com/MythicalCuddles/MogiiBot3/wiki)
-[![mogiibot1](http://i.imgur.com/phY9CYP.png)](https://github.com/MythicalCuddles/MogiiBot3/wiki/Commands)
-[![mogiibot2](http://i.imgur.com/R3UmIw8.png)](https://github.com/MythicalCuddles/MogiiBot3/wiki/MogiiBot-Rules-&-Terms-of-Use)
+﻿[![mogiibot0](http://imgserv.mythicalcuddles.xyz/MogiiBot3/MogiiBot3.png)](https://github.com/MythicalCuddles/MogiiBot3/wiki)
+[![mogiibot1](http://imgserv.mythicalcuddles.xyz/MogiiBot3/Commands.png)](https://github.com/MythicalCuddles/MogiiBot3/wiki/Commands)
+[![mogiibot2](http://imgserv.mythicalcuddles.xyz/MogiiBot3/Usage.png)](https://github.com/MythicalCuddles/MogiiBot3/wiki/MogiiBot-Rules-&-Terms-of-Use)
 
 
 # MogiiBot3
@@ -14,4 +14,4 @@ The code makes references to a library called ~~MelissasCode~~ MelissaNet. I wil
 
 
 
-[![footer](http://i.imgur.com/YEgqCsm.png)](https://github.com/MythicalCuddles)
+[![footer](http://imgserv.mythicalcuddles.xyz/MythicalCuddles.png)](https://github.com/MythicalCuddles)
