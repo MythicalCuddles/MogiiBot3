@@ -14,4 +14,4 @@ The code makes references to a library called ~~MelissasCode~~ MelissaNet. I wil
 
 
 
-[![footer](http://imgserv.mythicalcuddles.xyz/MythicalCuddles.png)](https://github.com/MythicalCuddles)
+[![footer](http://imgserv.mythicalcuddles.xyz/Signature.png)](https://github.com/MythicalCuddles)
