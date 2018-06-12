@@ -11,7 +11,6 @@ You may use the code within the terms of the license. Unfortunately, I can not h
 
 The code makes references to a library called ~~MelissasCode~~ MelissaNet. I will not be sharing this library therefore, if you decide to use my code, you will need to find all of these methods and variables and change them yourself.
 
-
-
+---
 
 [![footer](http://imgserv.mythicalcuddles.xyz/Signature.png)](https://github.com/MythicalCuddles)
